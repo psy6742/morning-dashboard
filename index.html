@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>유치원 등원 준비 대시보드</title>
+<style>
+:root{
+  --ink:#3d3229; --sub:#8a7d6f; --green:#34a853; --green-l:#e6f6ea;
+  --card:#ffffff; --shadow:0 4px 14px rgba(90,70,40,.10);
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  color:var(--ink); overflow:hidden;
+  background:linear-gradient(160deg,#fdf8ee 0%,#f2f9ee 55%,#e8f3fb 100%);
+}
+#app{height:100%;display:flex;flex-direction:column;gap:clamp(6px,1.2vh,12px);padding:clamp(8px,1.4vh,14px) clamp(10px,1.4vw,16px)}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:2px solid #f3ead9}
+.hidden{display:none !important}
+
+/* ── header ─────────────────────────── */
+header{display:flex;gap:clamp(6px,.9vw,12px);height:clamp(96px,17vh,132px);flex:0 0 auto}
+#clock-card{width:clamp(150px,17vw,215px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
+#date-line{font-size:clamp(11px,1.7vh,15px);color:var(--sub);font-weight:600}
+#clock{font-size:clamp(26px,5.4vh,44px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+#clock .ampm{font-size:.5em;color:var(--sub);font-weight:700;margin-right:3px}
+
+#exp-card{width:clamp(195px,21vw,265px);padding:clamp(6px,1.2vh,12px) clamp(8px,1vw,14px);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.card-label{font-size:clamp(10px,1.5vh,13px);font-weight:700;color:#c85f2a}
+.exp-row{display:flex;align-items:center;gap:8px;min-height:0;flex:1}
+.exp-row img{width:clamp(40px,7.5vh,58px);height:clamp(40px,7.5vh,58px);object-fit:contain;flex:0 0 auto}
+.exp-info{flex:1;min-width:0}
+#today-poke-name{font-size:clamp(13px,2.3vh,18px);font-weight:800}
+#exp-text{font-size:clamp(9px,1.5vh,12px);color:var(--sub);font-weight:600;margin:1px 0 3px}
+.bar{height:clamp(8px,1.6vh,12px);background:#f0e7d8;border-radius:99px;overflow:hidden;border:1px solid #eadfc9}
+.bar>div{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ffc23c,#ff8b3d);transition:width .5s}
+
+#weather-card{flex:1;min-width:0;padding:clamp(6px,1.2vh,12px) clamp(10px,1.2vw,16px);display:flex;align-items:center;gap:clamp(8px,1.2vw,18px)}
+.w-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+#w-icon{font-size:clamp(24px,4.6vh,40px);line-height:1}
+#w-temp{font-size:clamp(20px,4.2vh,34px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+#w-desc{font-size:clamp(10px,1.7vh,14px);font-weight:700}
+#w-minmax{font-size:clamp(9px,1.5vh,12px);color:var(--sub);font-weight:600}
+.w-hours{display:flex;gap:clamp(4px,.6vw,10px);flex:0 0 auto}
+.wh-chip{display:flex;flex-direction:column;align-items:center;gap:1px;background:#f7f3ea;border-radius:12px;padding:clamp(3px,.8vh,7px) clamp(5px,.7vw,11px);min-width:clamp(48px,4.6vw,66px)}
+.wh-h{font-size:clamp(8px,1.3vh,11px);color:var(--sub);font-weight:700}
+.wh-i{font-size:clamp(13px,2.2vh,18px);line-height:1.1}
+.wh-t{font-size:clamp(10px,1.6vh,13px);font-weight:800;font-variant-numeric:tabular-nums}
+.wh-p{font-size:clamp(8px,1.3vh,11px);color:#4b8dd6;font-weight:700}
+.w-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:clamp(3px,.8vh,7px);justify-content:center}
+.dust-chips{display:flex;gap:6px;flex-wrap:wrap}
+.dust-chip{font-size:clamp(9px,1.5vh,12px);font-weight:700;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.d-good{background:#e3f4e6;color:#1e7c35}.d-mod{background:#fdf3d1;color:#8a6d1a}
+.d-bad{background:#fde8d7;color:#b45a12}.d-vbad{background:#fddadf;color:#b32020}
+#w-tip{font-size:clamp(10px,1.7vh,14px);font-weight:700;color:#4a6a86;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#w-err{font-size:clamp(9px,1.4vh,12px);color:#b34820;font-weight:600}
+
+#side-controls{display:flex;flex-direction:column;gap:5px;justify-content:center;width:clamp(118px,12vw,158px);flex:0 0 auto}
+.tab-btn{border:2px solid #eee3cf;background:#fff;border-radius:12px;font-family:inherit;font-weight:800;color:var(--sub);
+  font-size:clamp(11px,1.9vh,15px);padding:clamp(4px,1vh,8px) 4px;cursor:pointer;transition:.15s}
+.tab-btn.active{background:#fff6de;border-color:#f2c94c;color:#8a6d1a}
+.mini-row{display:flex;gap:5px;justify-content:center}
+.icon-btn{flex:1;border:2px solid #eee3cf;background:#fff;border-radius:10px;font-size:clamp(12px,2vh,16px);cursor:pointer;padding:2px 0;font-family:inherit}
+
+/* ── progress ───────────────────────── */
+#progress-card{flex:0 0 auto;display:flex;align-items:center;gap:clamp(10px,1.6vw,24px);
+  padding:clamp(6px,1.3vh,13px) clamp(12px,1.6vw,22px);height:clamp(78px,14.5vh,112px)}
+#p-left{flex:0 0 auto;text-align:left;min-width:clamp(150px,17vw,230px)}
+#p-title{font-size:clamp(13px,2.5vh,20px);font-weight:800;line-height:1.25}
+#p-title b{color:#e0731d}
+#p-sub{font-size:clamp(10px,1.6vh,13px);color:var(--sub);font-weight:700;margin-top:2px}
+#p-bar-wrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:clamp(2px,.6vh,5px)}
+#p-labels{display:flex;justify-content:space-between;font-size:clamp(9px,1.5vh,12px);font-weight:700;color:var(--sub)}
+#p-bar{position:relative;height:clamp(12px,2.3vh,18px);background:#efe7d6;border-radius:99px;border:1px solid #e7dcc5}
+#p-fill{position:absolute;inset:0 auto 0 0;width:0%;border-radius:99px;background:linear-gradient(90deg,#7ed07e,#34a853);transition:width .8s}
+#p-poke{position:absolute;top:50%;width:clamp(28px,5.4vh,42px);height:clamp(28px,5.4vh,42px);transform:translate(-50%,-58%);left:0%;transition:left .8s;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
+#p-flag{position:absolute;right:-4px;top:-14px;font-size:clamp(12px,2vh,16px)}
+#p-msg{font-size:clamp(10px,1.7vh,14px);font-weight:700;color:#4e8f5e}
+#p-school{font-size:clamp(26px,5vh,40px);flex:0 0 auto}
+
+/* ── tasks ──────────────────────────── */
+#view-dash{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,1vw,14px)}
+.task{position:relative;background:var(--card);border:3px solid #f3ead9;border-radius:var(--r);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;padding:clamp(6px,1.2vh,12px) clamp(4px,.5vw,8px);cursor:pointer;
+  transition:transform .12s, border-color .2s;overflow:hidden;user-select:none}
+.task:active{transform:scale(.97)}
+.task .num{position:absolute;top:6px;left:8px;width:clamp(16px,2.9vh,24px);height:clamp(16px,2.9vh,24px);border-radius:50%;
+  background:#f2c94c;color:#6b5410;font-weight:800;font-size:clamp(10px,1.7vh,14px);display:flex;align-items:center;justify-content:center}
+.task img{flex:1;min-height:0;max-width:88%;object-fit:contain;pointer-events:none}
+.task .t-label{flex:0 0 auto;font-size:clamp(12px,2.2vh,18px);font-weight:800;text-align:center;line-height:1.2;padding:2px 0 4px}
+.task.done{border-color:#34a853;background:#f4fbf5}
+.task .check{position:absolute;top:6px;right:8px;width:clamp(22px,4vh,32px);height:clamp(22px,4vh,32px);border-radius:50%;
+  background:var(--green);color:#fff;font-size:clamp(13px,2.4vh,19px);display:none;align-items:center;justify-content:center;font-weight:900;box-shadow:0 2px 6px rgba(30,120,60,.4)}
+.task .done-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);
+  background:var(--green);color:#fff;font-weight:900;font-size:clamp(12px,2.3vh,19px);padding:4px 16px;border-radius:99px;
+  display:none;box-shadow:0 3px 10px rgba(30,120,60,.35);pointer-events:none}
+.task.done .check,.task.done .done-badge{display:flex}
+.task.done img{opacity:.55}
+
+.timer{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px;
+  background:#fff8ec;border:1.5px solid #f2dfb6;border-radius:12px;padding:clamp(3px,.9vh,8px) clamp(4px,.6vw,10px);width:92%;cursor:default}
+.timer.on{background:#e9f7ee;border-color:#8fd6a2}
+#t-time{font-size:clamp(17px,3.4vh,27px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;color:#7a5c14;line-height:1.05}
+.timer.on #t-time{color:#1e7c35}
+#t-time.ended{color:#d33;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+.t-btns{display:flex;gap:3px;justify-content:center;flex-wrap:nowrap}
+.t-btns button{font-family:inherit;font-weight:800;font-size:clamp(9px,1.6vh,13px);border:none;border-radius:8px;
+  padding:clamp(2px,.7vh,6px) clamp(4px,.7vw,9px);cursor:pointer;white-space:nowrap;flex:0 0 auto}
+#t-start{background:#34a853;color:#fff}
+#t-start.paused{background:#f2a13c}
+#t-reset{background:#efe7d6;color:#6b5e4d}
+#t-end{background:#fde8d7;color:#b45a12}
+
+/* ── pokedex ────────────────────────── */
+#view-poke{flex:1;min-height:0;overflow:auto;background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:2px solid #f3ead9;padding:clamp(10px,2vh,20px) clamp(12px,1.6vw,24px)}
+#pk-head{display:flex;align-items:baseline;gap:14px;margin-bottom:clamp(6px,1.4vh,14px)}
+#pk-head b{font-size:clamp(16px,3vh,24px)}
+#pk-stats{font-size:clamp(11px,1.9vh,15px);color:var(--sub);font-weight:700}
+#pk-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,1vw,14px)}
+.pk-card{position:relative;border:2px solid #f0e7d6;border-radius:14px;background:#fffdf8;padding:8px 6px 10px;text-align:center}
+.pk-card.caught{border-color:#ffd76e;background:#fffbef}
+.pk-no{font-size:clamp(9px,1.5vh,12px);font-weight:800;color:var(--sub)}
+.pk-card img{width:60%;max-width:92px;aspect-ratio:1;object-fit:contain}
+.pk-card:not(.caught) img{filter:brightness(0);opacity:.30}
+.pk-name{font-weight:800;font-size:clamp(12px,2.1vh,17px)}
+.pk-card:not(.caught) .pk-name{color:#b9ad9c}
+.pk-date{font-size:clamp(9px,1.5vh,12px);color:#c8a53c;font-weight:700;min-height:1.3em}
+.pk-cnt{position:absolute;top:6px;right:8px;background:#ffd76e;color:#6b5410;border-radius:99px;font-weight:800;font-size:clamp(9px,1.5vh,12px);padding:1px 8px}
+
+/* ── modals ─────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(60,50,30,.45);display:flex;align-items:center;justify-content:center;z-index:50}
+#modal-catch{z-index:60}
+.modal{background:#fff;border-radius:22px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:clamp(14px,3vh,28px) clamp(16px,2.5vw,32px);
+  max-width:min(88vw,520px);max-height:88vh;overflow:auto;text-align:center}
+#modal-catch .m-sprite{width:clamp(110px,22vh,170px);height:clamp(110px,22vh,170px);animation:pop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+#modal-catch h2{font-size:clamp(20px,4.2vh,32px);color:#e0731d;margin:4px 0 2px}
+#catch-name{font-size:clamp(15px,3vh,23px);font-weight:800}
+#catch-sub{font-size:clamp(12px,2.1vh,16px);color:var(--sub);font-weight:700;margin:4px 0 10px}
+.m-btn{font-family:inherit;font-weight:800;font-size:clamp(13px,2.4vh,18px);border:none;border-radius:12px;padding:9px 26px;cursor:pointer;background:#34a853;color:#fff}
+#catch-ball{font-size:clamp(28px,6vh,46px);animation:spin 1.2s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.modal h3{font-size:clamp(15px,2.8vh,21px);margin-bottom:10px;text-align:left}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed #f0e7d6;font-size:clamp(12px,2vh,15px);font-weight:700}
+.set-row:last-child{border-bottom:none}
+.set-row input[type=time]{font-family:inherit;font-size:clamp(12px,2vh,15px);padding:3px 6px;border:1.5px solid #e7dcc5;border-radius:8px}
+.set-btn{font-family:inherit;font-weight:800;font-size:clamp(11px,1.9vh,14px);border:none;border-radius:10px;padding:7px 12px;cursor:pointer}
+.sb-sound{background:#fff6de;color:#8a6d1a;border:1.5px solid #f2c94c}
+.sb-test{background:#e3f0fd;color:#1d5cad}
+.sb-reset{background:#fde8d7;color:#b45a12}
+.sb-close{background:#34a853;color:#fff}
+.btn-col{display:flex;flex-direction:column;gap:6px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="card" id="clock-card">
+      <div id="date-line"></div>
+      <div id="clock"></div>
+    </div>
+
+    <div class="card" id="exp-card">
+      <div class="card-label">오늘의 목표 포켓몬</div>
+      <div class="exp-row">
+        <img id="today-poke-img" src="" alt="오늘의 포켓몬">
+        <div class="exp-info">
+          <div id="today-poke-name">-</div>
+          <div id="exp-text">0 / 100 EXP</div>
+          <div class="bar"><div id="exp-fill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="weather-card">
+      <div class="w-left">
+        <div id="w-icon">⏳</div>
+        <div>
+          <div id="w-temp">--°</div>
+          <div id="w-desc">날씨 확인 중</div>
+          <div id="w-minmax"></div>
+        </div>
+      </div>
+      <div class="w-hours" id="w-hours"></div>
+      <div class="w-right">
+        <div class="dust-chips" id="dust-chips"></div>
+        <div id="w-tip"></div>
+        <div id="w-err" class="hidden"></div>
+      </div>
+    </div>
+
+    <div id="side-controls">
+      <button class="tab-btn active" id="tab-dash">🎒 등원 준비</button>
+      <button class="tab-btn" id="tab-poke">📕 포켓몬 도감</button>
+      <div class="mini-row">
+        <button class="icon-btn" id="btn-sound" title="소리 켜기">🔇</button>
+        <button class="icon-btn" id="btn-settings" title="설정">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="card" id="progress-card">
+    <div id="p-left">
+      <div id="p-title"></div>
+      <div id="p-sub"></div>
+    </div>
+    <div id="p-bar-wrap">
+      <div id="p-labels"><span id="p-wake-label">기상 06:45</span><span id="p-depart-label">출발 08:10</span></div>
+      <div id="p-bar">
+        <div id="p-fill"></div>
+        <div id="p-flag">🚩</div>
+        <img id="p-poke" alt="">
+      </div>
+      <div id="p-msg"></div>
+    </div>
+    <div id="p-school">🏫</div>
+  </section>
+
+  <main id="view-dash"></main>
+
+  <section id="view-poke" class="hidden">
+    <div id="pk-head"><b>📕 포켓몬 도감</b><span id="pk-stats"></span></div>
+    <div id="pk-grid"></div>
+  </section>
+</div>
+
+<!-- 포획 연출 -->
+<div id="modal-catch" class="overlay hidden">
+  <div class="modal">
+    <div id="catch-ball">🎯</div>
+    <img class="m-sprite" id="catch-img" src="" alt="">
+    <h2 id="catch-title">포켓몬을 잡았다!</h2>
+    <div id="catch-name"></div>
+    <div id="catch-sub"></div>
+    <button class="m-btn" id="catch-close">좋아요!</button>
+  </div>
+</div>
+
+<!-- 설정 (엄마용) -->
+<div id="modal-settings" class="overlay hidden">
+  <div class="modal" style="text-align:left;min-width:min(80vw,430px)">
+    <h3>⚙️ 엄마용 설정 · 테스트</h3>
+    <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
+    <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
+    <div class="set-row"><span>효과음 · 음성</span>
+      <span style="display:flex;gap:6px">
+        <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
+        <button class="set-btn sb-sound" id="btn-preview">▶ 가랏 피카츄! 미리 듣기</button>
+      </span>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <div class="btn-col">
+        <button class="set-btn sb-test" id="btn-test">⏱ 시간 내 완료 테스트 (할 일 5개 완료 +50 EXP)</button>
+        <button class="set-btn sb-test" id="btn-exp">🎯 포획 연출 바로 보기 (+50 EXP)</button>
+        <button class="set-btn sb-reset" id="btn-reset-day">🧹 오늘 기록 초기화</button>
+        <button class="set-btn sb-reset" id="btn-reset-dex">📚 도감 전체 초기화</button>
+        <button class="set-btn sb-close" id="btn-close-settings">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ================= 데이터 ================= */
+const POKEMON=[
+  {id:1,  no:'001', name:'이상해씨'},
+  {id:4,  no:'004', name:'파이리'},
+  {id:7,  no:'007', name:'꼬부기'},
+  {id:25, no:'025', name:'피카츄'},
+  {id:39, no:'039', name:'푸린'},
+  {id:52, no:'052', name:'냐옹이'},
+  {id:131,no:'131', name:'라프라스'},
+  {id:133,no:'133', name:'이브이'},
+  {id:143,no:'143', name:'잠만보'},
+  {id:151,no:'151', name:'뮤'}
+];
+const TASKS=[
+  {n:1,label:'아침 할 일(화장실)'},
+  {n:2,label:'가방 준비'},
+  {n:3,label:'밥 먹기'},
+  {n:4,label:'아침 공부'},
+  {n:5,label:'양치하고 옷 입기'}
+];
+const EXP_PER_TASK=10, EXP_PER_CATCH=100, EAT_SECONDS=1200;
+const SKEY='morningDashboard.v1';
+const LAT=37.5712, LON=127.0545; // 서울 동대문구 답십리1동
+
+function todayKey(d=new Date()){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(SKEY));
+    if(s&&s.v===1)return s;
+  }catch(e){}
+  return {v:1,days:{},caught:[],settings:{wake:'06:45',depart:'08:10',sound:false}};
+}
+let S=load();
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
+function day(k){
+  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:EAT_SECONDS,running:false,since:null,ended:false}};
+  return S.days[k];
+}
+
+/* ================= 시계·진행 ================= */
+const WEEK='일월화수목금토'.split('');
+function parseHM(s){const[a,b]=s.split(':').map(Number);return{h:a,m:b};}
+function dateWith(hm,d=new Date()){const x=new Date(d);x.setHours(hm.h,hm.m,0,0);return x;}
+function ampmClock(d){
+  const h=d.getHours(),m=d.getMinutes(),ap=h<12?'오전':'오후';let h12=h%12;if(h12===0)h12=12;
+  return {ap,h12,m};
+}
+function renderClock(){
+  const now=new Date(),c=ampmClock(now);
+  document.getElementById('date-line').textContent=`${now.getMonth()+1}월 ${now.getDate()}일 ${WEEK[now.getDay()]}요일`;
+  document.getElementById('clock').innerHTML=`<span class="ampm">${c.ap}</span>${c.h12}:${String(c.m).padStart(2,'0')}`;
+}
+function renderProgress(){
+  const now=new Date();
+  const wake=dateWith(parseHM(S.settings.wake)), dep=dateWith(parseHM(S.settings.depart));
+  if(dep<=wake){dep.setDate(dep.getDate()+1);}
+  let pct,msg,title;
+  if(now<wake){pct=0;title='기상 시간 전이에요 😴';msg='잠옷 갈아입고 기분 좋게 시작해요!';}
+  else if(now<dep){
+    pct=(now-wake)/(dep-wake)*100;
+    const leftMin=Math.max(0,Math.ceil((dep-now)/60000));
+    title=`유치원 출발까지 <b>${leftMin}분</b> 남았어요`;
+    msg=pct<25?'출발 준비, 천천히 시작해 볼까요?':pct<50?'좋아요, 순조로워요!':pct<75?'조금만 더 힘내요!':'거의 다 왔어요, 서둘러 주세요!';
+  }else{pct=100;title='출발 시간이 지났어요!';msg=' 늦었어도 괜찮아요, 힘차게 화이팅!';}
+  document.getElementById('p-title').innerHTML=title;
+  document.getElementById('p-msg').textContent=msg;
+  document.getElementById('p-wake-label').textContent='기상 '+S.settings.wake;
+  document.getElementById('p-depart-label').textContent='출발 '+S.settings.depart;
+  document.getElementById('p-sub').textContent='출발 '+fmtK(S.settings.depart);
+  document.getElementById('p-fill').style.width=pct+'%';
+  const poke=nextTarget();
+  const pp=document.getElementById('p-poke');
+  if(!pp.getAttribute('src'))pp.src=`assets/pokemon/${poke.id}.png`;
+  pp.style.left=pct+'%';
+  pp.style.left=pct+'%';
+}
+function fmtK(hm){const{h,m}=parseHM(hm),ap=h<12?'오전':'오후';let h12=h%12;if(h12===0)h12=12;return `${ap} ${h12}:${String(m).padStart(2,'0')}`;}
+
+/* ================= EXP · 포획 ================= */
+function poolExp(){let t=0;for(const k in S.days)t+=S.days[k].exp||0;return t-EXP_PER_CATCH*S.caught.length;}
+function nextTarget(){
+  const di=Math.floor(new Date(todayKey()+'T00:00:00')/864e5);
+  for(let i=0;i<POKEMON.length;i++){const p=POKEMON[(di+i)%POKEMON.length];
+    if(!S.caught.some(c=>c.id===p.id))return p;}
+  return POKEMON[di%POKEMON.length]; // 도감 완료 후엔 순환
+}
+function renderExp(){
+  const p=nextTarget(),pool=Math.max(0,poolExp());
+  document.getElementById('today-poke-img').src=`assets/pokemon/${p.id}.png`;
+  document.getElementById('today-poke-name').textContent=p.name;
+  document.getElementById('exp-text').textContent=`${pool} / ${EXP_PER_CATCH} EXP`;
+  document.getElementById('exp-fill').style.width=(pool%EXP_PER_CATCH+ (pool>0&&pool%EXP_PER_CATCH===0?0:0))+'%';
+  document.getElementById('exp-fill').style.width=Math.min(100,pool)+'%';
+}
+function checkCatch(){
+  if(poolExp()>=EXP_PER_CATCH){
+    const p=nextTarget();
+    S.caught.push({id:p.id,date:todayKey()});
+    save();
+    showCatch(p);
+    return true;
+  }
+  return false;
+}
+function showCatch(p){
+  document.getElementById('modal-settings').classList.add('hidden');
+  document.getElementById('catch-img').src=`assets/pokemon/${p.id}.png`;
+  document.getElementById('catch-name').textContent=`No.${p.no} ${p.name}`;
+  document.getElementById('catch-sub').textContent=`${todayKey().replace(/-/g,'.')} 획득 · 다음 목표: ${nextTarget().name}`;
+  document.getElementById('modal-catch').classList.remove('hidden');
+  playChime();
+  renderExp();renderPoke();
+}
+document.getElementById('catch-close').addEventListener('click',()=>{
+  document.getElementById('modal-catch').classList.add('hidden');
+});
+
+/* ================= 할 일 ================= */
+function buildTasks(){
+  const main=document.getElementById('view-dash');
+  main.innerHTML='';
+  TASKS.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='task';el.id=`task-${t.n}`;el.dataset.n=t.n;
+    let inner=`<div class="num">${t.n}</div><img src="assets/task-${t.n}.png" alt="${t.label}"><div class="t-label">${t.label}</div>
+      <div class="check">✔</div><div class="done-badge">완료!</div>`;
+    if(t.n===3){
+      inner+=`<div class="timer" id="eat-timer">
+        <div id="t-time">20:00</div>
+        <div class="t-btns">
+          <button id="t-start">▶ 시작</button>
+          <button id="t-reset">⟳</button>
+          <button id="t-end">⏹ 끝</button>
+        </div>
+      </div>`;
+    }
+    el.innerHTML=inner;
+    el.addEventListener('click',()=>toggleTask(t.n));
+    main.appendChild(el);
+  });
+  document.getElementById('t-start').addEventListener('click',e=>{e.stopPropagation();timerToggle();});
+  document.getElementById('t-reset').addEventListener('click',e=>{e.stopPropagation();timerReset();});
+  document.getElementById('t-end').addEventListener('click',e=>{e.stopPropagation();timerEnd();});
+}
+function isBeforeDepart(){
+  const now=new Date(),dep=dateWith(parseHM(S.settings.depart));
+  return now<dep;
+}
+function toggleTask(n,forceInTime){
+  const d=day(todayKey());
+  if(!d.tasks[n]){
+    d.tasks[n]=true;
+    d.inTime[n]=(typeof forceInTime==='boolean')?forceInTime:isBeforeDepart();
+    if(d.inTime[n]){d.exp=(d.exp||0)+EXP_PER_TASK;}
+  }else{
+    if(d.inTime[n])d.exp=Math.max(0,(d.exp||0)-EXP_PER_TASK);
+    delete d.tasks[n];delete d.inTime[n];
+  }
+  save();renderTasks();renderExp();
+  checkCatch();
+}
+function renderTasks(){
+  const d=day(todayKey());
+  TASKS.forEach(t=>{
+    document.getElementById(`task-${t.n}`).classList.toggle('done',!!d.tasks[t.n]);
+  });
+  renderTimer();
+}
+/* 밥 먹기 20분 타이머 */
+function renderTimer(){
+  const d=day(todayKey()).timer,left=Math.max(0,Math.ceil(d.left));
+  const el=document.getElementById('eat-timer');if(!el)return;
+  el.classList.toggle('on',!!d.running);
+  const tEl=document.getElementById('t-time');
+  tEl.textContent=`${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`;
+  tEl.classList.toggle('ended',d.left<=0);
+  const s=document.getElementById('t-start');
+  s.textContent=d.running?'⏸ 일시정지':'▶ 시작';
+  s.classList.toggle('paused',!!d.running);
+}
+function timerToggle(){
+  const t=day(todayKey()).timer;
+  if(t.left<=0){t.left=EAT_SECONDS;t.ended=false;}
+  if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);t.running=false;t.since=null;}
+  else{t.running=true;t.since=Date.now();}
+  save();renderTimer();
+}
+function timerReset(){
+  const d=day(todayKey());
+  d.timer={left:EAT_SECONDS,running:false,since:null,ended:false};
+  save();renderTimer();
+}
+function timerEnd(){
+  const t=day(todayKey()).timer;
+  if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);}
+  t.running=false;t.since=null;
+  save();renderTimer();
+}
+function tickTimer(){
+  const t=day(todayKey()).timer;
+  if(t.running){
+    const left=t.left-(Date.now()-t.since)/1000;
+    if(left<=0){
+      day(todayKey()).timer={left:0,running:false,since:null,ended:true};
+      save();renderTimer();playBeep();
+    }else{t.left=left;t.since=Date.now();save();renderTimer();}
+  }
+}
+
+/* ================= 사운드 · TTS ================= */
+let AC=null,soundUnlocked=false;
+function unlockAudio(){
+  try{
+    if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    soundUnlocked=true;S.settings.sound=true;save();updateSoundBtn();
+    return true;
+  }catch(e){return false;}
+}
+function playChime(){
+  if(!soundUnlocked||!AC)return;
+  try{
+    const t=AC.currentTime;
+    [[523.25,0],[659.25,.13],[783.99,.26],[1046.5,.4]].forEach(([f,dt])=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='triangle';o.frequency.value=f;
+      o.connect(g);g.connect(AC.destination);
+      g.gain.setValueAtTime(0,t+dt);
+      g.gain.linearRampToValueAtTime(.28,t+dt+.02);
+      g.gain.exponentialRampToValueAtTime(.001,t+dt+.55);
+      o.start(t+dt);o.stop(t+dt+.6);
+    });
+  }catch(e){}
+  try{
+    if('speechSynthesis' in window){
+      const u=new SpeechSynthesisUtterance('가랏, 피카츄!');
+      u.lang='ko-KR';u.rate=1;u.pitch=1.2;
+      speechSynthesis.speak(u);
+    }
+  }catch(e){}
+}
+function playBeep(){
+  if(!soundUnlocked||!AC)return;
+  try{
+    const t=AC.currentTime;
+    [0,.3].forEach(dt=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='sine';o.frequency.value=880;
+      o.connect(g);g.connect(AC.destination);
+      g.gain.setValueAtTime(0,t+dt);g.gain.linearRampToValueAtTime(.2,t+dt+.02);
+      g.gain.exponentialRampToValueAtTime(.001,t+dt+.25);
+      o.start(t+dt);o.stop(t+dt+.3);
+    });
+  }catch(e){}
+}
+function updateSoundBtn(){
+  document.getElementById('btn-sound').textContent=soundUnlocked?'🔊':'🔇';
+  const b=document.getElementById('btn-unlock');
+  b.textContent=soundUnlocked?'🔊 소리 켜짐':'🔊 소리 켜기';
+}
+
+/* 08:10 출발 이벤트 (하루 1회) */
+function checkDepartEvent(){
+  const now=new Date(),d=day(todayKey());
+  const dep=dateWith(parseHM(S.settings.depart));
+  if(now>=dep&&!d.chime&&soundUnlocked){
+    d.chime=true;save();
+    playChime();
+    document.getElementById('modal-catch').classList.add('hidden');
+  }
+}
+
+/* ================= 날씨 (Open-Meteo) ================= */
+const WMO={0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],45:['안개','🌫️'],48:['안개','🌫️'],
+  51:['이슬비','🌦️'],53:['이슬비','🌦️'],55:['이슬비','🌧️'],56:['얼어붙는 이슬비','🌧️'],57:['얼어붙는 이슬비','🌧️'],
+  61:['비','🌧️'],63:['비','🌧️'],65:['강한 비','🌧️'],66:['얼어붙는 비','🌧️'],67:['얼어붙는 비','🌧️'],
+  71:['눈','🌨️'],73:['눈','🌨️'],75:['많은 눈','❄️'],77:['진눈깨비','🌨️'],
+  80:['소나기','🌦️'],81:['소나기','🌧️'],82:['강한 소나기','🌧️'],85:['소낙눈','🌨️'],86:['소낙눈','❄️'],
+  95:['천둥번개','⛈️'],96:['천둥번개','⛈️'],99:['천둥번개','⛈️']};
+function dustGrade(pm,p25){
+  const g1=pm<=30?['좋음','d-good']:pm<=80?['보통','d-mod']:pm<=150?['나쁨','d-bad']:['매우나쁨','d-vbad'];
+  const g2=p25<=15?['좋음','d-good']:p25<=35?['보통','d-mod']:p25<=75?['나쁨','d-bad']:['매우나쁨','d-vbad'];
+  return {pm10:g1,pm25:g2};
+}
+function round1(x){return Math.round(x);}
+let W={};
+async function fetchWeather(){
+  const WURL=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
+    `&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min`+
+    `&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia%2FSeoul&forecast_days=1`;
+  const AURL=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}`+
+    `&current=pm10,pm2_5&timezone=Asia%2FSeoul`;
+  try{
+    const [wr,ar]=await Promise.all([fetch(WURL),fetch(AURL)]);
+    if(!wr.ok||!ar.ok)throw new Error('http '+wr.status+'/'+ar.status);
+    const w=await wr.json(),a=await ar.json();
+    W={
+      temp:w.current.temperature_2m,code:w.current.weather_code,
+      tmax:w.daily.temperature_2m_max[0],tmin:w.daily.temperature_2m_min[0],
+      hourly:w.hourly,air:{pm10:a.current.pm10,pm25:a.current.pm2_5},
+      at:Date.now()
+    };
+    renderWeather();
+  }catch(e){
+    document.getElementById('w-err').classList.remove('hidden');
+    document.getElementById('w-err').textContent='날씨를 못 가져왔어요 · 잠시 후 다시 시도해요';
+    setTimeout(fetchWeather,10*60*1000);
+  }
+}
+function renderWeather(){
+  if(!W.at)return;
+  const [desc,icon]=WMO[W.code]||['알 수 없음','🌡️'];
+  document.getElementById('w-icon').textContent=icon;
+  document.getElementById('w-temp').textContent=round1(W.temp)+'°';
+  document.getElementById('w-desc').textContent=desc;
+  document.getElementById('w-minmax').textContent=`최고 ${round1(W.tmax)}° · 최저 ${round1(W.tmin)}°`;
+  /* 시간대별 예보: 8/12/16/20시 */
+  const hours=document.getElementById('w-hours');hours.innerHTML='';
+  [8,12,16,20].forEach(h=>{
+    const i=W.hourly.time.findIndex(t=>{const d=new Date(t);return d.getHours()===h&&d.getDate()===new Date().getDate();});
+    if(i<0)return;
+    const [hd,hi]=WMO[W.hourly.weather_code[i]]||['','🌡️'];
+    const chip=document.createElement('div');chip.className='wh-chip';
+    chip.innerHTML=`<div class="wh-h">${h}시</div><div class="wh-i">${hi}</div>
+      <div class="wh-t">${round1(W.hourly.temperature_2m[i])}°</div>
+      <div class="wh-p">💧${W.hourly.precipitation_probability[i]??0}%</div>`;
+    hours.appendChild(chip);
+  });
+  /* 미세먼지 */
+  const g=dustGrade(W.air.pm10,W.air.pm25);
+  document.getElementById('dust-chips').innerHTML=
+    `<span class="dust-chip ${g.pm10[1]}">미세먼지 ${g.pm10[0]} ${round1(W.air.pm10)}㎍</span>`+
+    `<span class="dust-chip ${g.pm25[1]}">초미세먼지 ${g.pm25[0]} ${round1(W.air.pm25)}㎍</span>`;
+  /* 외출 팁 */
+  const tips=[];
+  const pmax=W.hourly.precipitation_probability;
+  const rainSoon=(W.code>=51&&W.code!==77)||Math.max(...pmax.filter((_,i)=>new Date(W.hourly.time[i]).getHours()>=new Date().getHours()&&new Date(W.hourly.time[i]).getHours()<=20),0)>=40;
+  if(rainSoon)tips.push('☂️ 우산 챙기기');
+  if(W.tmin<=5)tips.push('🧤 장갑·목도리 챙기기');
+  if(W.tmax-W.tmin>=10||W.tmax<=15)tips.push('🧥 겉옷 챙기기');
+  if(g.pm10[0]==='나쁨'||g.pm10[0]==='매우나쁨'||g.pm25[0]==='나쁨'||g.pm25[0]==='매우나쁨')tips.push('😷 마스크 챙기기');
+  document.getElementById('w-tip').textContent=tips.length?('나갈 때: '+tips.join(' · ')):'나갈 때: 쾌적한 하루예요!';
+}
+
+/* ================= 도감 ================= */
+function renderPoke(){
+  const grid=document.getElementById('pk-grid');grid.innerHTML='';
+  let cnt=0;
+  POKEMON.forEach(p=>{
+    const got=S.caught.filter(c=>c.id===p.id);
+    const last=got.length?got[got.length-1].date.replace(/-/g,'.'):'';
+    cnt+=got.length;
+    const card=document.createElement('div');
+    card.className='pk-card'+(got.length?' caught':'');
+    card.innerHTML=`<div class="pk-no">No.${p.no}</div>
+      <img src="assets/pokemon/${p.id}.png" alt="${p.name}">
+      <div class="pk-name">${got.length?p.name:'???'}</div>
+      <div class="pk-date">${got.length?'잡은 날 '+last:'아직 못 잡았어요'}</div>
+      ${got.length>1?`<div class="pk-cnt">×${got.length}</div>`:''}`;
+    grid.appendChild(card);
+  });
+  document.getElementById('pk-stats').textContent=
+    `잡은 포켓몬 ${cnt}마리 · 도감 ${S.caught.length?new Set(S.caught.map(c=>c.id)).size:0}/${POKEMON.length}종`;
+}
+
+/* ================= 탭 · 설정 ================= */
+function switchTab(poke){
+  document.getElementById('view-dash').classList.toggle('hidden',poke);
+  document.getElementById('view-poke').classList.toggle('hidden',!poke);
+  document.getElementById('tab-dash').classList.toggle('active',!poke);
+  document.getElementById('tab-poke').classList.toggle('active',poke);
+  if(poke)renderPoke();
+}
+document.getElementById('tab-dash').addEventListener('click',()=>switchTab(false));
+document.getElementById('tab-poke').addEventListener('click',()=>switchTab(true));
+document.getElementById('btn-sound').addEventListener('click',unlockAudio);
+
+const setModal=document.getElementById('modal-settings');
+document.getElementById('btn-settings').addEventListener('click',()=>{
+  document.getElementById('set-wake').value=S.settings.wake;
+  document.getElementById('set-depart').value=S.settings.depart;
+  setModal.classList.remove('hidden');
+});
+document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();}});
+document.getElementById('set-depart').addEventListener('change',e=>{if(e.target.value){S.settings.depart=e.target.value;save();renderProgress();}});
+document.getElementById('btn-unlock').addEventListener('click',()=>{unlockAudio();});
+document.getElementById('btn-preview').addEventListener('click',()=>{if(!soundUnlocked)unlockAudio();playChime();});
+document.getElementById('btn-test').addEventListener('click',()=>{
+  const d=day(todayKey());
+  TASKS.forEach(t=>{if(!d.tasks[t.n]){d.tasks[t.n]=true;d.inTime[t.n]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
+  save();renderTasks();renderExp();
+  if(!checkCatch())alert('할 일 5개 완료! +50 EXP');
+});
+document.getElementById('btn-exp').addEventListener('click',()=>{
+  const d=day(todayKey());d.exp=(d.exp||0)+50;save();renderTasks();renderExp();
+  if(!checkCatch())alert('+50 EXP! (100이 되면 포획 연출이 나와요)');
+});
+document.getElementById('btn-reset-day').addEventListener('click',()=>{
+  if(confirm('오늘 기록(할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
+    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:EAT_SECONDS,running:false,since:null,ended:false}};
+    save();renderTasks();renderExp();renderProgress();
+    setModal.classList.add('hidden');
+  }
+});
+document.getElementById('btn-reset-dex').addEventListener('click',()=>{
+  if(confirm('잡은 포켓몬 도감을 모두 지울까요?')){
+    S.caught=[];save();renderPoke();renderExp();
+  }
+});
+document.getElementById('btn-close-settings').addEventListener('click',()=>setModal.classList.add('hidden'));
+setModal.addEventListener('click',e=>{if(e.target===setModal)setModal.classList.add('hidden');});
+
+/* ================= 시작 ================= */
+buildTasks();
+renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+fetchWeather();
+if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
+setInterval(renderClock,1000);
+setInterval(tickTimer,500);
+setInterval(()=>{renderProgress();checkDepartEvent();},5000);
+checkDepartEvent();
+</script>
+</body>
+</html>
