@@ -126,7 +126,15 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
 
 #w-tip-row{flex:0 0 auto;display:flex;align-items:center;gap:6px;border-top:2px dashed #D9DEE8;padding-top:3px}
 #w-tip{font-size:12px;font-weight:800;color:var(--ink);white-space:nowrap;line-height:1.25}
-#w-err{font-size:10px;color:#b34820;font-weight:800}
+#w-err{flex:0 0 auto;font-size:10px;color:#b34820;font-weight:800;white-space:nowrap}
+#w-retry{font-family:inherit;font-size:11px;font-weight:900;color:#1d5cad;background:#E3F0FD;
+  border:2px solid var(--ink);border-radius:9px;padding:1px 8px;cursor:pointer;white-space:nowrap;
+  box-shadow:0 2px 0 rgba(34,43,56,.2);line-height:1.3}
+#w-retry:active{transform:translateY(2px);box-shadow:none}
+#w-naver{flex:0 0 auto;margin-left:auto;font-size:10px;font-weight:800;color:var(--ink-soft);text-decoration:none;
+  border:2px solid #D9DEE8;border-radius:8px;padding:0 5px;white-space:nowrap;line-height:1.35;background:#F7FAFF}
+#w-naver:active{background:#E3F0FD}
+.dust-badge.d-unk{background:#AEB8C6}
 
 /* ── 진행 바 ───────────────────────────── */
 #progress-card{height:112px;flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 16px;border-radius:18px}
@@ -296,6 +304,7 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
       <div id="w-tip-row">
         <span id="w-tip"></span>
         <div id="w-err" class="hidden"></div>
+        <a id="w-naver" href="https://weather.naver.com/today/09230105" target="_blank" rel="noopener noreferrer" title="답십리1동 네이버 날씨">네이버 날씨 ↗</a>
       </div>
     </section>
   </header>
@@ -652,43 +661,180 @@ function checkDepartEvent(){
   }
 }
 
-/* ================= 날씨 (Open-Meteo) ================= */
+/* ================= 날씨 (Open-Meteo 5초 타임아웃 → met.no 자동 폴백) ================= */
 const WMO={0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],45:['안개','🌫️'],48:['안개','🌫️'],
   51:['이슬비','🌦️'],53:['이슬비','🌦️'],55:['이슬비','🌧️'],56:['얼어붙는 이슬비','🌧️'],57:['얼어붙는 이슬비','🌧️'],
   61:['비','🌧️'],63:['비','🌧️'],65:['강한 비','🌧️'],66:['얼어붙는 비','🌧️'],67:['얼어붙는 비','🌧️'],
   71:['눈','🌨️'],73:['눈','🌨️'],75:['많은 눈','❄️'],77:['진눈깨비','🌨️'],
   80:['소나기','🌦️'],81:['소나기','🌧️'],82:['강한 소나기','🌧️'],85:['소낙눈','🌨️'],86:['소낙눈','❄️'],
   95:['천둥번개','⛈️'],96:['천둥번개','⛈️'],99:['천둥번개','⛈️']};
+/* met.no symbol_code → WMO 코드 (폴백에서 같은 표/팁 로직을 쓰기 위해) */
+const MET_SYM={clearsky:0,fair:1,partlycloudy:2,cloudy:3,fog:45,
+  lightrain:61,rain:63,heavyrain:65,lightrainshowers:80,rainshowers:81,heavyrainshowers:82,
+  lightsleet:56,sleet:57,heavysleet:57,lightsnow:71,snow:73,heavysnow:75,
+  lightsnowshowers:85,snowshowers:86,rainandthunder:95,heavyrainandthunder:99,lightrainandthunder:95,
+  sleetandthunder:96,partlycloudyandthunder:95,cloudyandthunder:95,fairandthunder:95,clearskyandthunder:95};
+const HOURS=[8,12,16,20];
+const W_TIMEOUT=5000;                 /* 한 소스당 5초 */
+const W_CACHE_KEY='morningDashboard.weather.v1';
+const W_TTL=60*60*1000;               /* 마지막 성공 날씨 1시간 캐시 */
+let W={},wBusy=false;
+
+function metCode(sym){
+  if(!sym)return 3;
+  const base=String(sym).replace(/_(day|night|polartwilight)$/,'');
+  return (base in MET_SYM)?MET_SYM[base]:3;
+}
+function getJSON(url,ms){
+  const ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+  const tid=setTimeout(()=>{if(ctrl)ctrl.abort();},ms);
+  return fetch(url,ctrl?{signal:ctrl.signal}:{}).then(r=>{
+    if(!r.ok)throw new Error('http '+r.status);
+    return r.json();
+  }).finally(()=>clearTimeout(tid));
+}
+/* ── 1) Open-Meteo (기본) ───────────────── */
+async function fetchOpenMeteo(){
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
+    `&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min`+
+    `&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia%2FSeoul&forecast_days=1`;
+  const w=await getJSON(u,W_TIMEOUT);
+  if(!w||!w.current||!w.hourly||!w.hourly.time)throw new Error('open-meteo bad data');
+  const day=new Date().getDate(),curH=new Date().getHours();
+  const hours=[];
+  HOURS.forEach(h=>{
+    const i=w.hourly.time.findIndex(t=>{const d=new Date(t);return d.getHours()===h&&d.getDate()===day;});
+    if(i<0)return;
+    hours.push({h,t:w.hourly.temperature_2m[i],code:w.hourly.weather_code[i],p:(w.hourly.precipitation_probability||[])[i]||0});
+  });
+  const probs=[];
+  w.hourly.time.forEach((t,i)=>{const h=new Date(t).getHours();if(h>=curH&&h<=20)probs.push((w.hourly.precipitation_probability||[])[i]||0);});
+  return {temp:w.current.temperature_2m,code:w.current.weather_code,
+    tmax:(w.daily.temperature_2m_max||[])[0],tmin:(w.daily.temperature_2m_min||[])[0],
+    hours,probs,src:'open-meteo'};
+}
+/* ── 2) met.no (폴백, CORS 허용) ────────── */
+async function fetchMetNo(){
+  const u=`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${LAT}&lon=${LON}`;
+  const d=await getJSON(u,W_TIMEOUT);
+  const ts=(d&&d.properties&&d.properties.timeseries)||[];
+  if(ts.length<2)throw new Error('met.no empty');
+  const KST=9*3600*1000;
+  const kd=iso=>new Date(new Date(iso).getTime()+KST);          /* UTC → KST */
+  const key=x=>x.getUTCFullYear()+'-'+(x.getUTCMonth()+1)+'-'+x.getUTCDate();
+  const nowMs=Date.now(),todayK=key(kd(new Date(nowMs).toISOString()));
+  const amt=e=>{const d1=e.data.next_1_hours&&e.data.next_1_hours.details;return (d1&&d1.precipitation_amount)||0;};
+  const prob=mm=>mm<=0?0:mm<0.5?40:mm<2?65:mm<5?85:95;         /* met.no compact엔 확률 필드가 없어 강수량으로 환산 */
+  const symOf=e=>(e.data.next_1_hours&&e.data.next_1_hours.summary&&e.data.next_1_hours.summary.symbol_code)||
+                 (e.data.next_6_hours&&e.data.next_6_hours.summary&&e.data.next_6_hours.summary.symbol_code)||'';
+  let cur=ts[0],best=Infinity;
+  ts.forEach(e=>{const df=Math.abs(new Date(e.time).getTime()-nowMs);if(df<best){best=df;cur=e;}});
+  const todays=ts.filter(e=>key(kd(e.time))===todayK);
+  const pool=todays.length>=4?todays:ts.filter(e=>{const t=new Date(e.time).getTime();return t>=nowMs-3600e3&&t<=nowMs+24*3600e3;});
+  const temps=pool.map(e=>e.data.instant.details.air_temperature);
+  const hours=[],probs=[],curH=Number(new Date(nowMs+KST).toISOString().slice(11,13));
+  HOURS.forEach(h=>{
+    const hit=todays.find(e=>kd(e.time).getUTCHours()===h);
+    if(!hit)return;
+    hours.push({h,t:hit.data.instant.details.air_temperature,code:metCode(symOf(hit)),p:prob(amt(hit))});
+  });
+  ts.forEach(e=>{const k=kd(e.time);if(key(k)!==todayK)return;const h=k.getUTCHours();if(h>=curH&&h<=20)probs.push(prob(amt(e)));});
+  return {temp:cur.data.instant.details.air_temperature,code:metCode(symOf(cur)),
+    tmax:Math.max.apply(null,temps),tmin:Math.min.apply(null,temps),
+    hours,probs,src:'met.no'};
+}
+/* ── 3) 미세먼지 (날씨와 분리) ───────────── */
+async function fetchDust(){
+  const u=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}`+
+    `&current=pm10,pm2_5&timezone=Asia%2FSeoul`;
+  try{
+    const a=await getJSON(u,W_TIMEOUT);
+    const pm10=a&&a.current&&a.current.pm10,pm25=a&&a.current&&a.current.pm2_5;
+    if(typeof pm10!=='number'||typeof pm25!=='number')throw new Error('no pm');
+    W.air={pm10,pm25};W.airAt=Date.now();
+  }catch(e){
+    if(!W.airAt||Date.now()-W.airAt>W_TTL){W.air=null;}  /* 1시간 넘은 값이면 안전하게 '-' 표시 */
+  }
+  saveWeatherCache();
+  if(W.at)renderWeather();
+}
+/* ── 캐시 ───────────────────────────────── */
+function readWeatherCache(){
+  try{
+    const c=JSON.parse(localStorage.getItem(W_CACHE_KEY));
+    if(c&&c.at&&Array.isArray(c.hours)&&Date.now()-c.at<W_TTL)return c;
+  }catch(e){}
+  return null;
+}
+function saveWeatherCache(){
+  if(!W.at)return;
+  try{localStorage.setItem(W_CACHE_KEY,JSON.stringify(W));}catch(e){}
+}
+/* ── 상태 표시 ──────────────────────────── */
+function showRetry(on){
+  const box=document.getElementById('w-err');
+  box.classList.toggle('hidden',!on);
+  if(on&&!document.getElementById('w-retry')){
+    box.innerHTML='<button id="w-retry" type="button">🔄 다시 불러오기</button>';
+    document.getElementById('w-retry').addEventListener('click',e=>{e.stopPropagation();refreshWeather();});
+  }
+  const tip=document.getElementById('w-tip');
+  tip.classList.toggle('hidden',on&&!W.at);
+  fitTip();
+}
+function renderFail(){
+  showRetry(true);
+  if(!W.at){
+    document.getElementById('w-temp').textContent='--°';
+    document.getElementById('w-desc').textContent='날씨를 못 가져왔어요';
+    document.getElementById('w-minmax').textContent='아래 버튼을 눌러 다시 시도해 주세요';
+    document.getElementById('w-dustline').textContent='미세 - · 초미세 - ㎍';
+    document.getElementById('dust-chips').innerHTML=
+      `<div class="dust-badge d-unk"><span class="db-t">미세먼지</span><span class="db-face">⏳</span><span class="db-g">-</span><span class="db-v">-</span></div>`;
+    document.getElementById('w-hours').innerHTML='';
+    document.getElementById('w-icon').textContent='🌥️';
+    document.getElementById('w-tip').textContent='';
+  }
+}
+/* ── 불러오기 (독립 실행) ────────────────── */
+async function refreshWeather(){
+  if(wBusy)return;
+  wBusy=true;
+  showRetry(false);
+  if(!W.at){
+    document.getElementById('w-icon').textContent='⏳';
+    document.getElementById('w-temp').textContent='--°';
+    document.getElementById('w-desc').textContent='날씨 확인 중';
+  }
+  let ok=false;
+  fetchDust();                    /* 날씨와 동시에, 서로 기다리지 않음 */
+  try{
+    const w=await fetchOpenMeteo();
+    W=Object.assign(W,w,{at:Date.now()});
+    ok=true;
+  }catch(e){
+    document.getElementById('w-desc').textContent='날씨 다시 확인 중';
+    try{
+      const w=await fetchMetNo();
+      W=Object.assign(W,w,{at:Date.now()});
+      ok=true;
+    }catch(e2){ok=false;}
+  }
+  if(ok){saveWeatherCache();renderWeather();}
+  else renderFail();
+  wBusy=false;
+}
+function initWeather(){
+  const c=readWeatherCache();
+  if(c){W=c;renderWeather();}
+  refreshWeather();
+}
 function dustGrade(pm,p25){
   const g1=pm<=30?['좋음','d-good']:pm<=80?['보통','d-mod']:pm<=150?['나쁨','d-bad']:['매우나쁨','d-vbad'];
   const g2=p25<=15?['좋음','d-good']:p25<=35?['보통','d-mod']:p25<=75?['나쁨','d-bad']:['매우나쁨','d-vbad'];
   return {pm10:g1,pm25:g2};
 }
 function round1(x){return Math.round(x);}
-let W={};
-async function fetchWeather(){
-  const WURL=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
-    `&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min`+
-    `&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia%2FSeoul&forecast_days=1`;
-  const AURL=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}`+
-    `&current=pm10,pm2_5&timezone=Asia%2FSeoul`;
-  try{
-    const [wr,ar]=await Promise.all([fetch(WURL),fetch(AURL)]);
-    if(!wr.ok||!ar.ok)throw new Error('http '+wr.status+'/'+ar.status);
-    const w=await wr.json(),a=await ar.json();
-    W={
-      temp:w.current.temperature_2m,code:w.current.weather_code,
-      tmax:w.daily.temperature_2m_max[0],tmin:w.daily.temperature_2m_min[0],
-      hourly:w.hourly,air:{pm10:a.current.pm10,pm25:a.current.pm2_5},
-      at:Date.now()
-    };
-    renderWeather();
-  }catch(e){
-    document.getElementById('w-err').classList.remove('hidden');
-    document.getElementById('w-err').textContent='날씨를 못 가져왔어요 · 잠시 후 다시 시도해요';
-    setTimeout(fetchWeather,10*60*1000);
-  }
-}
 const DUST_FACE={'좋음':'😄','보통':'🙂','나쁨':'😷','매우나쁨':'🤢'};
 function renderWeather(){
   if(!W.at)return;
@@ -696,46 +842,66 @@ function renderWeather(){
   document.getElementById('w-icon').textContent=icon;
   document.getElementById('w-temp').textContent=round1(W.temp)+'°';
   document.getElementById('w-desc').textContent=desc;
-  document.getElementById('w-minmax').textContent=`최고 ${round1(W.tmax)}° · 최저 ${round1(W.tmin)}°`;
+  document.getElementById('w-minmax').textContent=
+    (typeof W.tmax==='number'&&typeof W.tmin==='number')?`최고 ${round1(W.tmax)}° · 최저 ${round1(W.tmin)}°`:'';
   /* 시간대별 예보: 8/12/16/20시 */
   const hours=document.getElementById('w-hours');hours.innerHTML='';
-  [8,12,16,20].forEach(h=>{
-    const i=W.hourly.time.findIndex(t=>{const d=new Date(t);return d.getHours()===h&&d.getDate()===new Date().getDate();});
-    if(i<0)return;
-    const [hd,hi]=WMO[W.hourly.weather_code[i]]||['','🌡️'];
+  (W.hours||[]).forEach(o=>{
+    const [hd,hi]=WMO[o.code]||['','🌡️'];
     const chip=document.createElement('div');chip.className='wh-chip';
-    chip.innerHTML=`<div class="wh-h">${h}시</div><div class="wh-i">${hi}</div>
-      <div class="wh-t">${round1(W.hourly.temperature_2m[i])}°</div>
-      <div class="wh-p">💧${W.hourly.precipitation_probability[i]??0}%</div>`;
+    chip.innerHTML=`<div class="wh-h">${o.h}시</div><div class="wh-i">${hi}</div>
+      <div class="wh-t">${round1(o.t)}°</div>
+      <div class="wh-p">💧${o.p??0}%</div>`;
     hours.appendChild(chip);
   });
-  /* 미세먼지: 세로 배지 + 가운데 수치 */
-  const g=dustGrade(W.air.pm10,W.air.pm25);
-  const RANK={'좋음':0,'보통':1,'나쁨':2,'매우나쁨':3};
-  const worse=(RANK[g.pm25[0]]>RANK[g.pm10[0]])?g.pm25:g.pm10;
-  document.getElementById('dust-chips').innerHTML=
-    `<div class="dust-badge ${worse[1]}">
-       <span class="db-t">미세먼지</span>
-       <span class="db-face">${DUST_FACE[worse[0]]||'🙂'}</span>
-       <span class="db-g">${worse[0]}</span>
-       <span class="db-v">${round1(W.air.pm10)}㎍</span>
-     </div>`;
-  document.getElementById('w-dustline').textContent=`미세 ${round1(W.air.pm10)} · 초미세 ${round1(W.air.pm25)} ㎍`;
+  /* 미세먼지: 세로 배지 (실패하면 안전 표시) */
+  const air=(W.air&&typeof W.air.pm10==='number'&&typeof W.air.pm25==='number')?W.air:null;
+  let g=null;
+  const dustBox=document.getElementById('dust-chips');
+  if(air){
+    g=dustGrade(air.pm10,air.pm25);
+    const RANK={'좋음':0,'보통':1,'나쁨':2,'매우나쁨':3};
+    const worse=(RANK[g.pm25[0]]>RANK[g.pm10[0]])?g.pm25:g.pm10;
+    dustBox.innerHTML=
+      `<div class="dust-badge ${worse[1]}">
+         <span class="db-t">미세먼지</span>
+         <span class="db-face">${DUST_FACE[worse[0]]||'🙂'}</span>
+         <span class="db-g">${worse[0]}</span>
+         <span class="db-v">${round1(air.pm10)}㎍</span>
+       </div>`;
+    document.getElementById('w-dustline').textContent=`미세 ${round1(air.pm10)} · 초미세 ${round1(air.pm25)} ㎍`;
+  }else{
+    dustBox.innerHTML=
+      `<div class="dust-badge d-unk">
+         <span class="db-t">미세먼지</span>
+         <span class="db-face">⏳</span>
+         <span class="db-g">-</span>
+         <span class="db-v">-</span>
+       </div>`;
+    document.getElementById('w-dustline').textContent='미세 - · 초미세 - ㎍';
+  }
   /* 외출 팁 (한 줄, 잘리지 않게) */
   const tips=[];
-  const pmax=W.hourly.precipitation_probability;
-  const rainSoon=(W.code>=51&&W.code!==77)||Math.max(...pmax.filter((_,i)=>new Date(W.hourly.time[i]).getHours()>=new Date().getHours()&&new Date(W.hourly.time[i]).getHours()<=20),0)>=40;
+  const pmax=Math.max(0,...(W.probs||[]));
+  const rainSoon=(W.code>=51&&W.code!==77)||pmax>=40;
   if(rainSoon)tips.push('☂️ 우산 챙기기');
   if(W.tmin<=5)tips.push('🧤 장갑·목도리 챙기기');
   if(W.tmax-W.tmin>=10||W.tmax<=15)tips.push('🧥 겉옷 챙기기');
-  if(g.pm10[0]==='나쁨'||g.pm10[0]==='매우나쁨'||g.pm25[0]==='나쁨'||g.pm25[0]==='매우나쁨')tips.push('😷 마스크 챙기기');
+  if(g&&(g.pm10[0]==='나쁨'||g.pm10[0]==='매우나쁨'||g.pm25[0]==='나쁨'||g.pm25[0]==='매우나쁨'))tips.push('😷 마스크 챙기기');
   const tipEl=document.getElementById('w-tip');
   tipEl.textContent=tips.length?('나갈 때: '+tips.join(' · ')):'나갈 때: 쾌적한 하루예요!';
+  tipEl.classList.remove('hidden');
   fitTip();
 }
 function fitTip(){
   const el=document.getElementById('w-tip');
-  const avail=el.parentElement.clientWidth-8;
+  const row=el.parentElement;
+  const nav=document.getElementById('w-naver');
+  const err=document.getElementById('w-err');
+  let used=0;
+  if(nav)used+=nav.offsetWidth+6;
+  if(err&&!err.classList.contains('hidden'))used+=err.offsetWidth+6;
+  const avail=row.clientWidth-8-used;
   let fs=12.4;el.style.fontSize=fs+'px';
   let guard=0;
   while(el.scrollWidth>avail&&fs>7.5&&guard++<40){fs-=0.3;el.style.fontSize=fs.toFixed(1)+'px';}
@@ -812,7 +978,8 @@ window.addEventListener('resize',()=>{if(W.at)fitTip();});
 /* ================= 시작 ================= */
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
-fetchWeather();
+initWeather();
+setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
 if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
 setInterval(renderClock,1000);
 setInterval(tickTimer,500);
