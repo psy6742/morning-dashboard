@@ -318,7 +318,7 @@ body.dex-open #progress-card{display:none}
 .sb-close{background:var(--green);color:#fff}
 .btn-col{display:flex;flex-direction:column;gap:7px}
 .set-sub{font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35}
-/* 🛡️ 깜빡한 할 일 포인트 인정 (엄마용) */
+/* 🛡️ 깜빡한 할 일 포인트 인정 (보호자용) */
 .missed-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .missed-chip{font-family:inherit;font-weight:900;font-size:12.5px;border:2.5px dashed #C3CEDD;background:#F7FAFF;color:#41505F;
   border-radius:999px;padding:6px 11px;cursor:pointer;box-shadow:0 2px 0 rgba(34,43,56,.10);line-height:1.2}
@@ -461,16 +461,16 @@ body.dex-open #progress-card{display:none}
   </div>
 </div>
 
-<!-- 설정 (엄마용) -->
+<!-- 설정 (보호자용) -->
 <div id="modal-settings" class="overlay hidden">
   <div class="modal" style="text-align:left;min-width:min(80vw,430px)">
-    <h3>⚙️ 엄마용 설정 · 테스트</h3>
+    <h3>⚙️ 보호자용 설정 · 테스트</h3>
     <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
     <div class="set-sub" id="set-depart-song" style="padding:0 0 6px"></div>
     <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FCF7;border:2px solid #CBEBD5;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
-      <span>🛡️ 깜빡한 할 일 포인트 인정 <b style="font-size:12px;color:#1C7A3A">· 엄마용</b></span>
+      <span>🛡️ 깜빡한 할 일 포인트 인정 <b style="font-size:12px;color:#1C7A3A">· 보호자용</b></span>
       <span class="set-sub">아이가 제때 끝냈는데 화면 터치를 깜빡했을 때 여기서 눌러 주세요. 누른 할 일은 완료로 바뀌고 <b>+10 EXP</b>가 돼요. 진행 바와 출발 시각은 그대로예요. <b>✅</b>는 이미 인정된 할 일이고, 잘못 인정했으면 닫은 뒤 메인 화면에서 그 카드를 한 번 더 눌러 취소할 수 있어요.</span>
       <div id="missed-chips" class="missed-chips"></div>
       <div class="missed-foot">
@@ -1982,7 +1982,7 @@ document.getElementById('backup-file').addEventListener('change',e=>{
   rd.readAsText(f,'utf-8');
 });
 
-/* ================= 🛡️ 깜빡한 할 일 포인트 인정 (엄마용) =================
+/* ================= 🛡️ 깜빡한 할 일 포인트 인정 (보호자용) =================
    아이가 제때 끝냈는데 화면 터치를 깜빡한 경우, ⚙️ 설정에서 그 할 일을 눌러
    완료(+10 EXP)로 인정한다. 메인 화면의 '출발 시각 이후 = 0 EXP' 규칙은 그대로 둔다. */
 function renderSettingsMissedTasks(){
