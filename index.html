@@ -68,6 +68,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 /* ── 유튜브 오디오 '우리는 모두 친구' (화면엔 1px, 소리만) ── */
 #yt-wrap{position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:.01;pointer-events:none;overflow:hidden;z-index:0}
 #yt-player,#yt-player iframe{width:1px;height:1px;border:0}
+#yt-timer,#yt-timer iframe{width:1px;height:1px;border:0}
 #song-bar{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:70}
 #btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
@@ -224,13 +225,13 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .timer.on #t-time{color:var(--green-d)}
 #t-time.ended{color:#d33;animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.35}}
-.t-btns{display:flex;gap:4px;justify-content:center}
+.t-btns{display:flex;gap:4px;justify-content:center;align-items:center}
 .t-btns button{font-family:inherit;font-weight:900;font-size:12px;border:2.5px solid var(--ink);border-radius:9px;
   padding:2px 8px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 rgba(34,43,56,.2);transition:.1s}
 .t-btns button:active{transform:translateY(2px);box-shadow:none}
 #t-start{background:var(--green);color:#fff}
 #t-start.paused{background:var(--orange);color:#fff}
-#t-reset{background:#fff;color:var(--ink)}
+#t-reset{background:#fff;color:var(--ink);font-size:17px;font-weight:900;line-height:1;padding:2px 11px;letter-spacing:0}
 #t-end{background:#FFE2D6;color:#A63D12}
 
 /* ── 도감 ──────────────────────────────── */
@@ -315,7 +316,7 @@ body.dex-open #progress-card{display:none}
 <div id="sky"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c4"></span></div>
 
 <!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
-<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div></div>
+<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div></div>
 <div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
 
 <div id="app">
@@ -453,13 +454,22 @@ body.dex-open #progress-card{display:none}
       </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <span>네이버 날씨 중계 주소 (Cloudflare Worker)</span>
+      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 넣으면 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비워 두면 지금처럼 Open-Meteo·met.no만 씁니다.</span>
+      <div class="vac-row" style="margin-top:6px">
+        <input type="url" id="set-proxy" class="set-date" style="flex:1;min-width:200px" placeholder="https://naver-weather.계정.workers.dev" inputmode="url" autocomplete="off" spellcheck="false">
+        <button class="set-btn sb-backup" id="btn-proxy-save" type="button">저장 및 새로고침</button>
+      </div>
+      <div id="set-proxy-state" class="set-sub" style="margin-top:2px"></div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
       <span>소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
       <div class="btn-col" style="margin-top:6px">
         <span style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
           <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
         </span>
-        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기</button>
+        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기 / 정지</button>
       </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
@@ -534,9 +544,11 @@ function load(){
   try{const s=JSON.parse(localStorage.getItem(SKEY));
     if(s&&s.v===1)return s;
   }catch(e){}
-  return {v:1,days:{},caught:[],settings:{wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[]}};
+  return {v:1,days:{},caught:[],settings:defaultSettings()};
 }
 let S=load();
+if(!S.settings||typeof S.settings!=='object')S.settings=defaultSettings();
+if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy='';
 /* 예전 버전의 숫자 키(1~5) 기록을 루틴 키로 옮긴다 */
 (function migrateTaskKeys(){
   try{
@@ -556,7 +568,7 @@ let S=load();
 function dayTasks(){return restInfo().rest?RTASKS:TASKS;}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
-  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false}};
+  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false}};
   return S.days[k];
 }
 
@@ -795,20 +807,22 @@ function renderTimer(){
 }
 function timerToggle(){
   const t=day(todayKey()).timer;
-  if(t.left<=0){t.left=dayTotalSec(todayKey());t.ended=false;}
+  if(t.left<=0){t.left=dayTotalSec(todayKey());t.ended=false;t.cue11=false;buzzOk=false;stopBuzz();}
   if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);t.running=false;t.since=null;}
-  else{t.running=true;t.since=Date.now();}
+  else{t.running=true;t.since=Date.now();primeBuzz();}   /* 시작 버튼(사용자 제스처)에서 버저 플레이어 준비 */
   save();renderTimer();
 }
 function timerReset(){
   const d=day(todayKey());
-  d.timer={left:dayTotalSec(todayKey()),running:false,since:null,ended:false};
+  d.timer={left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false};
+  buzzOk=false;stopBuzz();
   save();renderTimer();
 }
 function timerEnd(){
   const t=day(todayKey()).timer;
   if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);}
-  t.running=false;t.since=null;
+  t.running=false;t.since=null;t.cue11=false;
+  buzzOk=false;stopBuzz();
   save();renderTimer();
 }
 function tickTimer(){
@@ -817,8 +831,14 @@ function tickTimer(){
     const left=t.left-(Date.now()-t.since)/1000;
     if(left<=0){
       day(todayKey()).timer={left:0,running:false,since:null,ended:true};
-      save();renderTimer();playBeep();
-    }else{t.left=left;t.since=Date.now();save();renderTimer();}
+      stopBuzz();
+      save();renderTimer();
+      if(!buzzOk)playBeep();          /* 유튜브 버저가 울리지 못한 환경에서만 00:00 효과음 */
+    }else{
+      t.left=left;t.since=Date.now();
+      if(!t.cue11&&left<=11){t.cue11=true;buzzAtCue();}   /* 남은 11초 → 10초 타이머+버저 1회 */
+      save();renderTimer();
+    }
   }
 }
 
@@ -864,6 +884,7 @@ function ytCreate(){
       }
     });
   }catch(e){ytFailed=true;}
+  yttCreate();                       /* 식사 타이머 버저 플레이어도 함께 준비 */
 }
 /* 사용자 제스처(소리 켜기·화면 클릭) 때 플레이어를 미리 깨워 두기
    → 모바일·태블릿 Chrome에서도 08:10에 자동재생이 막히지 않음 */
@@ -896,7 +917,78 @@ function stopSong(){
   ytClearFb();ytEnded();
   try{if(YTP&&ytReady){YTP.pauseVideo();YTP.seekTo(0,true);}}catch(e){}
 }
-/* 재생이 실제로 시작됐는지 잠시 뒤 확인 → 안 됐으면 그때만 효과음·음성 폴백 */
+/* ── 유튜브 식사 타이머 종료음 (10초 타이머 + 버저) ─────────────────
+   YT_VIDEO_ID와는 별도의 1px 플레이어(YTT)로 독립 관리합니다.
+   타이머 ▶ 시작 · 🔊 소리 켜기 · 화면 터치에서 미리 깨워 두고,
+   남은 시간이 11초가 되는 순간 1회만 재생합니다. 유튜브가 막힌 환경에서만 00:00에 효과음. */
+const YT_TIMER_ID='VKDa227lMr0';
+let YTT=null,yttReady=false,yttFailed=false,yttPrimed=false,yttWantPlay=false,yttPlayingState=false;
+let buzzOk=false;                                  /* 이번 타이머에서 버저가 실제로 울렸는지 */
+function yttState(){try{return YTT?YTT.getPlayerState():-1;}catch(e){return -1;}}
+function yttStarted(){const s=yttState();return s===1||s===3;}
+function yttCreate(){
+  if(YTT||yttReady)return;
+  try{
+    YTT=new YT.Player('yt-timer',{
+      videoId:YT_TIMER_ID,
+      playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3},
+      events:{
+        onReady(){
+          yttReady=true;yttFailed=false;
+          try{YTT.setVolume(100);}catch(e){}
+          if(soundUnlocked||S.settings.sound)primeBuzz();
+        },
+        onStateChange(e){
+          if(e.data===1||e.data===3)yttPlayingState=true;
+          else if(e.data===0||e.data===2)yttPlayingState=false;
+        },
+        onError(){yttFailed=true;yttPlayingState=false;}
+      }
+    });
+  }catch(e){yttFailed=true;}
+}
+function primeBuzz(){
+  if(!yttReady||yttFailed||yttPrimed||!YTT)return;
+  if(yttWantPlay)return;
+  const ua=navigator.userActivation;
+  if(ua&&ua.isActive===false)return;
+  yttPrimed=true;
+  try{
+    YTT.mute();YTT.playVideo();
+    setTimeout(()=>{
+      try{
+        if(!yttWantPlay){YTT.pauseVideo();YTT.seekTo(0,true);}
+        YTT.unMute();YTT.setVolume(100);
+      }catch(e){}
+    },320);
+  }catch(e){yttPrimed=false;}
+}
+function playBuzz(){
+  if(!yttReady||yttFailed||!YTT)return false;
+  try{yttWantPlay=true;YTT.setVolume(100);YTT.seekTo(0,true);YTT.unMute();YTT.playVideo();return true;}
+  catch(e){yttWantPlay=false;return false;}
+}
+function stopBuzz(){
+  yttWantPlay=false;yttPlayingState=false;
+  try{if(YTT&&yttReady){YTT.pauseVideo();YTT.seekTo(0,true);}}catch(e){}
+}
+/* 남은 11초 도달 → 버저 1회. 실제로 시작했는지 0.9초 뒤 확인해 00:00 폴백 여부를 정함 */
+function buzzAtCue(){
+  buzzOk=playBuzz();
+  if(buzzOk)setTimeout(()=>{if(!yttStarted())buzzOk=false;},900);
+}
+/* 설정의 '🔔 식사 타이머 소리 미리 듣기 / 정지' */
+function toggleBuzzPreview(){
+  if(yttPlayingState&&yttWantPlay){stopBuzz();return;}
+  primeBuzz();
+  if(playBuzz())return;
+  let tries=0;                                     /* 플레이어가 아직 준비 중이면 잠깐 기다렸다 재시도 */
+  const iv=setInterval(()=>{
+    if(playBuzz()){clearInterval(iv);return;}
+    if(yttFailed||++tries>20){clearInterval(iv);playBeep();}   /* 유튜브 불가 → 효과음 */
+  },300);
+}
+
 function watchStart(ms){
   ytClearFb();
   ytFbTimer=setTimeout(()=>{
@@ -914,7 +1006,7 @@ function watchStart(ms){
   s.src='https://www.youtube.com/iframe_api';s.async=true;
   s.onerror=function(){ytFailed=true;};                 /* 스크립트 로드 실패 → 폴백 */
   document.head.appendChild(s);
-  setTimeout(function(){if(!ytReady)ytFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
+  setTimeout(function(){if(!ytReady)ytFailed=true;if(!yttReady)yttFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
 })();
 
 function unlockAudio(){
@@ -922,7 +1014,7 @@ function unlockAudio(){
     if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended')AC.resume();
     soundUnlocked=true;S.settings.sound=true;save();updateSoundBtn();
-    primeYouTube();
+    primeYouTube();primeBuzz();
     return true;
   }catch(e){return false;}
 }
@@ -1053,7 +1145,7 @@ function tickWake(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tickWake();});
 
-/* ================= 날씨 (Open-Meteo 5초 타임아웃 → met.no 자동 폴백) ================= */
+/* ================= 날씨 (네이버 중계 → Open-Meteo → met.no 자동 폴백) ================= */
 const WMO={0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],45:['안개','🌫️'],48:['안개','🌫️'],
   51:['이슬비','🌦️'],53:['이슬비','🌦️'],55:['이슬비','🌧️'],56:['얼어붙는 이슬비','🌧️'],57:['얼어붙는 이슬비','🌧️'],
   61:['비','🌧️'],63:['비','🌧️'],65:['강한 비','🌧️'],66:['얼어붙는 비','🌧️'],67:['얼어붙는 비','🌧️'],
@@ -1084,6 +1176,67 @@ function getJSON(url,ms){
     if(!r.ok)throw new Error('http '+r.status);
     return r.json();
   }).finally(()=>clearTimeout(tid));
+}
+/* ── 0) 네이버 날씨 중계 (Cloudflare Worker, 설정에 주소가 있을 때 가장 먼저) ── */
+function naverWmo(cd,txt){                       /* 중계 응답에 wmo가 없어도 같은 아이콘·팁이 나오도록 */
+  const t=String(txt||'');
+  if(/눈/.test(t))return /소낙/.test(t)?86:73;
+  if(/소나기/.test(t))return /강/.test(t)?82:80;
+  if(/천둥|번개/.test(t))return 95;
+  if(/비|이슬비/.test(t))return /강/.test(t)?65:61;
+  if(/안개/.test(t))return 45;
+  if(/황사|먼지/.test(t))return 3;
+  if(/흐리|구름많/.test(t))return 3;
+  if(/구름\s*조금/.test(t))return 2;
+  if(/맑음/.test(t))return 0;
+  const n=Number(cd);
+  if(n===1||n===2)return 0;
+  if(n===3||n===4)return 2;
+  if(n===15||n===42)return 80;
+  if(n===17)return 45;
+  return 3;
+}
+function pickNaverHours(all){                     /* 8·12·16·20시 4칸 → 없으면(이미 지난 시각) 지금부터 오늘 남은 시간을 4칸으로 고르게 */
+  const sorted=all.slice().sort((a,b)=>a.h-b.h);
+  const pick=HOURS.map(h=>sorted.find(o=>o.h===h)).filter(Boolean);
+  if(pick.length>=4)return pick;
+  const nowH=new Date().getHours();
+  const rest=sorted.filter(o=>o.h>=nowH);
+  const src=rest.length?rest:sorted;
+  const n=src.length,out=[];
+  [0,1,2,3].forEach(i=>{
+    const k=n>=4?Math.round(i*(n-1)/3):i;
+    const o=src[k];
+    if(o&&out.indexOf(o)<0)out.push(o);
+  });
+  return out.length>=2?out:(pick.length?pick:out);
+}
+async function fetchNaverProxy(base){
+  const u=String(base||'').trim().replace(/\/+$/,'');
+  if(!u)throw new Error('no proxy');
+  const j=await getJSON(u,W_TIMEOUT);
+  if(!j||j.ok===false)throw new Error('naver relay '+(j&&j.error?j.error:'bad'));
+  const now=j.current||{};
+  if(typeof now.temp!=='number')throw new Error('naver relay no temp');
+  const all=(Array.isArray(j.hours)?j.hours:[]).map(o=>({
+      h:Number(o.h),t:Number(o.t),
+      code:(typeof o.wmo==='number'?o.wmo:naverWmo(o.cd,o.txt)),
+      p:(o.p==null||o.p===''?0:Number(o.p)),
+      txt:o.txt||''
+    })).filter(o=>isFinite(o.h)&&isFinite(o.t)&&o.t!==null);
+  if(!all.length)throw new Error('naver relay no hours');
+  const t=j.today||{}, dust=j.dust||{};
+  const air=(typeof dust.pm10==='number'&&typeof dust.pm25==='number')
+    ?{pm10:dust.pm10,pm25:dust.pm25,legend10:dust.pm10Grade||'',legend25:dust.pm25Grade||'',station:dust.station||''}:null;
+  const nowH=new Date().getHours();
+  const probs=all.filter(o=>o.h>=nowH).map(o=>o.p);
+  if(typeof t.pmProb==='number')probs.push(t.pmProb);
+  return {temp:now.temp,
+    code:(typeof now.wmo==='number'?now.wmo:naverWmo(now.cd,now.txt)),
+    desc:now.txt||'',
+    tmax:(typeof t.max==='number'?t.max:undefined),
+    tmin:(typeof t.min==='number'?t.min:undefined),
+    hours:pickNaverHours(all), probs, air, src:'naver'};
 }
 /* ── 1) Open-Meteo (기본) ───────────────── */
 async function fetchOpenMeteo(){
@@ -1201,23 +1354,38 @@ async function refreshWeather(){
     document.getElementById('w-desc').textContent='날씨 확인 중';
   }
   let ok=false;
-  fetchDust();                    /* 날씨와 동시에, 서로 기다리지 않음 */
-  try{
-    const w=await fetchOpenMeteo();
-    W=Object.assign(W,w,{at:Date.now()});
-    ok=true;
-  }catch(e){
-    document.getElementById('w-desc').textContent='날씨 다시 확인 중';
+  const proxy=(typeof S.settings.weatherProxy==='string')?S.settings.weatherProxy.trim():'';
+  /* 중계 주소가 있으면 네이버를 가장 먼저 (5초 타임아웃) — 성공하면 미세먼지도 네이버 값 그대로 */
+  if(proxy){
+    document.getElementById('w-desc').textContent='네이버 날씨 확인 중';
     try{
-      const w=await fetchMetNo();
-      W=Object.assign(W,w,{at:Date.now()});
+      const w=await fetchNaverProxy(proxy);
+      W=Object.assign(W,w,{at:Date.now(),desc:w.desc||''});
       ok=true;
-    }catch(e2){ok=false;}
+    }catch(e){ok=false;}
   }
-  if(ok){W.stale=false;saveWeatherCache();showRetry(false);renderWeather();}
+  if(!ok){
+    fetchDust();                    /* 폴백에서는 날씨와 동시에, 서로 기다리지 않음 */
+    try{
+      const w=await fetchOpenMeteo();
+      W=Object.assign(W,w,{at:Date.now(),desc:''});
+      ok=true;
+    }catch(e){
+      document.getElementById('w-desc').textContent='날씨 다시 확인 중';
+      try{
+        const w=await fetchMetNo();
+        W=Object.assign(W,w,{at:Date.now(),desc:''});
+        ok=true;
+      }catch(e2){ok=false;}
+    }
+  }
+  if(ok){W.stale=false;saveWeatherCache();showRetry(false);renderWeather();
+    if(W.src==='naver'&&!W.air)fetchDust();   /* 중계에 미세먼지가 없을 때만 Open-Meteo 대기질로 보충 */
+  }
   else renderFail();
   wBusy=false;
 }
+async function refreshWeatherForce(){wBusy=false;await refreshWeather();}
 function initWeather(){
   const c=readWeatherCache();
   if(c){W=c;renderWeather();}
@@ -1229,11 +1397,20 @@ function dustGrade(pm,p25){
   return {pm10:g1,pm25:g2};
 }
 function round1(x){return Math.round(x);}
+function legendClass(l){                        /* 네이버 미세먼지 등급 문구 → 배지 색 */
+  const s=String(l||'');
+  if(s.indexOf('매우')>=0)return 'd-vbad';
+  if(s.indexOf('나쁨')>=0)return 'd-bad';
+  if(s.indexOf('보통')>=0)return 'd-mod';
+  if(s.indexOf('좋음')>=0)return 'd-good';
+  return '';
+}
 function hmOf(ts){const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function renderLive(){
   const b=document.getElementById('w-live');
   if(!W.at){b.textContent='🔄 실시간 --:--';return;}
-  b.textContent='🔄 실시간 '+hmOf(W.at)+(W.src==='met.no'?' · 보조':'')+(W.stale?' · 캐시':'');
+  const src=W.src==='naver'?' · 네이버':(W.src==='met.no'?' · 보조':'');
+  b.textContent='🔄 실시간 '+hmOf(W.at)+src+(W.stale?' · 캐시':'');
 }
 const SNOW_CODES=[71,73,75,77,85,86];
 function outfitOf(t){
@@ -1265,7 +1442,8 @@ function buildTip(air){
 }
 function renderWeather(){
   if(!W.at)return;
-  const [desc,icon]=WMO[W.code]||['알 수 없음','🌡️'];
+  const [wdesc,icon]=WMO[W.code]||['알 수 없음','🌡️'];
+  const desc=(W.desc&&W.desc.trim())?W.desc:wdesc;      /* 네이버 문구가 있으면 그대로 */
   document.getElementById('w-icon').textContent=icon;
   document.getElementById('w-temp').textContent=round1(W.temp)+'°';
   document.getElementById('w-desc').textContent=desc;
@@ -1286,9 +1464,10 @@ function renderWeather(){
   const dustBox=document.getElementById('w-dust-chips');
   if(air){
     const g=dustGrade(air.pm10,air.pm25);
+    const l10=legendClass(air.legend10),l25=legendClass(air.legend25);
     dustBox.innerHTML=
-      `<span class="dust-pill ${g.pm10[1]}" title="미세먼지 ${round1(air.pm10)}㎍/㎥">미세 ${g.pm10[0]}</span>`+
-      `<span class="dust-pill ${g.pm25[1]}" title="초미세먼지 ${round1(air.pm25)}㎍/㎥">초미세 ${g.pm25[0]}</span>`;
+      `<span class="dust-pill ${l10||g.pm10[1]}" title="미세먼지 ${round1(air.pm10)}㎍/㎥">미세 ${l10?air.legend10:g.pm10[0]}</span>`+
+      `<span class="dust-pill ${l25||g.pm25[1]}" title="초미세먼지 ${round1(air.pm25)}㎍/㎥">초미세 ${l25?air.legend25:g.pm25[0]}</span>`;
   }else{
     dustBox.innerHTML='<span class="dust-pill d-unk">미세 -</span><span class="dust-pill d-unk">초미세 -</span>';
   }
@@ -1358,7 +1537,14 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[]};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:''};}
+function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
+  let s=String(v==null?'':v).trim().replace(/\s+/g,'');
+  if(!s)return '';
+  if(!/^https?:\/\//i.test(s))s='https://'+s.replace(/^\/+/, '');
+  try{const u=new URL(s);if(u.protocol!=='https:'&&u.protocol!=='http:')return '';return u.href.replace(/\/+$/,'');}
+  catch(e){return '';}
+}
 function todaySnapshot(){
   const k=todayKey(), d=S.days[k], t=nextTarget();
   return {date:k, exp:(d&&d.exp)||0, tasksDone:d?Object.keys(d.tasks||{}).length:0,
@@ -1426,12 +1612,13 @@ function parseBackup(raw){
       exp:(Number.isFinite(exp)&&exp>=0)?Math.floor(exp):0,
       chime:o.chime===true,
       restOverride:(typeof o.restOverride==='boolean')?o.restOverride:undefined,
-      timer:{left,running,since:running?since:null,ended:left<=0}};
+      timer:{left,running,since:running?since:null,ended:left<=0,cue11:tm.cue11===true}};
   });
   const rs=(raw.settings&&typeof raw.settings==='object')?raw.settings:{};
   const settings=defaultSettings();
   if(typeof rs.wake==='string'&&HM_RE.test(rs.wake))settings.wake=rs.wake;
   if(typeof rs.depart==='string'&&HM_RE.test(rs.depart))settings.depart=rs.depart;
+  if(typeof rs.weatherProxy==='string')settings.weatherProxy=proxyUrl(rs.weatherProxy);
   settings.sound=rs.sound===true;
   if(Array.isArray(rs.vacations)){
     settings.vacations=rs.vacations.filter(v=>v&&typeof v.s==='string'&&DATE_RE.test(v.s))
@@ -1503,8 +1690,30 @@ const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
   document.getElementById('set-wake').value=S.settings.wake;
   document.getElementById('set-depart').value=S.settings.depart;
+  const px=document.getElementById('set-proxy');
+  if(px)px.value=S.settings.weatherProxy||'';
+  setProxyState(S.settings.weatherProxy?'지금은 이 주소로 네이버 날씨를 받아와요.':'지금은 Open-Meteo·met.no로 받아와요.');
   renderRestSettings();
   setModal.classList.remove('hidden');
+});
+function setProxyState(msg,bad){
+  const el=document.getElementById('set-proxy-state');
+  if(!el)return;
+  el.textContent=msg||'';
+  el.style.color=bad?'#C84A3E':'#6B7480';
+}
+document.getElementById('btn-proxy-save').addEventListener('click',()=>{
+  const el=document.getElementById('set-proxy');
+  const raw=(el&&el.value)||'';
+  let v=proxyUrl(raw);
+  if(raw.trim()&&!v){setProxyState('주소를 확인해 주세요 (https://... 형식)',true);return;}
+  const prev=S.settings.weatherProxy||'';
+  S.settings.weatherProxy=v;save();
+  setProxyState(v?'저장했어요. 네이버 날씨로 다시 불러오는 중…':'중계 주소를 비웠어요. Open-Meteo·met.no로 받아와요.');
+  setModal.classList.add('hidden');
+  toast(v?'네이버 날씨 중계 주소를 저장했어요':'중계 주소를 비웠어요');
+  if(prev!==v){W.stale=false;}
+  refreshWeatherForce();
 });
 document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();tickWake();}});
 document.getElementById('set-depart').addEventListener('change',e=>{if(e.target.value){S.settings.depart=e.target.value;save();renderProgress();tickWake();}});
@@ -1517,10 +1726,10 @@ document.getElementById('btn-preview').addEventListener('click',()=>{
 });
 document.getElementById('btn-preview-beep').addEventListener('click',()=>{
   if(!soundUnlocked)unlockAudio();
-  playBeep();                                            /* 식사 타이머 완료 알림음 */
+  toggleBuzzPreview();                                   /* 식사 타이머 종료음 미리 듣기 / 정지 */
 });
 document.getElementById('btn-song-stop').addEventListener('click',stopSong);
-document.addEventListener('pointerdown',()=>{if(soundUnlocked)primeYouTube();tickWake();},{passive:true});
+document.addEventListener('pointerdown',()=>{if(soundUnlocked){primeYouTube();primeBuzz();}tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
   const d=day(todayKey());
   TASKS.forEach(t=>{if(!d.tasks[t.k]){d.tasks[t.k]=true;d.inTime[t.k]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
@@ -1533,7 +1742,7 @@ document.getElementById('btn-exp').addEventListener('click',()=>{
 });
 document.getElementById('btn-reset-day').addEventListener('click',()=>{
   if(confirm('오늘 기록(할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
-    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false}};
+    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false}};
     stopSong();
     save();renderTasks();renderExp();renderProgress();
     setModal.classList.add('hidden');
