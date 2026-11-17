@@ -1285,6 +1285,7 @@ function acquireWake(gesture){
   wlHang=setTimeout(()=>{if(!settled&&gesture&&!wakeActive())startWlVideo();},900);
   wlHang2=setTimeout(()=>{if(!settled)fail();},3000);
   req.then(s=>{
+    if(!wakeNeeded()){try{s.release();}catch(e){}return;}   /* 08:10을 넘겨 늦게 잡힌 것은 바로 돌려줌 */
     if(wlSentinel){try{s.release();}catch(e){}return;}   /* 이미 잡힌 게 있으면 늦게 온 것은 돌려줌 */
     settled=true;
     if(wlHang){clearTimeout(wlHang);wlHang=null;}
