@@ -775,6 +775,7 @@ function toggleTask(k,forceInTime){
   }else{
     delete d.tasks[k];delete d.inTime[k];
   }
+  if(d.tasks[k])playDoneSound();      /* 완료로 바뀔 때만 피카츄 효과음 */
   recalcExp(d);
   save();renderTasks();renderExp();renderProgress();
   tickWake();                                  /* 쉬는 날: 양치(5번) 체크하면 화면 유지 해제 */
@@ -1062,6 +1063,27 @@ function updateSoundBtn(){
   document.getElementById('btn-sound').textContent=soundUnlocked?'🔊':'🔇';
   const b=document.getElementById('btn-unlock');
   b.textContent=soundUnlocked?'🔊 소리 켜짐':'🔊 소리 켜기';
+}
+/* ── 할 일 완료 효과음 (assets/task-done.mp3) ─────────────────
+   할 일이 '완료'로 바뀔 때만 1회 재생합니다(완료 해제는 무음).
+   소리가 아직 안 깨어 있는 상태에서 바로 눌러도 들리도록, 같은 터치(사용자 제스처) 안에서
+   오디오를 깨운 뒤 재생합니다. 연속 터치 시에는 처음으로 되감아 다시 재생합니다. */
+const DONE_SOUND_SRC='assets/task-done.mp3';
+let doneSnd=null;
+function doneAudio(){
+  if(!doneSnd){
+    try{doneSnd=new Audio(DONE_SOUND_SRC);doneSnd.preload='auto';doneSnd.volume=1;}catch(e){doneSnd=null;}
+  }
+  return doneSnd;
+}
+function playDoneSound(){
+  const a=doneAudio();
+  if(!a)return;
+  if(!soundUnlocked){                       /* 명시적 음소거 상태는 없음 → 이 터치로 소리를 켠다 */
+    if(!unlockAudio())return;               /* 브라우저가 막으면 조용히 넘어간다 */
+  }
+  try{a.pause();a.currentTime=0;}catch(e){}
+  try{const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
 }
 
 /* 08:10 출발 이벤트 (하루 1회) */
@@ -1893,6 +1915,7 @@ document.getElementById('hol-add').addEventListener('click',()=>{
 /* ================= 시작 ================= */
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+doneAudio();   /* 할 일 완료 효과음 미리 받아 두기(터치 순간 바로 울리도록) */
 initWeather();
 setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
 if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
