@@ -45,7 +45,7 @@ body{
 .hidden{display:none !important}
 
 /* ── 상단 (하늘 위) ────────────────────── */
-header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
+header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 
 /* 좌: 도감 버튼 + EXP */
 #hl{width:252px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:8px}
@@ -65,6 +65,13 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
 .icon-btn{width:40px;height:40px;font-family:inherit;font-size:18px;cursor:pointer;background:#fff;
   border:var(--bw) solid var(--ink);border-radius:12px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
 .icon-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
+/* ── 유튜브 오디오 '우리는 모두 친구' (화면엔 1px, 소리만) ── */
+#yt-wrap{position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:.01;pointer-events:none;overflow:hidden;z-index:0}
+#yt-player,#yt-player iframe{width:1px;height:1px;border:0}
+#song-bar{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:70}
+#btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
+  border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
+#btn-song-stop:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 
 .exp-mini{display:flex;align-items:center;gap:8px;background:#fff;border:var(--bw) solid var(--ink);
   border-radius:16px;padding:6px 10px;box-shadow:0 4px 0 rgba(34,43,56,.18)}
@@ -77,64 +84,66 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
 
 /* 중앙: 날짜 + 디지털 시계 */
 #hc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
-#date-line{font-size:16px;font-weight:900;color:#fff;letter-spacing:-.2px;
+#date-line{font-size:19px;font-weight:900;color:#fff;letter-spacing:-.2px;
   text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink),
               -2px 0 0 var(--ink),2px 0 0 var(--ink),0 -2px 0 var(--ink),0 2px 0 var(--ink),0 4px 0 rgba(34,43,56,.35)}
-#clock{display:flex;align-items:flex-end;gap:8px}
+#clock{display:flex;align-items:flex-end;gap:11px}
 #clock .ap{font-size:19px;font-weight:900;color:#fff;margin-bottom:13px;line-height:1;
   text-shadow:-2.5px -2.5px 0 var(--ink),2.5px -2.5px 0 var(--ink),-2.5px 2.5px 0 var(--ink),2.5px 2.5px 0 var(--ink),
               -2.5px 0 0 var(--ink),2.5px 0 0 var(--ink),0 -2.5px 0 var(--ink),0 2.5px 0 var(--ink),0 5px 0 rgba(34,43,56,.3)}
 #clock .d{position:relative;font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;font-weight:900;color:#fff;
-  font-size:66px;line-height:.86;letter-spacing:-2px;z-index:0;
+  font-size:66px;line-height:.86;letter-spacing:2px;z-index:0;
   text-shadow:-2px 6px 0 rgba(34,43,56,.22),0 9px 0 rgba(34,43,56,.18)}
 #clock .d::before{content:attr(data-t);position:absolute;left:0;top:0;z-index:-1;color:#fff;
   -webkit-text-stroke:11px var(--ink)}
-#clock .colon{position:relative;font-family:"Arial Black",Arial,sans-serif;font-weight:900;color:#fff;font-size:58px;line-height:.86;z-index:0}
+#clock .colon{position:relative;font-family:"Arial Black",Arial,sans-serif;font-weight:900;color:#fff;font-size:56px;line-height:.86;z-index:0;padding:0 1px}
 #clock .colon::before{content:attr(data-t);position:absolute;left:0;top:0;z-index:-1;color:#fff;-webkit-text-stroke:10px var(--ink)}
+#wl-mini{font-size:9.5px;font-weight:900;color:#fff;opacity:.9;letter-spacing:-.2px;
+  text-shadow:-1.5px -1.5px 0 var(--ink),1.5px -1.5px 0 var(--ink),-1.5px 1.5px 0 var(--ink),1.5px 1.5px 0 var(--ink),0 2px 0 rgba(34,43,56,.3)}
 
-/* 우: 날씨 박스 */
-#weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;gap:4px;padding:8px 10px 6px;border-radius:18px}
-.w-main{display:flex;align-items:center;gap:8px;flex:1;min-height:0}
-#dust-chips{flex:0 0 auto;display:flex;width:60px}
-.dust-badge{flex:0 0 auto;width:60px;height:96px;border:var(--bw) solid var(--ink);border-radius:12px;background:#8FD6A2;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#fff;box-shadow:0 3px 0 rgba(34,43,56,.18)}
-.dust-badge .db-t{font-size:10px;font-weight:900;letter-spacing:-.4px;white-space:nowrap}
-.dust-badge .db-face{font-size:20px;line-height:1}
-.dust-badge .db-g{font-size:15px;font-weight:900;letter-spacing:-.5px}
-.dust-badge .db-v{font-size:10.5px;font-weight:800;opacity:.95}
-.dust-badge.d-good{background:#45B36B}
-.dust-badge.d-mod{background:#3E8FD8}
-.dust-badge.d-bad{background:#F0A81E;color:#4a3400}
-.dust-badge.d-bad .db-v,.dust-badge.d-bad .db-t{color:#4a3400}
-.dust-badge.d-vbad{background:#E05555}
+/* 우: 날씨 박스 — 1)지역·링크·미세 2)현재 3)시간대 4)팁 */
+#weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;gap:4px;padding:6px 8px;border-radius:18px}
+#w-top{flex:0 0 auto;display:flex;align-items:center;gap:4px;min-height:21px}
+#w-place{font-size:12px;font-weight:900;color:var(--ink);white-space:nowrap}
+.w-link{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;text-decoration:none;background:#EAF4FF;
+  border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.55;white-space:nowrap;box-shadow:0 2px 0 rgba(34,43,56,.14)}
+.w-link:active{transform:translateY(2px);box-shadow:none}
+#w-dust-chips{margin-left:auto;display:flex;gap:4px}
+.dust-pill{border:2.5px solid var(--ink);border-radius:99px;padding:0 9px;font-size:11px;font-weight:900;
+  color:#fff;line-height:1.5;box-shadow:0 2px 0 rgba(34,43,56,.18);white-space:nowrap}
+.dust-pill.d-good{background:#45B36B}
+.dust-pill.d-mod{background:#3E8FD8}
+.dust-pill.d-bad{background:#F0A81E;color:#4a3400}
+.dust-pill.d-vbad{background:#E05555}
+.dust-pill.d-unk{background:#AEB8C6}
 
-.w-mid{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
+#w-now{flex:0 0 auto;display:flex;align-items:center;gap:7px;min-height:52px;padding:1px 2px}
 #w-icon{font-size:40px;line-height:1;flex:0 0 auto;filter:drop-shadow(0 2px 2px rgba(34,43,56,.15))}
-.w-temps{min-width:0}
-#w-temp{font-size:34px;font-weight:900;line-height:1;letter-spacing:-1px}
-#w-desc{font-size:12.5px;font-weight:900;color:var(--ink);margin-top:1px}
-#w-minmax{font-size:10.5px;font-weight:700;color:var(--ink-soft);white-space:nowrap}
-#w-dustline{font-size:10.5px;font-weight:800;color:var(--ink-soft);white-space:nowrap;margin-top:1px}
+#w-temp{font-size:40px;font-weight:900;line-height:1;letter-spacing:-1px}
+#w-desc{font-size:15px;font-weight:900;padding-top:13px;white-space:nowrap}
+#w-side{margin-left:auto;display:flex;align-items:center;gap:7px;min-width:0}
+#w-minmax{font-size:12px;font-weight:800;color:var(--ink-soft);white-space:nowrap}
+#w-live{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;background:#EAF4FF;cursor:pointer;
+  border:2.5px solid var(--ink);border-radius:99px;padding:1px 8px;line-height:1.5;white-space:nowrap;
+  box-shadow:0 2px 0 rgba(34,43,56,.18)}
+#w-live:active{transform:translateY(2px);box-shadow:none}
 
-.w-hours{flex:0 0 auto;display:flex;gap:5px}
-.wh-chip{flex:0 0 auto;width:49px;border:2.5px solid var(--ink);border-radius:10px;background:#EAF7FF;text-align:center;
-  padding:3px 0 2px;display:flex;flex-direction:column;align-items:center;gap:0;box-shadow:0 2px 0 rgba(34,43,56,.15)}
+.w-hours{flex:0 0 auto;display:flex;gap:6px}
+.wh-chip{flex:1 1 0;min-width:0;border:2.5px solid var(--ink);border-radius:12px;background:#F1F2F4;text-align:center;
+  padding:1px 0 2px;display:flex;flex-direction:column;align-items:center;gap:0;box-shadow:0 2px 0 rgba(34,43,56,.14)}
 .wh-h{font-size:9.5px;font-weight:900;color:var(--ink-soft)}
-.wh-i{font-size:15px;line-height:1.05}
-.wh-t{font-size:12px;font-weight:900;line-height:1.15}
-.wh-p{font-size:8.5px;font-weight:800;color:#2F6FB5;line-height:1.2}
+.wh-i{font-size:15px;line-height:1.02}
+.wh-t{font-size:13px;font-weight:900;line-height:1.1}
+.wh-p{font-size:9px;font-weight:900;color:#2F6FB5;line-height:1.2}
 
-#w-tip-row{flex:0 0 auto;display:flex;align-items:center;gap:6px;border-top:2px dashed #D9DEE8;padding-top:3px}
-#w-tip{font-size:12px;font-weight:800;color:var(--ink);white-space:nowrap;line-height:1.25}
-#w-err{flex:0 0 auto;font-size:10px;color:#b34820;font-weight:800;white-space:nowrap}
+#w-tip-row{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;min-height:27px;
+  background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:12px;padding:1px 9px;box-shadow:0 2px 0 rgba(34,43,56,.14)}
+#w-tip{font-size:12.5px;font-weight:900;color:#5a4300;white-space:nowrap;line-height:1.2}
+#w-err{flex:0 0 auto;font-size:10.5px;color:#b34820;font-weight:900;white-space:nowrap}
 #w-retry{font-family:inherit;font-size:11px;font-weight:900;color:#1d5cad;background:#E3F0FD;
-  border:2px solid var(--ink);border-radius:9px;padding:1px 8px;cursor:pointer;white-space:nowrap;
-  box-shadow:0 2px 0 rgba(34,43,56,.2);line-height:1.3}
+  border:2px solid var(--ink);border-radius:99px;padding:1px 9px;cursor:pointer;white-space:nowrap;
+  box-shadow:0 2px 0 rgba(34,43,56,.2);line-height:1.35}
 #w-retry:active{transform:translateY(2px);box-shadow:none}
-#w-naver{flex:0 0 auto;margin-left:auto;font-size:10px;font-weight:800;color:var(--ink-soft);text-decoration:none;
-  border:2px solid #D9DEE8;border-radius:8px;padding:0 5px;white-space:nowrap;line-height:1.35;background:#F7FAFF}
-#w-naver:active{background:#E3F0FD}
-.dust-badge.d-unk{background:#AEB8C6}
 
 /* ── 진행 바 ───────────────────────────── */
 #progress-card{height:112px;flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 16px;border-radius:18px}
@@ -287,6 +296,10 @@ body.dex-open #progress-card{display:none}
 <body>
 <div id="sky"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c4"></span></div>
 
+<!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
+<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div></div>
+<div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
+
 <div id="app">
   <header>
     <!-- 좌: 도감 + EXP -->
@@ -314,27 +327,30 @@ body.dex-open #progress-card{display:none}
     <div id="hc">
       <div id="date-line"></div>
       <div id="clock"></div>
+      <div id="wl-mini" class="hidden">화면 유지 중</div>
     </div>
 
-    <!-- 우: 날씨 -->
+    <!-- 우: 날씨 (지역·링크·미세 / 현재 / 시간대 / 팁) -->
     <section id="weather-card" class="card">
-      <div class="w-main">
-        <div id="dust-chips"></div>
-        <div class="w-mid">
-          <div id="w-icon">⏳</div>
-          <div class="w-temps">
-            <div id="w-temp">--°</div>
-            <div id="w-desc">날씨 확인 중</div>
-            <div id="w-minmax"></div>
-            <div id="w-dustline"></div>
-          </div>
-        </div>
-        <div class="w-hours" id="w-hours"></div>
+      <div id="w-top">
+        <span id="w-place">📍 답십리1동 ·</span>
+        <a class="w-link" id="w-google" href="https://www.google.com/search?q=%EC%84%9C%EC%9A%B8+%EB%8F%99%EB%8C%80%EB%AC%B8%EA%B5%AC+%EB%8B%B5%EC%8B%AD%EB%A6%AC1%EB%8F%99+%EB%82%A0%EC%94%A8" target="_blank" rel="noopener noreferrer" title="답십리1동 구글 날씨">구글 날씨 ↗</a>
+        <a class="w-link" id="w-naver" href="https://weather.naver.com/today/09230105" target="_blank" rel="noopener noreferrer" title="답십리1동 네이버 날씨">네이버 날씨 ↗</a>
+        <span id="w-dust-chips"></span>
       </div>
+      <div id="w-now">
+        <div id="w-icon">⏳</div>
+        <div id="w-temp">--°</div>
+        <div id="w-desc">날씨 확인 중</div>
+        <div id="w-side">
+          <span id="w-minmax"></span>
+          <button id="w-live" type="button" title="지금 날씨 다시 불러오기">🔄 실시간 --:--</button>
+        </div>
+      </div>
+      <div class="w-hours" id="w-hours"></div>
       <div id="w-tip-row">
         <span id="w-tip"></span>
         <div id="w-err" class="hidden"></div>
-        <a id="w-naver" href="https://weather.naver.com/today/09230105" target="_blank" rel="noopener noreferrer" title="답십리1동 네이버 날씨">네이버 날씨 ↗</a>
       </div>
     </section>
   </header>
@@ -400,10 +416,12 @@ body.dex-open #progress-card{display:none}
     <h3>⚙️ 엄마용 설정 · 테스트</h3>
     <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
-    <div class="set-row"><span>효과음 · 음성</span>
-      <span style="display:flex;gap:6px">
+    <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <span>출발 알림 음악 · 유튜브 '우리는 모두 친구'</span>
+      <span style="display:flex;gap:6px;margin-top:6px">
         <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
-        <button class="set-btn sb-sound" id="btn-preview">▶ 가랏 피카츄! 미리 듣기</button>
+        <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
       </span>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
@@ -660,14 +678,109 @@ function tickTimer(){
 
 /* ================= 사운드 · TTS ================= */
 let AC=null,soundUnlocked=false;
+
+/* ── 유튜브 '우리는 모두 친구' 오디오 (화면엔 안 보이고 소리만) ─────────
+   임베드 차단(101/150)·API 로드 실패·오프라인처럼 유튜브로 소리를 낼 수 없을 때만
+   기존 효과음 + "가랏, 피카츄!" 음성으로 폴백합니다. */
+const YT_VIDEO_ID='Xm_lnAIclY0';
+let YTP=null,ytReady=false,ytFailed=false,ytPrimed=false,ytWantPlay=false,ytPlaying=false,ytFbTimer=null;
+function ytClearFb(){if(ytFbTimer){clearTimeout(ytFbTimer);ytFbTimer=null;}}
+function ytState(){try{return YTP?YTP.getPlayerState():-1;}catch(e){return -1;}}
+function ytStarted(){const s=ytState();return s===1||s===3;}   /* 1=PLAYING, 3=BUFFERING */
+function setSongBar(on){
+  document.getElementById('song-bar').classList.toggle('hidden',!on);
+  const b=document.getElementById('btn-preview');
+  if(b)b.textContent=on?'⏹ 우리는 모두 친구 정지':'🎵 우리는 모두 친구 미리 듣기 / 정지';
+}
+function ytEnded(){ytWantPlay=false;ytPlaying=false;setSongBar(false);}
+function ytCreate(){
+  if(YTP||ytReady)return;
+  try{
+    YTP=new YT.Player('yt-player',{
+      videoId:YT_VIDEO_ID,
+      playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3},
+      events:{
+        onReady(){
+          ytReady=true;ytFailed=false;
+          try{YTP.setVolume(100);}catch(e){}
+          if(soundUnlocked||S.settings.sound)primeYouTube();
+        },
+        onStateChange(e){
+          if(!ytWantPlay)return;
+          if(e.data===1||e.data===3){ytPlaying=(e.data===1);if(e.data===1)ytClearFb();setSongBar(true);}
+          else if(e.data===0||e.data===2){ytEnded();}
+        },
+        onError(){
+          ytFailed=true;                             /* 101/150 등 임베드 차단 */
+          if(ytPlaying)ytEnded();                    /* 재생 중 끊김 → 정지 버튼만 정리 */
+          /* 시작 전 오류는 아래 트리거의 확인 타이머가 효과음 폴백을 맡음 */
+        }
+      }
+    });
+  }catch(e){ytFailed=true;}
+}
+/* 사용자 제스처(소리 켜기·화면 클릭) 때 플레이어를 미리 깨워 두기
+   → 모바일·태블릿 Chrome에서도 08:10에 자동재생이 막히지 않음 */
+function primeYouTube(){
+  if(!ytReady||ytFailed||ytPrimed||!YTP)return;
+  if(ytWantPlay)return;
+  /* 제스처 없이 부른 경우(페이지 로드 직후)는 나중 제스처로 미룸 */
+  const ua=navigator.userActivation;
+  if(ua&&ua.isActive===false)return;
+  ytPrimed=true;
+  try{
+    YTP.mute();YTP.playVideo();
+    setTimeout(()=>{
+      try{
+        if(!ytWantPlay){YTP.pauseVideo();YTP.seekTo(0,true);}
+        YTP.unMute();YTP.setVolume(100);
+      }catch(e){}
+    },320);
+  }catch(e){ytPrimed=false;}
+}
+function startSong(){
+  if(!ytReady||ytFailed||!YTP)return false;
+  try{
+    ytClearFb();ytWantPlay=true;
+    YTP.setVolume(100);YTP.seekTo(0,true);YTP.unMute();YTP.playVideo();
+    return true;
+  }catch(e){ytWantPlay=false;return false;}
+}
+function stopSong(){
+  ytClearFb();ytEnded();
+  try{if(YTP&&ytReady){YTP.pauseVideo();YTP.seekTo(0,true);}}catch(e){}
+}
+/* 재생이 실제로 시작됐는지 잠시 뒤 확인 → 안 됐으면 그때만 효과음·음성 폴백 */
+function watchStart(ms){
+  ytClearFb();
+  ytFbTimer=setTimeout(()=>{
+    ytFbTimer=null;
+    if(!ytStarted()){
+      ytEnded();
+      try{if(YTP)YTP.pauseVideo();}catch(e){}
+      playChime();
+    }
+  },ms);
+}
+(function loadYouTubeAPI(){
+  window.onYouTubeIframeAPIReady=function(){try{ytCreate();}catch(e){ytFailed=true;}};
+  const s=document.createElement('script');
+  s.src='https://www.youtube.com/iframe_api';s.async=true;
+  s.onerror=function(){ytFailed=true;};                 /* 스크립트 로드 실패 → 폴백 */
+  document.head.appendChild(s);
+  setTimeout(function(){if(!ytReady)ytFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
+})();
+
 function unlockAudio(){
   try{
     if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended')AC.resume();
     soundUnlocked=true;S.settings.sound=true;save();updateSoundBtn();
+    primeYouTube();
     return true;
   }catch(e){return false;}
 }
+/* 폴백 전용: 효과음 + "가랏, 피카츄!" (유튜브 재생이 불가능할 때만) */
 function playChime(){
   if(!soundUnlocked||!AC)return;
   try{
@@ -711,15 +824,79 @@ function updateSoundBtn(){
 }
 
 /* 08:10 출발 이벤트 (하루 1회) */
+function departAlarm(){
+  /* 우선 유튜브 '우리는 모두 친구'. 시작하지 못했을 때만 효과음+음성 */
+  if(startSong()){watchStart(1600);return;}
+  if(!ytFailed&&!ytReady){                       /* 아직 플레이어 준비 중이면 잠깐 기다렸다 재시도 */
+    let tries=0;
+    const iv=setInterval(()=>{
+      tries++;
+      if(startSong()){clearInterval(iv);watchStart(1600);return;}
+      if(ytFailed||tries>=15){clearInterval(iv);playChime();}
+    },400);
+    return;
+  }
+  playChime();
+}
 function checkDepartEvent(){
   const now=new Date(),d=day(todayKey());
   const dep=dateWith(parseHM(S.settings.depart));
   if(now>=dep&&!d.chime&&soundUnlocked){
     d.chime=true;save();
-    playChime();
+    departAlarm();
     document.getElementById('modal-catch').classList.add('hidden');
   }
 }
+
+/* ================= 화면 켜짐 유지 (기상 ~ 출발, 기본 06:45~08:10) =========
+   Screen Wake Lock: 그 시간대에만 화면을 켜 두고, 출발 시각(08:10)이 되는 즉시 해제해
+   아이패드의 원래 2분 자동 잠금이 그대로 동작하게 합니다. */
+let wlSentinel=null;
+function wakeRange(){
+  const start=dateWith(parseHM(S.settings.wake));
+  let end=dateWith(parseHM(S.settings.depart));      /* 출발 시각 정각까지 (기본 08:10) */
+  if(end<=start)end=new Date(end.getTime()+86400000);
+  return {start,end};
+}
+function wakeNeeded(){
+  const now=new Date(),r=wakeRange();
+  return now>=r.start&&now<r.end;
+}
+function setWakeUI(state){
+  const mini=document.getElementById('wl-mini'),row=document.getElementById('set-wl');
+  const on=(state==='on');
+  if(mini)mini.classList.toggle('hidden',!on);
+  if(row)row.textContent=on?'화면 유지 중':(state==='unsupported'?'이 기기에서 미지원':'꺼짐 (자동 잠금)');
+}
+function acquireWake(){
+  if(!('wakeLock' in navigator)||!navigator.wakeLock){setWakeUI('unsupported');return;}
+  if(wlSentinel)return;
+  if(document.visibilityState!=='visible'||!wakeNeeded())return;
+  try{
+    navigator.wakeLock.request('screen').then(s=>{
+      wlSentinel=s;
+      s.addEventListener('release',()=>{wlSentinel=null;setWakeUI(wakeNeeded()?'off':'off');});
+      setWakeUI('on');
+    }).catch(()=>{wlSentinel=null;setWakeUI('off');});   /* 절전·미지원 등은 조용히 */
+  }catch(e){wlSentinel=null;setWakeUI('off');}
+}
+function releaseWake(){
+  if(wlSentinel){try{wlSentinel.release();}catch(e){}wlSentinel=null;}
+  setWakeUI('off');
+}
+function tickWake(){
+  try{
+    if(!('wakeLock' in navigator)||!navigator.wakeLock){setWakeUI('unsupported');return;}
+    if(wakeNeeded()&&document.visibilityState==='visible'){
+      if(!wlSentinel)acquireWake();
+    }else if(wlSentinel){
+      releaseWake();                                  /* 08:15 이후 → 즉시 해제 */
+    }else{
+      setWakeUI('off');
+    }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tickWake();});
 
 /* ================= 날씨 (Open-Meteo 5초 타임아웃 → met.no 자동 폴백) ================= */
 const WMO={0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],45:['안개','🌫️'],48:['안개','🌫️'],
@@ -834,28 +1011,29 @@ function saveWeatherCache(){
 function showRetry(on){
   const box=document.getElementById('w-err');
   box.classList.toggle('hidden',!on);
-  if(on&&!document.getElementById('w-retry')){
-    box.innerHTML='<button id="w-retry" type="button">🔄 다시 불러오기</button>';
-    document.getElementById('w-retry').addEventListener('click',e=>{e.stopPropagation();refreshWeather();});
-  }
   const tip=document.getElementById('w-tip');
   tip.classList.toggle('hidden',on&&!W.at);
+  if(on){
+    box.innerHTML=(W.at?'':'날씨를 못 가져왔어요 ')+'<button id="w-retry" type="button">🔄 다시 불러오기</button>';
+    document.getElementById('w-retry').addEventListener('click',e=>{e.stopPropagation();refreshWeather();});
+  }else box.innerHTML='';
   fitTip();
 }
 function renderFail(){
+  if(W.at){W.stale=true;showRetry(true);renderWeather();return;}   /* 이전 값은 두고 버튼·'· 캐시'만 */
   showRetry(true);
-  if(W.at){renderWeather();return;}   /* 캐시·이전 값이 있으면 그대로 두고 버튼만 */
-  if(!W.at){
-    document.getElementById('w-temp').textContent='--°';
-    document.getElementById('w-desc').textContent='날씨를 못 가져왔어요';
-    document.getElementById('w-minmax').textContent='아래 버튼을 눌러 다시 시도해 주세요';
-    document.getElementById('w-dustline').textContent='미세 - · 초미세 - ㎍';
-    document.getElementById('dust-chips').innerHTML=
-      `<div class="dust-badge d-unk"><span class="db-t">미세먼지</span><span class="db-face">⏳</span><span class="db-g">-</span><span class="db-v">-</span></div>`;
-    document.getElementById('w-hours').innerHTML='';
-    document.getElementById('w-icon').textContent='🌥️';
-    document.getElementById('w-tip').textContent='';
-  }
+  document.getElementById('w-temp').textContent='--°';
+  document.getElementById('w-desc').textContent='날씨를 못 가져왔어요';
+  document.getElementById('w-minmax').textContent='';
+  document.getElementById('w-icon').textContent='🌥️';
+  document.getElementById('w-hours').innerHTML=HOURS.map(h=>
+    `<div class="wh-chip"><div class="wh-h">${h}시</div><div class="wh-i">·</div>`+
+    `<div class="wh-t">--°</div><div class="wh-p">💧--%</div></div>`).join('');
+  document.getElementById('w-dust-chips').innerHTML=
+    '<span class="dust-pill d-unk">미세 -</span><span class="dust-pill d-unk">초미세 -</span>';
+  document.getElementById('w-tip').textContent='';
+  document.getElementById('w-live').textContent='🔄 실시간 --:--';
+  fitTip();
 }
 /* ── 불러오기 (독립 실행) ────────────────── */
 async function refreshWeather(){
@@ -881,7 +1059,7 @@ async function refreshWeather(){
       ok=true;
     }catch(e2){ok=false;}
   }
-  if(ok){saveWeatherCache();renderWeather();}
+  if(ok){W.stale=false;saveWeatherCache();showRetry(false);renderWeather();}
   else renderFail();
   wBusy=false;
 }
@@ -896,7 +1074,40 @@ function dustGrade(pm,p25){
   return {pm10:g1,pm25:g2};
 }
 function round1(x){return Math.round(x);}
-const DUST_FACE={'좋음':'😄','보통':'🙂','나쁨':'😷','매우나쁨':'🤢'};
+function hmOf(ts){const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function renderLive(){
+  const b=document.getElementById('w-live');
+  if(!W.at){b.textContent='🔄 실시간 --:--';return;}
+  b.textContent='🔄 실시간 '+hmOf(W.at)+(W.src==='met.no'?' · 보조':'')+(W.stale?' · 캐시':'');
+}
+const SNOW_CODES=[71,73,75,77,85,86];
+function outfitOf(t){
+  if(t>=28)return '👕 반팔·반바지처럼 시원하게!';
+  if(t>=23)return '👕 반팔 + 얇은 가디건 추천!';
+  if(t>=20)return '👕 반팔 + 긴팔(또는 얇은 자켓) 추천!';
+  if(t>=17)return '🧥 긴팔 + 얇은 자켓 추천!';
+  if(t>=13)return '🧥 긴팔 + 맨투맨·자켓(또는 경량패딩) 추천!';
+  if(t>=10)return '🧥 맨투맨 + 자켓·코트 추천!';
+  if(t>=5)return '🧥 두꺼운 코트 + 목도리 추천!';
+  return '🧥 패딩 + 목도리·장갑 추천!';
+}
+function buildTip(air){
+  const h8=(W.hours||[]).find(o=>o.h===8);
+  const t=(h8&&typeof h8.t==='number')?h8.t:round1(W.temp);
+  const parts=[outfitOf(t)];
+  const pmax=Math.max(0,...(W.probs||[]));
+  const snow=SNOW_CODES.indexOf(W.code)>=0;
+  const rain=(W.code>=51&&!snow)||pmax>=40;
+  if(snow)parts.push('🌨️ 눈길 조심!');
+  else if(rain)parts.push('☂️ 우산 챙겨요!');
+  if(air){
+    const g=dustGrade(air.pm10,air.pm25);
+    const bad=['나쁨','매우나쁨'];
+    if(bad.indexOf(g.pm25[0])>=0||bad.indexOf(g.pm10[0])>=0)parts.push('😷 마스크 챙겨요!');
+  }
+  if(parts.length===1)parts.push('🍀 쾌적한 하루 보내요!');
+  return parts.join(' ');
+}
 function renderWeather(){
   if(!W.at)return;
   const [desc,icon]=WMO[W.code]||['알 수 없음','🌡️'];
@@ -904,8 +1115,9 @@ function renderWeather(){
   document.getElementById('w-temp').textContent=round1(W.temp)+'°';
   document.getElementById('w-desc').textContent=desc;
   document.getElementById('w-minmax').textContent=
-    (typeof W.tmax==='number'&&typeof W.tmin==='number')?`최고 ${round1(W.tmax)}° · 최저 ${round1(W.tmin)}°`:'';
-  /* 시간대별 예보: 8/12/16/20시 */
+    (typeof W.tmax==='number'&&typeof W.tmin==='number')?`최고 ${round1(W.tmax)}° / 최저 ${round1(W.tmin)}°`:'';
+  renderLive();
+  /* 3줄: 시간대별 예보 8/12/16/20시 */
   const hours=document.getElementById('w-hours');hours.innerHTML='';
   (W.hours||[]).forEach(o=>{
     const [hd,hi]=WMO[o.code]||['','🌡️'];
@@ -915,55 +1127,30 @@ function renderWeather(){
       <div class="wh-p">💧${o.p??0}%</div>`;
     hours.appendChild(chip);
   });
-  /* 미세먼지: 세로 배지 (실패하면 안전 표시) */
+  /* 1줄: 미세·초미세 등급 배지 (실패하면 안전 표시) */
   const air=(W.air&&typeof W.air.pm10==='number'&&typeof W.air.pm25==='number')?W.air:null;
-  let g=null;
-  const dustBox=document.getElementById('dust-chips');
+  const dustBox=document.getElementById('w-dust-chips');
   if(air){
-    g=dustGrade(air.pm10,air.pm25);
-    const RANK={'좋음':0,'보통':1,'나쁨':2,'매우나쁨':3};
-    const worse=(RANK[g.pm25[0]]>RANK[g.pm10[0]])?g.pm25:g.pm10;
+    const g=dustGrade(air.pm10,air.pm25);
     dustBox.innerHTML=
-      `<div class="dust-badge ${worse[1]}">
-         <span class="db-t">미세먼지</span>
-         <span class="db-face">${DUST_FACE[worse[0]]||'🙂'}</span>
-         <span class="db-g">${worse[0]}</span>
-         <span class="db-v">${round1(air.pm10)}㎍</span>
-       </div>`;
-    document.getElementById('w-dustline').textContent=`미세 ${round1(air.pm10)} · 초미세 ${round1(air.pm25)} ㎍`;
+      `<span class="dust-pill ${g.pm10[1]}" title="미세먼지 ${round1(air.pm10)}㎍/㎥">미세 ${g.pm10[0]}</span>`+
+      `<span class="dust-pill ${g.pm25[1]}" title="초미세먼지 ${round1(air.pm25)}㎍/㎥">초미세 ${g.pm25[0]}</span>`;
   }else{
-    dustBox.innerHTML=
-      `<div class="dust-badge d-unk">
-         <span class="db-t">미세먼지</span>
-         <span class="db-face">⏳</span>
-         <span class="db-g">-</span>
-         <span class="db-v">-</span>
-       </div>`;
-    document.getElementById('w-dustline').textContent='미세 - · 초미세 - ㎍';
+    dustBox.innerHTML='<span class="dust-pill d-unk">미세 -</span><span class="dust-pill d-unk">초미세 -</span>';
   }
-  /* 외출 팁 (한 줄, 잘리지 않게) */
-  const tips=[];
-  const pmax=Math.max(0,...(W.probs||[]));
-  const rainSoon=(W.code>=51&&W.code!==77)||pmax>=40;
-  if(rainSoon)tips.push('☂️ 우산 챙기기');
-  if(W.tmin<=5)tips.push('🧤 장갑·목도리 챙기기');
-  if(W.tmax-W.tmin>=10||W.tmax<=15)tips.push('🧥 겉옷 챙기기');
-  if(g&&(g.pm10[0]==='나쁨'||g.pm10[0]==='매우나쁨'||g.pm25[0]==='나쁨'||g.pm25[0]==='매우나쁨'))tips.push('😷 마스크 챙기기');
-  const tipEl=document.getElementById('w-tip');
-  tipEl.textContent=tips.length?('나갈 때: '+tips.join(' · ')):'나갈 때: 쾌적한 하루예요!';
-  tipEl.classList.remove('hidden');
+  /* 4줄: 옷차림·우산·마스크 팁 */
+  document.getElementById('w-tip').textContent=buildTip(air);
   fitTip();
 }
 function fitTip(){
   const el=document.getElementById('w-tip');
   const row=el.parentElement;
-  const nav=document.getElementById('w-naver');
+  if(!el.textContent)return;
   const err=document.getElementById('w-err');
   let used=0;
-  if(nav)used+=nav.offsetWidth+6;
   if(err&&!err.classList.contains('hidden'))used+=err.offsetWidth+6;
-  const avail=row.clientWidth-8-used;
-  let fs=12.4;el.style.fontSize=fs+'px';
+  const avail=row.clientWidth-20-used;
+  let fs=12.5;el.style.fontSize=fs+'px';
   let guard=0;
   while(el.scrollWidth>avail&&fs>7.5&&guard++<40){fs-=0.3;el.style.fontSize=fs.toFixed(1)+'px';}
 }
@@ -1151,10 +1338,17 @@ document.getElementById('btn-settings').addEventListener('click',()=>{
   document.getElementById('set-depart').value=S.settings.depart;
   setModal.classList.remove('hidden');
 });
-document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();}});
-document.getElementById('set-depart').addEventListener('change',e=>{if(e.target.value){S.settings.depart=e.target.value;save();renderProgress();}});
+document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();tickWake();}});
+document.getElementById('set-depart').addEventListener('change',e=>{if(e.target.value){S.settings.depart=e.target.value;save();renderProgress();tickWake();}});
 document.getElementById('btn-unlock').addEventListener('click',()=>{unlockAudio();});
-document.getElementById('btn-preview').addEventListener('click',()=>{if(!soundUnlocked)unlockAudio();playChime();});
+document.getElementById('btn-preview').addEventListener('click',()=>{
+  if(ytWantPlay||ytPlaying){stopSong();return;}          /* 재생 중이면 정지 */
+  if(!soundUnlocked)unlockAudio();
+  if(startSong()){watchStart(1200);return;}
+  playChime();                                           /* 유튜브 불가 → 기존 효과음·음성 */
+});
+document.getElementById('btn-song-stop').addEventListener('click',stopSong);
+document.addEventListener('pointerdown',()=>{if(soundUnlocked)primeYouTube();tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
   const d=day(todayKey());
   TASKS.forEach(t=>{if(!d.tasks[t.n]){d.tasks[t.n]=true;d.inTime[t.n]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
@@ -1168,6 +1362,7 @@ document.getElementById('btn-exp').addEventListener('click',()=>{
 document.getElementById('btn-reset-day').addEventListener('click',()=>{
   if(confirm('오늘 기록(할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
     S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:EAT_SECONDS,running:false,since:null,ended:false}};
+    stopSong();
     save();renderTasks();renderExp();renderProgress();
     setModal.classList.add('hidden');
   }
@@ -1180,6 +1375,7 @@ document.getElementById('btn-reset-dex').addEventListener('click',()=>{
 document.getElementById('btn-close-settings').addEventListener('click',()=>setModal.classList.add('hidden'));
 setModal.addEventListener('click',e=>{if(e.target===setModal)setModal.classList.add('hidden')});
 window.addEventListener('resize',()=>{if(W.at)fitTip();});
+document.getElementById('w-live').addEventListener('click',e=>{e.stopPropagation();refreshWeather();});
 
 /* ================= 시작 ================= */
 buildTasks();
@@ -1187,6 +1383,8 @@ renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoun
 initWeather();
 setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
 if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
+tickWake();                          /* 기상~출발+5분에만 화면 켜짐 유지 */
+setInterval(tickWake,20000);
 setInterval(renderClock,1000);
 setInterval(tickTimer,500);
 setInterval(()=>{renderProgress();checkDepartEvent();},5000);
