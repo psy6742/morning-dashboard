@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7EC8F2">
 <title>유치원 등원 준비 대시보드</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%8E%92%3C/text%3E%3C/svg%3E">
 <style>
 :root{
   --ink:#222B38; --ink-soft:#4a5768;
@@ -451,6 +452,7 @@ body.dex-open #progress-card{display:none}
     <h3>⚙️ 엄마용 설정 · 테스트</h3>
     <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
+    <div class="set-sub" id="set-depart-song" style="padding:0 0 6px"></div>
     <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
@@ -929,7 +931,7 @@ function ytCreate(){
   yttCreate();                       /* 식사 타이머 버저 플레이어도 함께 준비 */
 }
 /* 사용자 제스처(소리 켜기·화면 클릭) 때 플레이어를 미리 깨워 두기
-   → 모바일·태블릿 Chrome에서도 08:10에 자동재생이 막히지 않음 */
+   → 모바일·태블릿 Chrome에서도 출발 1분 전(기본 08:09)에 자동재생이 막히지 않음 */
 function primeYouTube(){
   if(!ytReady||ytFailed||ytPrimed||!YTP)return;
   if(ytWantPlay)return;
@@ -1132,8 +1134,14 @@ function playDoneSound(){
   try{const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
 }
 
-/* 08:10 출발 이벤트 (하루 1회, 출발 후 2시간 안) */
+/* 출발 노래는 '출발 1분 전'(기본 08:09)에 울립니다 (하루 1회, 노래 시각부터 2시간 안).
+   100% 진행 바·"출발 시간이 지났어요!"·화면 유지 해제는 그대로 출발 시각(기본 08:10)입니다. */
+const DEPART_SONG_LEAD=60*1000;               /* 출발 1분 전 */
 const DEPART_SONG_WINDOW=2*3600*1000;
+function departSongTime(){                    /* 출발 시각 - 1분 */
+  return new Date(dateWith(parseHM(S.settings.depart)).getTime()-DEPART_SONG_LEAD);
+}
+function fmtHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function departAlarm(){
   /* 우선 유튜브 '우리는 모두 친구'. 시작하지 못했을 때만 효과음+음성 */
   if(startSong()){watchStart(1600);return;}
@@ -1149,12 +1157,21 @@ function departAlarm(){
   playChime();
   showSongPrompt('🎵 출발 노래 재생하기');
 }
+/* 노래 시각(출발 1분 전)에 5초 주기를 기다리지 않고 바로 울리도록 정확한 타이머를 걸어 둔다.
+   (앱을 다시 열거나 출발 시각을 바꿀 때마다 새로 계산) */
+let songTickTimer=null;
+function scheduleSongTick(){
+  if(songTickTimer){clearTimeout(songTickTimer);songTickTimer=null;}
+  const wait=departSongTime().getTime()-Date.now();
+  if(!(wait>0)||wait>12*3600*1000)return;
+  songTickTimer=setTimeout(()=>{songTickTimer=null;checkDepartEvent();},wait+80);
+}
 function checkDepartEvent(){
-  if(isRestDay())return;                     /* 쉬는 날엔 08:10 출발 노래 없음 */
+  if(isRestDay())return;                     /* 쉬는 날엔 출발 노래 없음 */
   const now=new Date(),d=day(todayKey());
-  const dep=dateWith(parseHM(S.settings.depart));
-  if(now<dep||d.chime)return;
-  if(now-dep>DEPART_SONG_WINDOW){d.chime=true;save();return;}   /* 너무 늦었으면 오늘은 넘어감 */
+  const song=departSongTime();               /* 출발 1분 전(기본 08:09)에 울림 */
+  if(now<song||d.chime)return;
+  if(now-song>DEPART_SONG_WINDOW){d.chime=true;save();return;}   /* 너무 늦었으면 오늘은 넘어감 */
   if(!soundUnlocked){                        /* 소리를 아직 안 켰으면 조용히 넘기지 않고 터치 배너 */
     showSongPrompt('🎵 출발! 노래 켜기');
     return;
@@ -1945,12 +1962,18 @@ const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
   document.getElementById('set-wake').value=S.settings.wake;
   document.getElementById('set-depart').value=S.settings.depart;
+  renderDepartSongHint();
   const px=document.getElementById('set-proxy');
   if(px)px.value=S.settings.weatherProxy||'';
   setProxyState(S.settings.weatherProxy?'지금은 이 주소로 네이버 날씨를 받아와요.':'지금은 Open-Meteo·met.no로 받아와요.');
   renderRestSettings();
   setModal.classList.remove('hidden');
 });
+function renderDepartSongHint(){
+  const el=document.getElementById('set-depart-song');
+  if(!el)return;
+  el.textContent=`🎵 출발 노래는 1분 전(${fmtHM(departSongTime())})에 울려요 · 진행 바 100%·화면 유지 해제는 ${S.settings.depart}`;
+}
 function setProxyState(msg,bad){
   const el=document.getElementById('set-proxy-state');
   if(!el)return;
@@ -1975,9 +1998,11 @@ document.getElementById('set-depart').addEventListener('change',e=>{
   if(!e.target.value)return;
   S.settings.depart=e.target.value;save();
   /* 출발 시각을 바꿨는데 이미 오늘 울린 기록(chime)만 남아 안 울리는 일이 없도록,
-     새 출발 시각이 아직 안 지난 때라면 오늘 기록을 지워 다시 울리게 한다. */
+     새 노래 시각(출발 1분 전)이 아직 지나지 않았으면 오늘 기록을 지워 다시 울리게 한다. */
   const d=day(todayKey());
-  if(d.chime&&dateWith(parseHM(S.settings.depart))>new Date()){d.chime=false;save();hideSongPrompt();}
+  if(d.chime&&departSongTime()>new Date()){d.chime=false;save();hideSongPrompt();}
+  renderDepartSongHint();
+  scheduleSongTick();
   renderProgress();tickWake();
 });
 document.getElementById('btn-unlock').addEventListener('click',()=>{unlockAudio();});
@@ -2040,7 +2065,7 @@ function ensureRestSettings(){
 function refreshRest(){
   const d=day(todayKey());
   /* 출발 노래를 '이미 울린 것'으로 미리 처리하지 않습니다.
-     08:10 판정은 checkDepartEvent만 하고(지난 뒤 2시간 창·터치 배너 포함),
+     08:10이 아니라 '출발 1분 전(기본 08:09)' 판정은 checkDepartEvent만 하고(지난 뒤 2시간 창·터치 배너 포함),
      여기서 d.chime을 건드리면 5초마다 도는 refreshRest가 먼저 찍어 버려 노래가 영영 안 울립니다. */
   /* 아직 시작하지 않은 타이머는 그 날 기준(등원 20분 / 쉬는 날 30분)으로 */
   if(d.timer&&!d.timer.running&&d.timer.since===null&&(d.timer.left===EAT_SCHOOL||d.timer.left===EAT_REST)){
@@ -2120,6 +2145,7 @@ setInterval(renderClock,1000);
 setInterval(tickTimer,500);
 setInterval(()=>{renderProgress();checkDepartEvent();tickWake();},5000);
 checkDepartEvent();
+scheduleSongTick();
 </script>
 </body>
 </html>
