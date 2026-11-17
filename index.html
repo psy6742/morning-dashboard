@@ -559,10 +559,14 @@ function load(){
   try{const s=JSON.parse(localStorage.getItem(SKEY));
     if(s&&s.v===1)return s;
   }catch(e){}
-  return {v:1,days:{},caught:[],settings:defaultSettings()};
+  return {v:1,days:{},caught:[],targetId:null,settings:defaultSettings()};
 }
 let S=load();
 if(!S.settings||typeof S.settings!=='object')S.settings=defaultSettings();
+if(!Array.isArray(S.caught))S.caught=[];
+/* 목표 포켓몬은 잡을 때까지 그대로 유지한다(targetId). 예전 기록·옛 백업에는 이 값이 없으므로
+   없거나 도감에 없는 id면 null로 두고, 다음 목표 계산 때 새로 골라 저장한다. */
+S.targetId=(S.targetId!=null&&POKEMON.some(p=>p.id===Number(S.targetId)))?Number(S.targetId):null;
 if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
 /* 예전 버전은 중계 주소 기본값이 빈 문자열이었다 → 사용자가 직접 비운 기록(proxyCustom)이 없으면 기본 워커 주소를 넣는다 */
 if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
@@ -702,10 +706,21 @@ function fmtK(hm){const{h,m}=parseHM(hm),ap=h<12?'오전':'오후';let h12=h%12;
 /* ================= EXP · 포획 ================= */
 function poolExp(){let t=0;for(const k in S.days)t+=S.days[k].exp||0;return t-EXP_PER_CATCH*S.caught.length;}
 function nextTarget(){
+  /* 한 마리를 잡을 때까지는 며칠이 걸려도 같은 목표를 유지한다.
+     날짜(di)는 '새 목표를 고를 때'만 쓰고, 이미 정해진 목표는 날이 바뀌어도 바꾸지 않는다. */
+  const caughtIds={};S.caught.forEach(c=>{caughtIds[Number(c.id)]=true;});
+  const allCaught=POKEMON.every(p=>caughtIds[p.id]);
   const di=Math.floor(new Date(todayKey()+'T00:00:00')/864e5);
-  for(let i=0;i<POKEMON.length;i++){const p=POKEMON[(di+i)%POKEMON.length];
-    if(!S.caught.some(c=>c.id===p.id))return p;}
-  return POKEMON[di%POKEMON.length]; // 도감 완료 후엔 순환
+  let p=null;
+  if(!allCaught){
+    if(S.targetId!=null)p=POKEMON.find(x=>x.id===Number(S.targetId))||null;
+    if(p&&caughtIds[p.id])p=null;                 /* 이미 잡은 포켓몬이 목표로 남아 있으면 새로 고른다 */
+    if(!p)for(let i=0;i<POKEMON.length;i++){const q=POKEMON[(di+i)%POKEMON.length];
+      if(!caughtIds[q.id]){p=q;break;}}
+  }
+  if(!p)p=POKEMON[di%POKEMON.length];              // 도감 완료 후엔 순환
+  if(S.targetId!==p.id){S.targetId=p.id;save();}   /* 목표가 실제로 바뀔 때만 저장 */
+  return p;
 }
 function renderExp(){
   const p=nextTarget(),pool=Math.max(0,poolExp());
@@ -719,7 +734,9 @@ function checkCatch(){
   if(poolExp()>=EXP_PER_CATCH){
     const p=nextTarget();
     S.caught.push({id:p.id,date:todayKey()});
+    S.targetId=null;            /* 잡았으니 목표를 비우고 */
     save();
+    nextTarget();               /* 다음 목표를 골라 저장 (showCatch의 '다음 목표' 표시에도 쓰인다) */
     showCatch(p);
     return true;
   }
@@ -1666,6 +1683,7 @@ function buildBackup(){
     app:BACKUP_APP, version:BACKUP_VER, exportedAt:new Date().toISOString(),
     dexTotal:POKEMON.length,
     caught:S.caught.map(c=>({id:c.id, date:c.date})),
+    targetId:S.targetId,
     today:todaySnapshot(),
     settings:Object.assign(defaultSettings(),S.settings),
     days:S.days
@@ -1739,11 +1757,15 @@ function parseBackup(raw){
   if(Array.isArray(rs.holidays)){
     settings.holidays=rs.holidays.filter(k=>typeof k==='string'&&DATE_RE.test(k));
   }
-  return {v:1,days,caught,settings,skipped};
+  /* 진행 중인 목표는 (잡지 않은 포켓몬일 때만) 백업에서 되살린다 */
+  let targetId=null;
+  const tid=Number(raw.targetId);
+  if(raw.targetId!=null&&ids.has(tid)&&!caught.some(c=>c.id===tid))targetId=tid;
+  return {v:1,days,caught,targetId,settings,skipped};
 }
 function applyBackup(r){
   try{localStorage.setItem(PRE_RESTORE_KEY,JSON.stringify(S));}catch(e){}   /* 되돌릴 수 있게 복원 전 상태 보관 */
-  S={v:1,days:r.days,caught:r.caught,settings:r.settings};
+  S={v:1,days:r.days,caught:r.caught,targetId:(r.targetId!=null)?r.targetId:null,settings:r.settings};
   day(todayKey());
   recalcExp(day(todayKey()));
   save();
