@@ -150,7 +150,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 
 /* ── 진행 바 ───────────────────────────── */
 #progress-card{height:112px;flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:8px 16px;border-radius:18px}
-#p-left{flex:0 0 auto;width:250px}
+#p-left{flex:0 0 250px;width:250px;min-width:0}
 #p-title{line-height:1.1}
 #p-title .lbl{display:block;font-size:12.5px;font-weight:900;color:var(--ink-soft);letter-spacing:-.2px}
 #p-title b{display:block;font-size:29px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-top:1px}
@@ -171,11 +171,11 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
 #p-labels{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10.5px;font-weight:800;color:var(--ink-soft);margin-top:3px;padding:0 2px}
 #p-msg{flex:1;text-align:center;font-size:10.5px;font-weight:900;color:var(--green-d)}
-#p-school{flex:0 0 auto;font-size:44px;line-height:1;filter:drop-shadow(0 3px 2px rgba(34,43,56,.2))}
+#p-school{flex:0 0 55px;width:55px;text-align:center;font-size:44px;line-height:1;filter:drop-shadow(0 3px 2px rgba(34,43,56,.2))}
 #p-title b.rest{color:#E0731D;font-size:21px;letter-spacing:-.8px}
 /* ── 쉬는 날 ───────────────────────────── */
-#btn-rest{flex:0 0 auto;font-family:inherit;font-size:11.5px;font-weight:900;cursor:pointer;color:#7a4a00;
-  background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:99px;padding:5px 11px;white-space:nowrap;
+#btn-rest{flex:0 0 126px;width:126px;text-align:center;font-family:inherit;font-size:11.5px;font-weight:900;cursor:pointer;color:#7a4a00;
+  background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:99px;padding:5px 8px;white-space:nowrap;
   box-shadow:0 3px 0 rgba(34,43,56,.2);line-height:1.25}
 #btn-rest:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 #btn-rest.on{background:#FFE0B8;color:#8a3b00}
