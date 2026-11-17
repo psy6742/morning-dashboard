@@ -784,6 +784,7 @@ function showRetry(on){
 }
 function renderFail(){
   showRetry(true);
+  if(W.at){renderWeather();return;}   /* 캐시·이전 값이 있으면 그대로 두고 버튼만 */
   if(!W.at){
     document.getElementById('w-temp').textContent='--°';
     document.getElementById('w-desc').textContent='날씨를 못 가져왔어요';
