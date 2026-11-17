@@ -1539,10 +1539,11 @@ function toast(msg){
 }
 function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:''};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
-  let s=String(v==null?'':v).trim().replace(/\s+/g,'');
+  let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
+  if(/^[a-z][a-z0-9+.\-]*:/i.test(s)&&!/^https?:/i.test(s))return '';   /* ftp:// 같은 다른 스킴은 거부 */
   if(!/^https?:\/\//i.test(s))s='https://'+s.replace(/^\/+/, '');
-  try{const u=new URL(s);if(u.protocol!=='https:'&&u.protocol!=='http:')return '';return u.href.replace(/\/+$/,'');}
+  try{const u=new URL(s);if(u.protocol!=='https:'&&u.protocol!=='http:')return '';if(!u.hostname)return '';return u.href.replace(/\/+$/,'');}
   catch(e){return '';}
 }
 function todaySnapshot(){
