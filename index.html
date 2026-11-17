@@ -65,14 +65,22 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .icon-btn{width:40px;height:40px;font-family:inherit;font-size:18px;cursor:pointer;background:#fff;
   border:var(--bw) solid var(--ink);border-radius:12px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
 .icon-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
-/* ── 유튜브 오디오 '우리는 모두 친구' (화면엔 1px, 소리만) ── */
-#yt-wrap{position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:.01;pointer-events:none;overflow:hidden;z-index:0}
-#yt-player,#yt-player iframe{width:1px;height:1px;border:0}
-#yt-timer,#yt-timer iframe{width:1px;height:1px;border:0}
+/* ── 유튜브 오디오 '우리는 모두 친구' (화면엔 2px, 소리만) ──
+   아이패드는 1×1px·opacity .01 플레이어를 '안 보이는 요소'로 보고 재생을 막는 경우가 있어,
+   화면 안 구석에 2×2px(불투명도 0.05)로 실제 렌더 영역에 둔다. */
+#yt-wrap{position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.05;pointer-events:none;overflow:hidden;z-index:0}
+#yt-player,#yt-player iframe{width:2px;height:2px;border:0}
+#yt-timer,#yt-timer iframe{width:2px;height:2px;border:0}
 #song-bar{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:70}
 #btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
 #btn-song-stop:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
+#song-prompt{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:71}
+#btn-song-play{font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;background:#FFE9A8;color:var(--ink);
+  border:var(--bw) solid var(--ink);border-radius:99px;padding:7px 16px;box-shadow:0 4px 0 rgba(34,43,56,.22);transition:.12s;
+  animation:promptBg 1.5s ease-in-out infinite}
+@keyframes promptBg{50%{background:#FFF6D8}}
+#btn-song-play:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 
 .exp-mini{display:flex;align-items:center;gap:8px;background:#fff;border:var(--bw) solid var(--ink);
   border-radius:16px;padding:6px 10px;box-shadow:0 4px 0 rgba(34,43,56,.18)}
@@ -112,10 +120,10 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 #w-dust-chips{margin-left:auto;display:flex;gap:4px}
 .dust-pill{border:2.5px solid var(--ink);border-radius:99px;padding:0 9px;font-size:11px;font-weight:900;
   color:#fff;line-height:1.5;box-shadow:0 2px 0 rgba(34,43,56,.18);white-space:nowrap}
-.dust-pill.d-good{background:#45B36B}
-.dust-pill.d-mod{background:#3E8FD8}
-.dust-pill.d-bad{background:#F0A81E;color:#4a3400}
-.dust-pill.d-vbad{background:#E05555}
+.dust-pill.d-good{background:#3B82F6}                 /* 좋음 = 파랑 */
+.dust-pill.d-mod{background:#22C55E}                  /* 보통 = 초록 */
+.dust-pill.d-bad{background:#FACC15;color:#3F3200}    /* 나쁨 = 노랑(진한 글씨로 대비) */
+.dust-pill.d-vbad{background:#EF4444}                 /* 매우나쁨 = 빨강 */
 .dust-pill.d-unk{background:#AEB8C6}
 
 #w-now{flex:0 0 auto;display:flex;align-items:center;gap:7px;min-height:52px;padding:1px 2px}
@@ -321,6 +329,7 @@ body.dex-open #progress-card{display:none}
 <!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
 <div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div></div>
 <div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
+<div id="song-prompt" class="hidden"><button id="btn-song-play" type="button">🎵 출발 노래 재생하기</button></div>
 
 <div id="app">
   <header>
@@ -642,7 +651,7 @@ function renderClock(){
 function renderRestBits(){
   const rest=isRestDay();
   const btn=document.getElementById('btn-rest');
-  if(btn){btn.textContent=rest?'🎒 등원 날로 전환':'🏖️ 오늘 쉬는 날';btn.classList.toggle('on',rest);}
+  if(btn){btn.textContent=rest?'🎒 등원 날로':'⛱️ 오늘은 쉬는 날';btn.title=rest?'오늘을 등원 날로 바꾸기':'오늘을 쉬는 날로 바꾸기';btn.classList.toggle('on',rest);}
   const sc=document.getElementById('p-school');
   if(sc)sc.textContent=rest?'🎈':'🏫';
 }
@@ -863,6 +872,15 @@ function setSongBar(on){
   if(b)b.textContent=on?'⏹ 우리는 모두 친구 정지':'🎵 우리는 모두 친구 미리 듣기 / 정지';
 }
 function ytEnded(){ytWantPlay=false;ytPlaying=false;setSongBar(false);}
+/* ── 출발 노래 터치 배너 (자동재생이 막혔거나 소리를 아직 안 켰을 때) ── */
+function showSongPrompt(label){
+  const box=document.getElementById('song-prompt');
+  if(!box)return;
+  const b=document.getElementById('btn-song-play');
+  if(label&&b)b.textContent=label;
+  box.classList.remove('hidden');
+}
+function hideSongPrompt(){const box=document.getElementById('song-prompt');if(box)box.classList.add('hidden');}
 function ytCreate(){
   if(YTP||ytReady)return;
   try{
@@ -877,7 +895,7 @@ function ytCreate(){
         },
         onStateChange(e){
           if(!ytWantPlay)return;
-          if(e.data===1||e.data===3){ytPlaying=(e.data===1);if(e.data===1)ytClearFb();setSongBar(true);}
+          if(e.data===1||e.data===3){ytPlaying=(e.data===1);if(e.data===1){ytClearFb();hideSongPrompt();}setSongBar(true);}
           else if(e.data===0||e.data===2){ytEnded();}
         },
         onError(){
@@ -900,11 +918,15 @@ function primeYouTube(){
   if(ua&&ua.isActive===false)return;
   ytPrimed=true;
   try{
-    YTP.mute();YTP.playVideo();
+    YTP.mute();YTP.setVolume(0);YTP.playVideo();
     setTimeout(()=>{
       try{
         if(!ytWantPlay){YTP.pauseVideo();YTP.seekTo(0,true);}
-        YTP.unMute();YTP.setVolume(100);
+        /* 멈춘 뒤에 다음 tick에서 소리만 되돌린다 — pause 직후 unMute는 자동재생 정책을 다시 걷을 수 있음 */
+        setTimeout(()=>{
+          try{if(!ytWantPlay){YTP.unMute();YTP.setVolume(100);}}
+          catch(e){}
+        },120);
       }catch(e){}
     },320);
   }catch(e){ytPrimed=false;}
@@ -958,11 +980,11 @@ function primeBuzz(){
   if(ua&&ua.isActive===false)return;
   yttPrimed=true;
   try{
-    YTT.mute();YTT.playVideo();
+    YTT.mute();YTT.setVolume(0);YTT.playVideo();
     setTimeout(()=>{
       try{
         if(!yttWantPlay){YTT.pauseVideo();YTT.seekTo(0,true);}
-        YTT.unMute();YTT.setVolume(100);
+        setTimeout(()=>{try{if(!yttWantPlay){YTT.unMute();YTT.setVolume(100);}}catch(e){}},120);
       }catch(e){}
     },320);
   }catch(e){yttPrimed=false;}
@@ -1000,7 +1022,8 @@ function watchStart(ms){
     if(!ytStarted()){
       ytEnded();
       try{if(YTP)YTP.pauseVideo();}catch(e){}
-      playChime();
+      playChime();                                   /* 유튜브가 막혔어도 폴백은 반드시 울린다 */
+      showSongPrompt('🎵 출발 노래 재생하기');      /* 터치 한 번으로 바로 재생할 수 있게 배너 */
     }
   },ms);
 }
@@ -1024,7 +1047,9 @@ function unlockAudio(){
 }
 /* 폴백 전용: 효과음 + "가랏, 피카츄!" (유튜브 재생이 불가능할 때만) */
 function playChime(){
-  if(!soundUnlocked||!AC)return;
+  if(!AC)return;
+  try{if(AC.state==='suspended')AC.resume();}catch(e){}    /* 아이패드가 잠깐 잠근 오디오도 깨워서 */
+  if(!soundUnlocked)return;
   try{
     const t=AC.currentTime;
     [[523.25,0],[659.25,.13],[783.99,.26],[1046.5,.4]].forEach(([f,dt])=>{
@@ -1086,7 +1111,8 @@ function playDoneSound(){
   try{const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
 }
 
-/* 08:10 출발 이벤트 (하루 1회) */
+/* 08:10 출발 이벤트 (하루 1회, 출발 후 2시간 안) */
+const DEPART_SONG_WINDOW=2*3600*1000;
 function departAlarm(){
   /* 우선 유튜브 '우리는 모두 친구'. 시작하지 못했을 때만 효과음+음성 */
   if(startSong()){watchStart(1600);return;}
@@ -1095,21 +1121,26 @@ function departAlarm(){
     const iv=setInterval(()=>{
       tries++;
       if(startSong()){clearInterval(iv);watchStart(1600);return;}
-      if(ytFailed||tries>=15){clearInterval(iv);playChime();}
+      if(ytFailed||tries>=15){clearInterval(iv);playChime();showSongPrompt('🎵 출발 노래 재생하기');}
     },400);
     return;
   }
   playChime();
+  showSongPrompt('🎵 출발 노래 재생하기');
 }
 function checkDepartEvent(){
   if(isRestDay())return;                     /* 쉬는 날엔 08:10 출발 노래 없음 */
   const now=new Date(),d=day(todayKey());
   const dep=dateWith(parseHM(S.settings.depart));
-  if(now>=dep&&!d.chime&&soundUnlocked){
-    d.chime=true;save();
-    departAlarm();
-    document.getElementById('modal-catch').classList.add('hidden');
+  if(now<dep||d.chime)return;
+  if(now-dep>DEPART_SONG_WINDOW){d.chime=true;save();return;}   /* 너무 늦었으면 오늘은 넘어감 */
+  if(!soundUnlocked){                        /* 소리를 아직 안 켰으면 조용히 넘기지 않고 터치 배너 */
+    showSongPrompt('🎵 출발! 노래 켜기');
+    return;
   }
+  d.chime=true;save();
+  departAlarm();
+  document.getElementById('modal-catch').classList.add('hidden');
 }
 
 /* ================= 화면 켜짐 유지 (기상 ~ 출발, 기본 06:45~08:10) =========
@@ -1795,11 +1826,20 @@ document.getElementById('btn-proxy-save').addEventListener('click',()=>{
   refreshWeatherForce();
 });
 document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();tickWake();}});
-document.getElementById('set-depart').addEventListener('change',e=>{if(e.target.value){S.settings.depart=e.target.value;save();renderProgress();tickWake();}});
+document.getElementById('set-depart').addEventListener('change',e=>{
+  if(!e.target.value)return;
+  S.settings.depart=e.target.value;save();
+  /* 출발 시각을 바꿨는데 이미 오늘 울린 기록(chime)만 남아 안 울리는 일이 없도록,
+     새 출발 시각이 아직 안 지난 때라면 오늘 기록을 지워 다시 울리게 한다. */
+  const d=day(todayKey());
+  if(d.chime&&dateWith(parseHM(S.settings.depart))>new Date()){d.chime=false;save();hideSongPrompt();}
+  renderProgress();tickWake();
+});
 document.getElementById('btn-unlock').addEventListener('click',()=>{unlockAudio();});
 document.getElementById('btn-preview').addEventListener('click',()=>{
   if(ytWantPlay||ytPlaying){stopSong();return;}          /* 재생 중이면 정지 */
   if(!soundUnlocked)unlockAudio();
+  hideSongPrompt();
   if(startSong()){watchStart(1200);return;}
   playChime();                                           /* 유튜브 불가 → 기존 효과음·음성 */
 });
@@ -1808,6 +1848,16 @@ document.getElementById('btn-preview-beep').addEventListener('click',()=>{
   toggleBuzzPreview();                                   /* 식사 타이머 종료음 미리 듣기 / 정지 */
 });
 document.getElementById('btn-song-stop').addEventListener('click',stopSong);
+document.getElementById('btn-song-play').addEventListener('click',()=>{
+  /* 자동재생이 막혔거나 소리가 꿇 있을 때 — 이 터치로 깨워서 바로 재생 */
+  const wasLocked=!soundUnlocked;
+  unlockAudio();
+  hideSongPrompt();
+  const d=day(todayKey());d.chime=true;save();      /* 오늘 출발 이벤트는 여기서 끝 */
+  if(startSong()){watchStart(1600);return;}
+  if(wasLocked)playChime();                         /* 유튜브가 막히면 최소한 효과음은 */
+  showSongPrompt('🎵 출발 노래 재생하기');
+});
 document.addEventListener('pointerdown',()=>{if(soundUnlocked){primeYouTube();primeBuzz();}tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
   const d=day(todayKey());
@@ -1844,8 +1894,9 @@ function ensureRestSettings(){
 }
 function refreshRest(){
   const d=day(todayKey());
-  /* 이미 지난 출발 시각으로 소급해 노래가 울리지 않게 */
-  if(!isRestDay()&&!d.chime&&new Date()>=dateWith(parseHM(S.settings.depart)))d.chime=true;
+  /* 출발 노래를 '이미 울린 것'으로 미리 처리하지 않습니다.
+     08:10 판정은 checkDepartEvent만 하고(지난 뒤 2시간 창·터치 배너 포함),
+     여기서 d.chime을 건드리면 5초마다 도는 refreshRest가 먼저 찍어 버려 노래가 영영 안 울립니다. */
   /* 아직 시작하지 않은 타이머는 그 날 기준(등원 20분 / 쉬는 날 30분)으로 */
   if(d.timer&&!d.timer.running&&d.timer.since===null&&(d.timer.left===EAT_SCHOOL||d.timer.left===EAT_REST)){
     d.timer.left=dayTotalSec(todayKey());
