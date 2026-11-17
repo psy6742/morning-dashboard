@@ -71,14 +71,14 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 #yt-wrap{position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.05;pointer-events:none;overflow:hidden;z-index:0}
 #yt-player,#yt-player iframe{width:2px;height:2px;border:0}
 #yt-timer,#yt-timer iframe{width:2px;height:2px;border:0}
-#song-bar{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:70}
+#song-bar{position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:70}
 #btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
 #btn-song-stop:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
-#song-prompt{position:fixed;left:50%;top:5px;transform:translateX(-50%);z-index:71}
+#song-prompt{position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:71}
 #btn-song-play{font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;background:#FFE9A8;color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:99px;padding:7px 16px;box-shadow:0 4px 0 rgba(34,43,56,.22);transition:.12s;
-  animation:promptBg 1.5s ease-in-out infinite}
+  white-space:nowrap;animation:promptBg 1.5s ease-in-out infinite}
 @keyframes promptBg{50%{background:#FFF6D8}}
 #btn-song-play:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 
@@ -92,7 +92,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .bar>div{height:100%;width:0%;background:linear-gradient(180deg,#FFD34D,#F0A81E);border-radius:99px;transition:width .5s}
 
 /* 중앙: 날짜 + 디지털 시계 */
-#hc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px}
+#hc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;position:relative}
 #date-line{font-size:19px;font-weight:900;color:#fff;letter-spacing:-.2px;
   text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink),
               -2px 0 0 var(--ink),2px 0 0 var(--ink),0 -2px 0 var(--ink),0 2px 0 var(--ink),0 4px 0 rgba(34,43,56,.35)}
@@ -214,6 +214,8 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .task.active .poke-mini{display:block}
 .task .task-img{flex:1 1 auto;min-height:0;width:100%;max-height:332px;height:100%;object-fit:cover;object-position:center 45%;pointer-events:none;
   mix-blend-mode:multiply}
+/* 우유 마시기: 일러스트가 카드 정가운데에 오도록(그림 자체도 주제 중심으로 잘라 둠) */
+.task[data-k="milk"] .task-img{object-fit:cover;object-position:center center}
 .task .t-label{flex:0 0 auto;font-size:17px;font-weight:900;text-align:center;line-height:1.15;padding:4px 0 2px;letter-spacing:-.4px}
 .task.active{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(250,204,21,.35),0 6px 0 rgba(34,43,56,.14),0 10px 22px rgba(34,43,56,.12)}
 .task.done{border-color:var(--green);background:var(--green-l)}
@@ -328,8 +330,6 @@ body.dex-open #progress-card{display:none}
 
 <!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
 <div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div></div>
-<div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
-<div id="song-prompt" class="hidden"><button id="btn-song-play" type="button">🎵 출발 노래 재생하기</button></div>
 
 <div id="app">
   <header>
@@ -356,6 +356,8 @@ body.dex-open #progress-card{display:none}
 
     <!-- 중앙: 날짜 + 디지털 시계 -->
     <div id="hc">
+      <div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
+      <div id="song-prompt" class="hidden"><button id="btn-song-play" type="button">🎵 출발 노래 재생하기</button></div>
       <div id="date-line"></div>
       <div id="clock"></div>
       <div id="wl-mini" class="hidden">화면 유지 중</div>
@@ -651,7 +653,7 @@ function renderClock(){
 function renderRestBits(){
   const rest=isRestDay();
   const btn=document.getElementById('btn-rest');
-  if(btn){btn.textContent=rest?'🎒 등원 날로':'⛱️ 오늘은 쉬는 날';btn.title=rest?'오늘을 등원 날로 바꾸기':'오늘을 쉬는 날로 바꾸기';btn.classList.toggle('on',rest);}
+  if(btn){btn.textContent=rest?'🎒 오늘은 등원 날':'⛱️ 오늘은 쉬는 날';btn.title=rest?'오늘을 등원 날로 바꾸기':'오늘을 쉬는 날로 바꾸기';btn.classList.toggle('on',rest);}
   const sc=document.getElementById('p-school');
   if(sc)sc.textContent=rest?'🎈':'🏫';
 }
