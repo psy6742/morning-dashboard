@@ -45,7 +45,7 @@ body{
 .hidden{display:none !important}
 
 /* ── 상단 (하늘 위) ────────────────────── */
-header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
+header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 
 /* 좌: 도감 버튼 + EXP */
 #hl{width:252px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:8px}
@@ -83,14 +83,14 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 .bar>div{height:100%;width:0%;background:linear-gradient(180deg,#FFD34D,#F0A81E);border-radius:99px;transition:width .5s}
 
 /* 중앙: 날짜 + 디지털 시계 */
-#hc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
+#hc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px}
 #date-line{font-size:19px;font-weight:900;color:#fff;letter-spacing:-.2px;
   text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink),
               -2px 0 0 var(--ink),2px 0 0 var(--ink),0 -2px 0 var(--ink),0 2px 0 var(--ink),0 4px 0 rgba(34,43,56,.35)}
 #clock{display:flex;align-items:flex-end;gap:11px}
-#clock .ap{font-size:19px;font-weight:900;color:#fff;margin-bottom:13px;line-height:1;
-  text-shadow:-2.5px -2.5px 0 var(--ink),2.5px -2.5px 0 var(--ink),-2.5px 2.5px 0 var(--ink),2.5px 2.5px 0 var(--ink),
-              -2.5px 0 0 var(--ink),2.5px 0 0 var(--ink),0 -2.5px 0 var(--ink),0 2.5px 0 var(--ink),0 5px 0 rgba(34,43,56,.3)}
+#clock .ap{font-size:20px;font-weight:900;color:#fff;margin-bottom:14px;line-height:1;
+  text-shadow:-1.5px -1.5px 0 var(--ink),1.5px -1.5px 0 var(--ink),-1.5px 1.5px 0 var(--ink),1.5px 1.5px 0 var(--ink),
+              -1.5px 0 0 var(--ink),1.5px 0 0 var(--ink),0 -1.5px 0 var(--ink),0 1.5px 0 var(--ink)}
 #clock .d{position:relative;font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;font-weight:900;color:#fff;
   font-size:66px;line-height:.86;letter-spacing:2px;z-index:0;
   text-shadow:-2px 6px 0 rgba(34,43,56,.22),0 9px 0 rgba(34,43,56,.18)}
@@ -102,7 +102,7 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
   text-shadow:-1.5px -1.5px 0 var(--ink),1.5px -1.5px 0 var(--ink),-1.5px 1.5px 0 var(--ink),1.5px 1.5px 0 var(--ink),0 2px 0 rgba(34,43,56,.3)}
 
 /* 우: 날씨 박스 — 1)지역·링크·미세 2)현재 3)시간대 4)팁 */
-#weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;gap:4px;padding:6px 8px;border-radius:18px}
+#weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:18px}
 #w-top{flex:0 0 auto;display:flex;align-items:center;gap:4px;min-height:21px}
 #w-place{font-size:12px;font-weight:900;color:var(--ink);white-space:nowrap}
 .w-link{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;text-decoration:none;background:#EAF4FF;
@@ -122,7 +122,7 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 #w-temp{font-size:40px;font-weight:900;line-height:1;letter-spacing:-1px}
 #w-desc{font-size:15px;font-weight:900;padding-top:13px;white-space:nowrap}
 #w-side{margin-left:auto;display:flex;align-items:center;gap:7px;min-width:0}
-#w-minmax{font-size:12px;font-weight:800;color:var(--ink-soft);white-space:nowrap}
+#w-minmax{font-size:16.5px;font-weight:900;color:var(--ink);white-space:nowrap;letter-spacing:-.3px}
 #w-live{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;background:#EAF4FF;cursor:pointer;
   border:2.5px solid var(--ink);border-radius:99px;padding:1px 8px;line-height:1.5;white-space:nowrap;
   box-shadow:0 2px 0 rgba(34,43,56,.18)}
@@ -130,15 +130,17 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 
 .w-hours{flex:0 0 auto;display:flex;gap:6px}
 .wh-chip{flex:1 1 0;min-width:0;border:2.5px solid var(--ink);border-radius:12px;background:#F1F2F4;text-align:center;
-  padding:1px 0 2px;display:flex;flex-direction:column;align-items:center;gap:0;box-shadow:0 2px 0 rgba(34,43,56,.14)}
-.wh-h{font-size:9.5px;font-weight:900;color:var(--ink-soft)}
-.wh-i{font-size:15px;line-height:1.02}
-.wh-t{font-size:13px;font-weight:900;line-height:1.1}
-.wh-p{font-size:9px;font-weight:900;color:#2F6FB5;line-height:1.2}
+  padding:3px 0 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  box-shadow:0 2px 0 rgba(34,43,56,.14)}
+.wh-h{font-size:13px;font-weight:900;color:var(--ink-soft)}
+.wh-i{font-size:27px;line-height:1.02}
+.wh-t{font-size:25px;font-weight:900;line-height:1.05;letter-spacing:-.6px}
+.wh-p{font-size:13px;font-weight:900;color:#2F6FB5;line-height:1.2}
+.wh-row{display:flex;align-items:center;justify-content:center;gap:5px;width:100%}
 
-#w-tip-row{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;min-height:27px;
+#w-tip-row{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;min-height:30px;
   background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:12px;padding:1px 9px;box-shadow:0 2px 0 rgba(34,43,56,.14)}
-#w-tip{font-size:12.5px;font-weight:900;color:#5a4300;white-space:nowrap;line-height:1.2}
+#w-tip{font-size:13px;font-weight:900;color:#5a4300;white-space:nowrap;line-height:1.2}
 #w-err{flex:0 0 auto;font-size:10.5px;color:#b34820;font-weight:900;white-space:nowrap}
 #w-retry{font-family:inherit;font-size:11px;font-weight:900;color:#1d5cad;background:#E3F0FD;
   border:2px solid var(--ink);border-radius:99px;padding:1px 9px;cursor:pointer;white-space:nowrap;
@@ -166,6 +168,21 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 #p-labels{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10.5px;font-weight:800;color:var(--ink-soft);margin-top:3px;padding:0 2px}
 #p-msg{flex:1;text-align:center;font-size:10.5px;font-weight:900;color:var(--green-d)}
 #p-school{flex:0 0 auto;font-size:44px;line-height:1;filter:drop-shadow(0 3px 2px rgba(34,43,56,.2))}
+#p-title b.rest{color:#E0731D;font-size:21px;letter-spacing:-.8px}
+/* ── 쉬는 날 ───────────────────────────── */
+#btn-rest{flex:0 0 auto;font-family:inherit;font-size:11.5px;font-weight:900;cursor:pointer;color:#7a4a00;
+  background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:99px;padding:5px 11px;white-space:nowrap;
+  box-shadow:0 3px 0 rgba(34,43,56,.2);line-height:1.25}
+#btn-rest:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
+#btn-rest.on{background:#FFE0B8;color:#8a3b00}
+.set-date{font-family:inherit;font-size:12px;padding:2px 5px;border:2px solid var(--ink);border-radius:8px;font-weight:800}
+.vac-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.chip-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:900;color:#1d5cad;background:#E3F0FD;
+  border:2px solid var(--ink);border-radius:99px;padding:1px 4px 1px 9px}
+.chip button{font-family:inherit;font-weight:900;font-size:12px;line-height:1;cursor:pointer;color:#A63D12;
+  background:#fff;border:1.5px solid var(--ink);border-radius:99px;width:17px;height:17px;padding:0}
+.chip button:active{transform:translateY(1px)}
 
 /* ── 할 일 카드 ────────────────────────── */
 #view-dash{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
@@ -196,6 +213,7 @@ header{display:flex;gap:12px;height:192px;flex:0 0 auto;align-items:stretch}
 .task.done .check,.task.done .done-badge{display:flex}
 .task.done .task-img{opacity:.45}
 .task.done .active-bubble,.task.done .poke-mini{display:none}
+/* 쉬는 날 */
 
 /* 밥 먹기 타이머 */
 .timer{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;margin:2px 0 1px;
@@ -370,6 +388,7 @@ body.dex-open #progress-card{display:none}
       <div id="p-labels"><span id="p-wake-label">기상 06:45</span><span id="p-msg"></span><span id="p-depart-label">출발 08:10</span></div>
     </div>
     <div id="p-school">🏫</div>
+    <button id="btn-rest" type="button" title="오늘을 쉬는 날로 / 등원 날로 바꾸기">🏖️ 오늘 쉬는 날</button>
   </section>
 
   <!-- 할 일 -->
@@ -418,11 +437,30 @@ body.dex-open #progress-card{display:none}
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
     <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <span>출발 알림 음악 · 유튜브 '우리는 모두 친구'</span>
-      <span style="display:flex;gap:6px;margin-top:6px">
-        <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
-        <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
-      </span>
+      <div class="btn-col">
+        <span>쉬는 날 · 방학/휴일 설정 <b id="set-rest-now" style="font-size:12px;color:#E0731D"></b></span>
+        <span class="set-sub">토·일요일과 법정공휴일(대체공휴일 포함)은 자동으로 쉬는 날이에요. 방학 기간과 특정 휴일 날짜를 넣으면 그날도 쉽니다. 오늘 하루만 바꿀 때는 진행 바의 <b>🏖️ 오늘 쉬는 날</b> 버튼을 누르세요.</span>
+        <div class="vac-row">
+          <input type="date" id="vac-s" class="set-date"><span>~</span><input type="date" id="vac-e" class="set-date">
+          <button class="set-btn sb-backup" id="vac-add" type="button">+ 방학·휴원 기간</button>
+        </div>
+        <div id="vac-list" class="chip-list"></div>
+        <div class="vac-row">
+          <input type="date" id="hol-d" class="set-date">
+          <button class="set-btn sb-backup" id="hol-add" type="button">+ 휴일 날짜</button>
+        </div>
+        <div id="hol-list" class="chip-list"></div>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <span>소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
+      <div class="btn-col" style="margin-top:6px">
+        <span style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
+          <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
+        </span>
+        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기</button>
+      </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
@@ -469,14 +507,23 @@ const POKEMON=[
   [571,'조로아크'], [637,'불카모스'], [658,'개굴닌자'], [700,'님피아'], [745,'루가루암'], [813,'염버니'],
   [906,'나오하'], [912,'꾸왁스'], [1007,'코라이돈'], [1008,'미라이돈']
 ].map(([id,name])=>({id,no:String(id).padStart(3,'0'),name}));
-const TASKS=[
-  {n:1,label:'아침 할 일(화장실)'},
-  {n:2,label:'가방 준비'},
-  {n:3,label:'밥 먹기'},
-  {n:4,label:'아침 공부'},
-  {n:5,label:'양치하고 옷 입기'}
+const TASKS=[                                  /* 등원 날 5가지 */
+  {k:'toilet',label:'아침 할 일(화장실)',img:'task-1'},
+  {k:'bag',   label:'가방 준비',         img:'task-2'},
+  {k:'eat',   label:'밥 먹기',           img:'task-3',timer:true},
+  {k:'study', label:'아침 공부',         img:'task-4'},
+  {k:'brush', label:'양치하고 옷 입기',   img:'task-5'}
 ];
-const EXP_PER_TASK=10, EXP_PER_CATCH=100, EAT_SECONDS=1200;
+const RTASKS=[                                 /* 쉬는 날 5가지 (종료시간 없음, 밥 먹기 30분 타이머) */
+  {k:'toilet',label:'아침 할 일(화장실)',img:'task-1'},
+  {k:'eat',   label:'밥 먹기',           img:'task-3',timer:true},
+  {k:'study', label:'아침 공부',         img:'task-4'},
+  {k:'milk',  label:'우유 마시기',       img:'task-milk'},
+  {k:'brush', label:'양치하기',           img:'task-5'}
+];
+const NUM2KEY={1:'toilet',2:'bag',3:'eat',4:'study',5:'brush'};   /* 예전 숫자 기록 마이그레이션 */
+const EXP_PER_TASK=10, EXP_PER_CATCH=100;
+const EAT_SCHOOL=1200, EAT_REST=1800;      /* 밥 먹기 기본: 등원 날 20분 · 쉬는 날 30분 */
 const SKEY='morningDashboard.v1';
 const LAT=37.5712, LON=127.0545; // 서울 동대문구 답십리1동
 
@@ -487,14 +534,75 @@ function load(){
   try{const s=JSON.parse(localStorage.getItem(SKEY));
     if(s&&s.v===1)return s;
   }catch(e){}
-  return {v:1,days:{},caught:[],settings:{wake:'06:45',depart:'08:10',sound:false}};
+  return {v:1,days:{},caught:[],settings:{wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[]}};
 }
 let S=load();
+/* 예전 버전의 숫자 키(1~5) 기록을 루틴 키로 옮긴다 */
+(function migrateTaskKeys(){
+  try{
+    Object.keys(S.days||{}).forEach(k=>{
+      const d=S.days[k];
+      if(!d||!d.tasks)return;
+      const nt={},ni={};
+      Object.keys(d.tasks).forEach(key=>{
+        const nk=NUM2KEY[key]||key;
+        if(d.tasks[key]===true)nt[nk]=true;
+        if(d.inTime&&d.inTime[key]===true)ni[nk]=true;
+      });
+      d.tasks=nt;d.inTime=ni;
+    });
+  }catch(e){}
+})();
+function dayTasks(){return restInfo().rest?RTASKS:TASKS;}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
-  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:EAT_SECONDS,running:false,since:null,ended:false}};
+  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false}};
   return S.days[k];
 }
+
+/* ================= 쉬는 날 (주말 · 법정공휴일 · 방학 · 개인 결석) =================
+   토·일요일과 아래 공휴일은 자동으로 쉬는 날. 방학 기간·특정 휴일은 ⚙️에서 추가하고,
+   오늘 하루만 바꿀 때는 진행 바의 '🏖️ 오늘 쉬는 날 / 🎒 등원 날로 전환' 버튼을 쓸니다.
+   2028년은 월력요항 공고 전 계산값이라 임시공휴일·정정이 있으면 목록에 더하거나 빼면 됩니다. */
+const HOLIDAYS={
+  '2026-01-01':'신정','2026-02-16':'설날 연휴','2026-02-17':'설날','2026-02-18':'설날 연휴',
+  '2026-03-01':'삼일절','2026-03-02':'대체공휴일(삼일절)','2026-05-01':'노동절','2026-05-05':'어린이날',
+  '2026-05-24':'부처님오신날','2026-05-25':'대체공휴일(부처님오신날)','2026-06-03':'지방선거일','2026-06-06':'현충일',
+  '2026-07-17':'제헌절','2026-08-15':'광복절','2026-08-17':'대체공휴일(광복절)',
+  '2026-09-24':'추석 연휴','2026-09-25':'추석','2026-09-26':'추석 연휴',
+  '2026-10-03':'개천절','2026-10-05':'대체공휴일(개천절)','2026-10-09':'한글날','2026-12-25':'성탄절',
+  '2027-01-01':'신정','2027-02-06':'설날 연휴','2027-02-07':'설날','2027-02-08':'설날 연휴','2027-02-09':'대체공휴일(설날)',
+  '2027-03-01':'삼일절','2027-05-01':'노동절','2027-05-03':'대체공휴일(노동절)','2027-05-05':'어린이날',
+  '2027-05-13':'부처님오신날','2027-06-06':'현충일','2027-07-17':'제헌절','2027-07-19':'대체공휴일(제헌절)',
+  '2027-08-15':'광복절','2027-08-16':'대체공휴일(광복절)','2027-09-14':'추석 연휴','2027-09-15':'추석','2027-09-16':'추석 연휴',
+  '2027-10-03':'개천절','2027-10-04':'대체공휴일(개천절)','2027-10-09':'한글날','2027-10-11':'대체공휴일(한글날)',
+  '2027-12-25':'성탄절','2027-12-27':'대체공휴일(성탄절)',
+  '2028-01-01':'신정','2028-01-26':'설날 연휴','2028-01-27':'설날','2028-01-28':'설날 연휴',
+  '2028-03-01':'삼일절','2028-04-12':'국회의원선거일','2028-05-01':'노동절','2028-05-02':'부처님오신날',
+  '2028-05-05':'어린이날','2028-06-06':'현충일','2028-07-17':'제헌절','2028-08-15':'광복절',
+  '2028-10-02':'추석 연휴','2028-10-03':'추석·개천절','2028-10-04':'추석 연휴','2028-10-05':'대체공휴일(추석)',
+  '2028-10-09':'한글날','2028-12-25':'성탄절'
+};
+const REST_WHY={weekend:'주말',holiday:'공휴일',custom:'지정 휴일',vacation:'방학',manual:'직접 전환',school:'등원 날'};
+function vacations(){return Array.isArray(S.settings.vacations)?S.settings.vacations:[];}
+function extraHolidays(){return Array.isArray(S.settings.holidays)?S.settings.holidays:[];}
+function autoRest(k){
+  if(HOLIDAYS[k])return 'holiday';
+  if(extraHolidays().indexOf(k)>=0)return 'custom';
+  if(vacations().some(v=>v&&v.s&&k>=v.s&&k<=(v.e||v.s)))return 'vacation';
+  const w=new Date(k+'T00:00:00').getDay();
+  if(w===0||w===6)return 'weekend';
+  return '';
+}
+function restInfo(k){
+  k=k||todayKey();
+  const d=S.days[k];
+  if(d&&typeof d.restOverride==='boolean')return {rest:d.restOverride,why:'manual'};
+  const a=autoRest(k);
+  return a?{rest:true,why:a}:{rest:false,why:'school'};
+}
+function isRestDay(){return restInfo().rest;}
+function dayTotalSec(k){return restInfo(k).rest?EAT_REST:EAT_SCHOOL;}
 
 /* ================= 시계·진행 ================= */
 const WEEK='일월화수목금토'.split('');
@@ -510,8 +618,36 @@ function renderClock(){
   document.getElementById('clock').innerHTML=
     `<span class="ap">${c.ap}</span><span class="d" data-t="${c.h12}">${c.h12}</span><span class="colon" data-t=":">:</span><span class="d" data-t="${String(c.m).padStart(2,'0')}">${String(c.m).padStart(2,'0')}</span>`;
 }
+function renderRestBits(){
+  const rest=isRestDay();
+  const btn=document.getElementById('btn-rest');
+  if(btn){btn.textContent=rest?'🎒 등원 날로 전환':'🏖️ 오늘 쉬는 날';btn.classList.toggle('on',rest);}
+  const sc=document.getElementById('p-school');
+  if(sc)sc.textContent=rest?'🎈':'🏫';
+}
 function renderProgress(){
+  renderRestBits();
   const now=new Date();
+  if(isRestDay()){                     /* 쉬는 날: 출발 카운트다운 대신 5가지 루틴 진행률 */
+    const d=day(todayKey());
+    const list=dayTasks();
+    const done=list.filter(t=>d.tasks[t.k]).length;
+    const pct=Math.round(done/list.length*100);
+    document.getElementById('p-title').innerHTML=
+      '<span class="lbl">쉬는 날 루틴 🎈</span><b class="rest">오늘은 유치원에 안 가요!</b>';
+    document.getElementById('p-msg').textContent=`${done}/${list.length} 완료`;
+    document.getElementById('p-wake-label').textContent='기상 '+S.settings.wake;
+    document.getElementById('p-depart-label').textContent='쉬는 날';
+    document.getElementById('p-sub').textContent=
+      '여유롭게 5가지 완료하고 포켓몬 경험치를 모아요';
+    document.getElementById('p-fill').style.width=pct+'%';
+    const poke=nextTarget();
+    const pp=document.getElementById('p-poke');
+    pp.src=`assets/pokemon/${poke.id}.png`;
+    pp.alt=poke.name;
+    pp.style.left=pct+'%';
+    return;
+  }
   const wake=dateWith(parseHM(S.settings.wake)), dep=dateWith(parseHM(S.settings.depart));
   if(dep<=wake){dep.setDate(dep.getDate()+1);}
   let pct,title,msg;
@@ -580,15 +716,15 @@ document.getElementById('catch-close').addEventListener('click',()=>{
 function buildTasks(){
   const main=document.getElementById('view-dash');
   main.innerHTML='';
-  TASKS.forEach(t=>{
+  dayTasks().forEach((t,i)=>{
     const el=document.createElement('div');
-    el.className='task';el.id=`task-${t.n}`;el.dataset.n=t.n;
-    let inner=`<div class="num">${t.n}</div>
+    el.className='task';el.id=`task-${i+1}`;el.dataset.k=t.k;
+    let inner=`<div class="num">${i+1}</div>
       <div class="active-bubble">같이 하자!</div>
       <img class="poke-mini" src="" alt="오늘의 포켓몬">
-      <img class="task-img" src="assets/task-${t.n}.png" alt="${t.label}">
-      ${t.n===3?`<div class="timer" id="eat-timer">
-        <div id="t-time">20:00</div>
+      <img class="task-img" src="assets/${t.img}.png" alt="${t.label}">
+      ${t.timer?`<div class="timer" id="eat-timer">
+        <div id="t-time">${fmtSec(dayTotalSec(todayKey()))}</div>
         <div class="t-btns">
           <button id="t-start">▶ 시작</button>
           <button id="t-reset">⟳</button>
@@ -598,7 +734,7 @@ function buildTasks(){
       <div class="t-label">${t.label}</div>
       <div class="check">✔</div><div class="done-badge">완료!</div>`;
     el.innerHTML=inner;
-    el.addEventListener('click',()=>toggleTask(t.n));
+    el.addEventListener('click',()=>toggleTask(t.k));
     main.appendChild(el);
   });
   document.getElementById('t-start').addEventListener('click',e=>{e.stopPropagation();timerToggle();});
@@ -609,25 +745,34 @@ function isBeforeDepart(){
   const now=new Date(),dep=dateWith(parseHM(S.settings.depart));
   return now<dep;
 }
-function toggleTask(n,forceInTime){
+function recalcExp(d){
+  let e=0;
+  dayTasks().forEach(t=>{if(d.tasks[t.k]&&d.inTime[t.k])e+=EXP_PER_TASK;});   /* 쉬는 날 5개 = +50 */
+  d.exp=Math.max(0,e);
+}
+function toggleTask(k,forceInTime){
   const d=day(todayKey());
-  if(!d.tasks[n]){
-    d.tasks[n]=true;
-    d.inTime[n]=(typeof forceInTime==='boolean')?forceInTime:isBeforeDepart();
-    if(d.inTime[n]){d.exp=(d.exp||0)+EXP_PER_TASK;}
+  const rest=isRestDay();
+  if(!dayTasks().some(t=>t.k===k))return;
+  if(!d.tasks[k]){
+    d.tasks[k]=true;
+    d.inTime[k]=rest?true:((typeof forceInTime==='boolean')?forceInTime:isBeforeDepart());
   }else{
-    if(d.inTime[n])d.exp=Math.max(0,(d.exp||0)-EXP_PER_TASK);
-    delete d.tasks[n];delete d.inTime[n];
+    delete d.tasks[k];delete d.inTime[k];
   }
-  save();renderTasks();renderExp();
+  recalcExp(d);
+  save();renderTasks();renderExp();renderProgress();
+  tickWake();                                  /* 쉬는 날: 양치(5번) 체크하면 화면 유지 해제 */
   checkCatch();
 }
 function renderTasks(){
   const d=day(todayKey());
+  const list=dayTasks();
   let taken=false;
-  TASKS.forEach(t=>{
-    const el=document.getElementById(`task-${t.n}`);
-    const done=!!d.tasks[t.n];
+  list.forEach((t,i)=>{
+    const el=document.getElementById(`task-${i+1}`);
+    if(!el)return;
+    const done=!!d.tasks[t.k];
     el.classList.toggle('done',done);
     const act=!done&&!taken;
     if(act)taken=true;
@@ -635,13 +780,14 @@ function renderTasks(){
   });
   renderTimer();
 }
-/* 밥 먹기 20분 타이머 */
+/* 밥 먹기 타이머 — 등원 날 20분 · 쉬는 날 30분 */
+function fmtSec(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function renderTimer(){
   const d=day(todayKey()).timer,left=Math.max(0,Math.ceil(d.left));
   const el=document.getElementById('eat-timer');if(!el)return;
   el.classList.toggle('on',!!d.running);
   const tEl=document.getElementById('t-time');
-  tEl.textContent=`${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`;
+  tEl.textContent=fmtSec(left);
   tEl.classList.toggle('ended',d.left<=0);
   const s=document.getElementById('t-start');
   s.textContent=d.running?'⏸ 일시정지':'▶ 시작';
@@ -649,14 +795,14 @@ function renderTimer(){
 }
 function timerToggle(){
   const t=day(todayKey()).timer;
-  if(t.left<=0){t.left=EAT_SECONDS;t.ended=false;}
+  if(t.left<=0){t.left=dayTotalSec(todayKey());t.ended=false;}
   if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);t.running=false;t.since=null;}
   else{t.running=true;t.since=Date.now();}
   save();renderTimer();
 }
 function timerReset(){
   const d=day(todayKey());
-  d.timer={left:EAT_SECONDS,running:false,since:null,ended:false};
+  d.timer={left:dayTotalSec(todayKey()),running:false,since:null,ended:false};
   save();renderTimer();
 }
 function timerEnd(){
@@ -839,6 +985,7 @@ function departAlarm(){
   playChime();
 }
 function checkDepartEvent(){
+  if(isRestDay())return;                     /* 쉬는 날엔 08:10 출발 노래 없음 */
   const now=new Date(),d=day(todayKey());
   const dep=dateWith(parseHM(S.settings.depart));
   if(now>=dep&&!d.chime&&soundUnlocked){
@@ -859,8 +1006,16 @@ function wakeRange(){
   return {start,end};
 }
 function wakeNeeded(){
-  const now=new Date(),r=wakeRange();
-  return now>=r.start&&now<r.end;
+  const now=new Date();
+  const start=dateWith(parseHM(S.settings.wake));
+  if(now<start)return false;
+  if(isRestDay()){
+    const d=day(todayKey());
+    return !d.tasks.brush;                   /* 쉬는 날: 5번 양치 완료하면 바로 해제 */
+  }
+  let end=dateWith(parseHM(S.settings.depart));
+  if(end<=start)end=new Date(end.getTime()+86400000);
+  return now<end;
 }
 function setWakeUI(state){
   const mini=document.getElementById('wl-mini'),row=document.getElementById('set-wl');
@@ -875,7 +1030,7 @@ function acquireWake(){
   try{
     navigator.wakeLock.request('screen').then(s=>{
       wlSentinel=s;
-      s.addEventListener('release',()=>{wlSentinel=null;setWakeUI(wakeNeeded()?'off':'off');});
+      s.addEventListener('release',()=>{wlSentinel=null;setWakeUI('off');});
       setWakeUI('on');
     }).catch(()=>{wlSentinel=null;setWakeUI('off');});   /* 절전·미지원 등은 조용히 */
   }catch(e){wlSentinel=null;setWakeUI('off');}
@@ -1027,8 +1182,8 @@ function renderFail(){
   document.getElementById('w-minmax').textContent='';
   document.getElementById('w-icon').textContent='🌥️';
   document.getElementById('w-hours').innerHTML=HOURS.map(h=>
-    `<div class="wh-chip"><div class="wh-h">${h}시</div><div class="wh-i">·</div>`+
-    `<div class="wh-t">--°</div><div class="wh-p">💧--%</div></div>`).join('');
+    `<div class="wh-chip"><div class="wh-row"><span class="wh-h">${h}시</span><span class="wh-i">·</span></div>`+
+    `<div class="wh-row"><span class="wh-t">--°</span><span class="wh-p">💧--%</span></div></div>`).join('');
   document.getElementById('w-dust-chips').innerHTML=
     '<span class="dust-pill d-unk">미세 -</span><span class="dust-pill d-unk">초미세 -</span>';
   document.getElementById('w-tip').textContent='';
@@ -1122,9 +1277,8 @@ function renderWeather(){
   (W.hours||[]).forEach(o=>{
     const [hd,hi]=WMO[o.code]||['','🌡️'];
     const chip=document.createElement('div');chip.className='wh-chip';
-    chip.innerHTML=`<div class="wh-h">${o.h}시</div><div class="wh-i">${hi}</div>
-      <div class="wh-t">${round1(o.t)}°</div>
-      <div class="wh-p">💧${o.p??0}%</div>`;
+    chip.innerHTML=`<div class="wh-row"><span class="wh-h">${o.h}시</span><span class="wh-i">${hi}</span></div>`+
+      `<div class="wh-row"><span class="wh-t">${round1(o.t)}°</span><span class="wh-p">💧${o.p??0}%</span></div>`;
     hours.appendChild(chip);
   });
   /* 1줄: 미세·초미세 등급 배지 (실패하면 안전 표시) */
@@ -1204,7 +1358,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[]};}
 function todaySnapshot(){
   const k=todayKey(), d=S.days[k], t=nextTarget();
   return {date:k, exp:(d&&d.exp)||0, tasksDone:d?Object.keys(d.tasks||{}).length:0,
@@ -1253,20 +1407,25 @@ function parseBackup(raw){
     const o=srcDays[k];
     if(!DATE_RE.test(k)||!o||typeof o!=='object')return;
     const tasks={},inTime={};
-    TASKS.forEach(t=>{
-      if(o.tasks&&o.tasks[t.n]===true)tasks[t.n]=true;
-      if(o.inTime&&o.inTime[t.n]===true)inTime[t.n]=true;
+    const okKeys={};
+    TASKS.concat(RTASKS).forEach(t=>{okKeys[t.k]=true;});
+    Object.keys(o.tasks||{}).forEach(key=>{
+      const nk=NUM2KEY[key]||key;
+      if(!okKeys[nk]||o.tasks[key]!==true)return;
+      tasks[nk]=true;
+      if(o.inTime&&o.inTime[key]===true)inTime[nk]=true;
     });
     const exp=Number(o.exp);
     const tm=(o.timer&&typeof o.timer==='object')?o.timer:{};
     let left=Number(tm.left);
-    if(!Number.isFinite(left)||left<0)left=EAT_SECONDS;
-    left=Math.min(left,EAT_SECONDS);
+    if(!Number.isFinite(left)||left<0)left=EAT_SCHOOL;
+    left=Math.min(left,EAT_REST);
     const since=Number(tm.since);
     const running=!!tm.running&&Number.isFinite(since)&&since>0;
     days[k]={tasks,inTime,
       exp:(Number.isFinite(exp)&&exp>=0)?Math.floor(exp):0,
       chime:o.chime===true,
+      restOverride:(typeof o.restOverride==='boolean')?o.restOverride:undefined,
       timer:{left,running,since:running?since:null,ended:left<=0}};
   });
   const rs=(raw.settings&&typeof raw.settings==='object')?raw.settings:{};
@@ -1274,14 +1433,22 @@ function parseBackup(raw){
   if(typeof rs.wake==='string'&&HM_RE.test(rs.wake))settings.wake=rs.wake;
   if(typeof rs.depart==='string'&&HM_RE.test(rs.depart))settings.depart=rs.depart;
   settings.sound=rs.sound===true;
+  if(Array.isArray(rs.vacations)){
+    settings.vacations=rs.vacations.filter(v=>v&&typeof v.s==='string'&&DATE_RE.test(v.s))
+      .map(v=>({s:v.s,e:(typeof v.e==='string'&&DATE_RE.test(v.e))?v.e:v.s}));
+  }
+  if(Array.isArray(rs.holidays)){
+    settings.holidays=rs.holidays.filter(k=>typeof k==='string'&&DATE_RE.test(k));
+  }
   return {v:1,days,caught,settings,skipped};
 }
 function applyBackup(r){
   try{localStorage.setItem(PRE_RESTORE_KEY,JSON.stringify(S));}catch(e){}   /* 되돌릴 수 있게 복원 전 상태 보관 */
   S={v:1,days:r.days,caught:r.caught,settings:r.settings};
   day(todayKey());
+  recalcExp(day(todayKey()));
   save();
-  renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+  renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();
   if(S.settings.sound)unlockAudio();
 }
 function loadBackupText(text){
@@ -1336,6 +1503,7 @@ const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
   document.getElementById('set-wake').value=S.settings.wake;
   document.getElementById('set-depart').value=S.settings.depart;
+  renderRestSettings();
   setModal.classList.remove('hidden');
 });
 document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();tickWake();}});
@@ -1347,11 +1515,15 @@ document.getElementById('btn-preview').addEventListener('click',()=>{
   if(startSong()){watchStart(1200);return;}
   playChime();                                           /* 유튜브 불가 → 기존 효과음·음성 */
 });
+document.getElementById('btn-preview-beep').addEventListener('click',()=>{
+  if(!soundUnlocked)unlockAudio();
+  playBeep();                                            /* 식사 타이머 완료 알림음 */
+});
 document.getElementById('btn-song-stop').addEventListener('click',stopSong);
 document.addEventListener('pointerdown',()=>{if(soundUnlocked)primeYouTube();tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
   const d=day(todayKey());
-  TASKS.forEach(t=>{if(!d.tasks[t.n]){d.tasks[t.n]=true;d.inTime[t.n]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
+  TASKS.forEach(t=>{if(!d.tasks[t.k]){d.tasks[t.k]=true;d.inTime[t.k]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
   save();renderTasks();renderExp();
   if(!checkCatch())alert('할 일 5개 완료! +50 EXP');
 });
@@ -1361,7 +1533,7 @@ document.getElementById('btn-exp').addEventListener('click',()=>{
 });
 document.getElementById('btn-reset-day').addEventListener('click',()=>{
   if(confirm('오늘 기록(할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
-    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:EAT_SECONDS,running:false,since:null,ended:false}};
+    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false}};
     stopSong();
     save();renderTasks();renderExp();renderProgress();
     setModal.classList.add('hidden');
@@ -1377,17 +1549,91 @@ setModal.addEventListener('click',e=>{if(e.target===setModal)setModal.classList.
 window.addEventListener('resize',()=>{if(W.at)fitTip();});
 document.getElementById('w-live').addEventListener('click',e=>{e.stopPropagation();refreshWeather();});
 
+/* ================= 쉬는 날 · 설정 UI ================= */
+function ensureRestSettings(){
+  if(!Array.isArray(S.settings.vacations))S.settings.vacations=[];
+  if(!Array.isArray(S.settings.holidays))S.settings.holidays=[];
+}
+function refreshRest(){
+  const d=day(todayKey());
+  /* 이미 지난 출발 시각으로 소급해 노래가 울리지 않게 */
+  if(!isRestDay()&&!d.chime&&new Date()>=dateWith(parseHM(S.settings.depart)))d.chime=true;
+  /* 아직 시작하지 않은 타이머는 그 날 기준(등원 20분 / 쉬는 날 30분)으로 */
+  if(d.timer&&!d.timer.running&&d.timer.since===null&&(d.timer.left===EAT_SCHOOL||d.timer.left===EAT_REST)){
+    d.timer.left=dayTotalSec(todayKey());
+  }
+  recalcExp(d);
+  save();
+  buildTasks();renderTasks();renderProgress();renderExp();renderTimer();renderRestBits();tickWake();
+}
+function renderRestSettings(){
+  ensureRestSettings();
+  const vc=document.getElementById('vac-list');
+  if(vc){
+    vc.innerHTML=vacations().length?vacations().map((v,i)=>
+      `<span class="chip">${v.s}${(v.e&&v.e!==v.s)?' ~ '+v.e:''}<button type="button" data-vac="${i}" title="삭제">×</button></span>`).join('')
+      :'<span class="set-sub">등록된 방학 기간이 없어요</span>';
+    vc.querySelectorAll('button[data-vac]').forEach(b=>b.addEventListener('click',()=>{
+      S.settings.vacations.splice(Number(b.dataset.vac),1);
+      save();renderRestSettings();refreshRest();
+    }));
+  }
+  const hc=document.getElementById('hol-list');
+  if(hc){
+    const ex=extraHolidays().slice().sort();
+    hc.innerHTML=ex.length?ex.map(k=>
+      `<span class="chip">${k}${HOLIDAYS[k]?' '+HOLIDAYS[k]:''}<button type="button" data-hol="${k}" title="삭제">×</button></span>`).join('')
+      :'<span class="set-sub">따로 넣은 휴일이 없어요</span>';
+    hc.querySelectorAll('button[data-hol]').forEach(b=>b.addEventListener('click',()=>{
+      S.settings.holidays=extraHolidays().filter(x=>x!==b.dataset.hol);
+      save();renderRestSettings();refreshRest();
+    }));
+  }
+  const now=document.getElementById('set-rest-now');
+  if(now){const ri=restInfo();now.textContent='· 오늘은 '+(ri.rest?'쉬는 날 ('+REST_WHY[ri.why]+')':'등원 날');}
+}
+document.getElementById('btn-rest').addEventListener('click',()=>{
+  const d=day(todayKey()), cur=isRestDay();
+  if(!cur)d.restOverride=true;                          /* 오늘만 쉬는 날 */
+  else if(autoRest(todayKey()))d.restOverride=false;    /* 자동 쉬는 날 → 등원 날 */
+  else delete d.restOverride;                           /* 직접 지정 취소 */
+  if(isRestDay()){delete d.tasks.bag;delete d.inTime.bag;}
+  else{delete d.tasks.milk;delete d.inTime.milk;}
+  refreshRest();
+  renderRestSettings();
+  toast(isRestDay()?'오늘은 유치원에 안 가요! 5가지 루틴을 여유롭게 해 봐요 🎈':'오늘은 등원 날! 8시 10분 출발이에요 🎒');
+});
+document.getElementById('vac-add').addEventListener('click',()=>{
+  const sEl=document.getElementById('vac-s'),eEl=document.getElementById('vac-e');
+  const s=sEl.value, e=eEl.value||s;
+  if(!s){alert('방학 시작일을 먼저 골라 주세요.');return;}
+  if(e<s){alert('종료일이 시작일보다 빨라요. 다시 확인해 주세요.');return;}
+  ensureRestSettings();
+  S.settings.vacations.push({s,e});
+  sEl.value='';eEl.value='';
+  save();renderRestSettings();refreshRest();
+  toast('방학·휴원 기간을 넣었어요 · '+s+(e!==s?' ~ '+e:''));
+});
+document.getElementById('hol-add').addEventListener('click',()=>{
+  const el=document.getElementById('hol-d'), k=el.value;
+  if(!k){alert('휴일 날짜를 골라 주세요.');return;}
+  ensureRestSettings();
+  if(extraHolidays().indexOf(k)<0)S.settings.holidays.push(k);
+  el.value='';
+  save();renderRestSettings();refreshRest();
+  toast('휴일로 넣었어요 · '+k);
+});
+
 /* ================= 시작 ================= */
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
 initWeather();
 setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
 if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
-tickWake();                          /* 기상~출발+5분에만 화면 켜짐 유지 */
-setInterval(tickWake,20000);
+tickWake();                          /* 기상~출발 사이에만 화면 켜짐 유지 */
 setInterval(renderClock,1000);
 setInterval(tickTimer,500);
-setInterval(()=>{renderProgress();checkDepartEvent();},5000);
+setInterval(()=>{renderProgress();checkDepartEvent();tickWake();},5000);
 checkDepartEvent();
 </script>
 </body>
