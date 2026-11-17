@@ -455,7 +455,7 @@ body.dex-open #progress-card{display:none}
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <span>네이버 날씨 중계 주소 (Cloudflare Worker)</span>
-      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 넣으면 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비워 두면 지금처럼 Open-Meteo·met.no만 씁니다.</span>
+      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 기본으로 서연 님 워커 주소가 들어 있어 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비우고 저장하면 Open-Meteo·met.no만 씁니다.</span>
       <div class="vac-row" style="margin-top:6px">
         <input type="url" id="set-proxy" class="set-date" style="flex:1;min-width:200px" placeholder="https://naver-weather.계정.workers.dev" inputmode="url" autocomplete="off" spellcheck="false">
         <button class="set-btn sb-backup" id="btn-proxy-save" type="button">저장 및 새로고침</button>
@@ -536,6 +536,7 @@ const EXP_PER_TASK=10, EXP_PER_CATCH=100;
 const EAT_SCHOOL=1200, EAT_REST=1800;      /* 밥 먹기 기본: 등원 날 20분 · 쉬는 날 30분 */
 const SKEY='morningDashboard.v1';
 const LAT=37.5712, LON=127.0545; // 서울 동대문구 답십리1동
+const DEFAULT_WEATHER_PROXY='https://twilight-salad-4306.psy6742.workers.dev';  /* 네이버 날씨 중계(Cloudflare Worker) 기본 주소 */
 
 function todayKey(d=new Date()){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -548,7 +549,12 @@ function load(){
 }
 let S=load();
 if(!S.settings||typeof S.settings!=='object')S.settings=defaultSettings();
-if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy='';
+if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
+/* 예전 버전은 중계 주소 기본값이 빈 문자열이었다 → 사용자가 직접 비운 기록(proxyCustom)이 없으면 기본 워커 주소를 넣는다 */
+if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
+  S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
+  save();
+}
 /* 예전 버전의 숫자 키(1~5) 기록을 루틴 키로 옮긴다 */
 (function migrateTaskKeys(){
   try{
@@ -1537,7 +1543,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:''};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -1620,6 +1626,8 @@ function parseBackup(raw){
   if(typeof rs.wake==='string'&&HM_RE.test(rs.wake))settings.wake=rs.wake;
   if(typeof rs.depart==='string'&&HM_RE.test(rs.depart))settings.depart=rs.depart;
   if(typeof rs.weatherProxy==='string')settings.weatherProxy=proxyUrl(rs.weatherProxy);
+  settings.proxyCustom=rs.proxyCustom===true;
+  if(!settings.weatherProxy&&!settings.proxyCustom)settings.weatherProxy=DEFAULT_WEATHER_PROXY;
   settings.sound=rs.sound===true;
   if(Array.isArray(rs.vacations)){
     settings.vacations=rs.vacations.filter(v=>v&&typeof v.s==='string'&&DATE_RE.test(v.s))
@@ -1709,7 +1717,7 @@ document.getElementById('btn-proxy-save').addEventListener('click',()=>{
   let v=proxyUrl(raw);
   if(raw.trim()&&!v){setProxyState('주소를 확인해 주세요 (https://... 형식)',true);return;}
   const prev=S.settings.weatherProxy||'';
-  S.settings.weatherProxy=v;save();
+  S.settings.weatherProxy=v;S.settings.proxyCustom=true;save();   /* 직접 저장·비움 → 자동 마이그레이션에서 제외 */
   setProxyState(v?'저장했어요. 네이버 날씨로 다시 불러오는 중…':'중계 주소를 비웠어요. Open-Meteo·met.no로 받아와요.');
   setModal.classList.add('hidden');
   toast(v?'네이버 날씨 중계 주소를 저장했어요':'중계 주소를 비웠어요');
