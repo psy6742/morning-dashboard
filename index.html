@@ -207,20 +207,41 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
 #t-end{background:#FFE2D6;color:#A63D12}
 
 /* ── 도감 ──────────────────────────────── */
-#view-poke{flex:1;min-height:0;overflow:auto;background:#fff;border:var(--bw) solid var(--ink);border-radius:var(--r);
-  box-shadow:var(--hard);padding:12px 16px 14px}
-#pk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+#view-poke{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#fff;border:var(--bw) solid var(--ink);
+  border-radius:var(--r);box-shadow:var(--hard);padding:10px 12px 8px}
+#pk-head{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:8px}
 #pk-head b{font-size:22px;font-weight:900;letter-spacing:-.4px}
 #pk-stats{font-size:13px;color:var(--ink-soft);font-weight:800}
-.back-btn{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:inherit;cursor:pointer;background:var(--yellow);
+#pk-head .sp{display:flex;align-items:center;gap:7px;margin-left:auto}
+.back-btn{display:flex;align-items:center;gap:6px;font-family:inherit;cursor:pointer;background:var(--yellow);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:6px 14px;font-weight:900;font-size:13.5px;color:var(--ink);
   box-shadow:0 4px 0 rgba(34,43,56,.2)}
 .back-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
-#pk-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.pk-card{position:relative;border:2.5px solid #D7DEE9;border-radius:14px;background:#F7FAFF;padding:6px 6px 8px;text-align:center}
+.bk-btn{display:flex;align-items:center;gap:5px;font-family:inherit;cursor:pointer;background:#E3F0FD;color:#1d5cad;
+  border:var(--bw) solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:900;font-size:13.5px;
+  box-shadow:0 4px 0 rgba(34,43,56,.2);transition:.12s}
+.bk-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
+#pk-filters{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:0 2px 8px}
+.pk-chip{font-family:inherit;cursor:pointer;font-weight:900;font-size:14px;color:var(--ink);background:#F2F6FC;
+  border:2.5px solid var(--ink);border-radius:99px;padding:5px 15px;transition:.12s;box-shadow:0 3px 0 rgba(34,43,56,.18)}
+.pk-chip:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
+.pk-chip.on{background:var(--yellow);color:#3d2f00}
+#pk-count{margin-left:auto;font-size:12px;font-weight:800;color:var(--ink-soft)}
+#pk-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 8px 8px 2px;scroll-behavior:smooth;overscroll-behavior:contain}
+#pk-scroll::-webkit-scrollbar{width:13px}
+#pk-scroll::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
+#pk-scroll::-webkit-scrollbar-thumb{background:#BCC9DB;border-radius:99px;border:3px solid #F2F6FC}
+#pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:9px}
+body.dex-open #progress-card{display:none}
+#pk-empty{margin:28px auto;text-align:center;font-size:15px;font-weight:900;color:var(--ink-soft);line-height:1.6}
+#pk-empty .em{display:block;font-size:40px;margin-bottom:6px}
+.pk-card{position:relative;border:2.5px solid #D7DEE9;border-radius:14px;background:#F7FAFF;padding:5px 5px 7px;text-align:center}
 .pk-card.caught{border-color:var(--yellow);background:#FFFCEF;box-shadow:0 3px 0 rgba(34,43,56,.12)}
+.pk-card.next{border-color:#7FB6E8;background:#F1F8FF;box-shadow:0 3px 0 rgba(34,43,56,.10)}
 .pk-no{font-size:11px;font-weight:900;color:var(--ink-soft)}
-.pk-card img{width:64%;max-width:96px;aspect-ratio:1;object-fit:contain}
+.pk-next{position:absolute;top:4px;left:5px;background:#7FB6E8;border:2px solid var(--ink);color:#fff;border-radius:99px;
+  font-weight:900;font-size:9.5px;padding:0 6px}
+.pk-card img{width:66%;max-width:92px;aspect-ratio:1;object-fit:contain}
 .pk-card:not(.caught) img{filter:brightness(0);opacity:.22}
 .pk-name{font-weight:900;font-size:15px;letter-spacing:-.3px}
 .pk-card:not(.caught) .pk-name{color:#AEB8C6}
@@ -250,8 +271,17 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
 .sb-sound{background:var(--yellow-l);color:#6b4f06}
 .sb-test{background:#E3F0FD;color:#1d5cad}
 .sb-reset{background:#FFE2D6;color:#A63D12}
+.sb-backup{background:#E3F0FD;color:#1d5cad}
 .sb-close{background:var(--green);color:#fff}
 .btn-col{display:flex;flex-direction:column;gap:7px}
+.set-sub{font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35}
+
+/* ── 알림 토스트 ───────────────────────── */
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);background:#fff;color:var(--ink);
+  border:var(--bw) solid var(--ink);border-radius:14px;padding:9px 18px;font-weight:900;font-size:14.5px;
+  box-shadow:0 6px 0 rgba(34,43,56,.18);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
+  z-index:80;max-width:82vw;text-align:center;line-height:1.35}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
@@ -335,9 +365,20 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
       <span class="pokeball sm"></span>
       <b>포켓몬 도감</b>
       <span id="pk-stats"></span>
-      <button class="back-btn" id="tab-dash">← 등원 준비로 돌아가기</button>
+      <span class="sp">
+        <button class="bk-btn" id="pk-backup" title="도감·기록을 파일로 저장">💾 백업</button>
+        <button class="back-btn" id="tab-dash">← 등원 준비로 돌아가기</button>
+      </span>
     </div>
-    <div id="pk-grid"></div>
+    <div id="pk-filters">
+      <button class="pk-chip on" id="chip-all" data-f="all">전체 (100)</button>
+      <button class="pk-chip" id="chip-caught" data-f="caught">잡은 포켓몬 (0)</button>
+      <span id="pk-count"></span>
+    </div>
+    <div id="pk-scroll">
+      <div id="pk-grid"></div>
+      <div id="pk-empty" class="hidden"><span class="em">🥚</span>아직 잡은 포켓몬이 없어요.<br>할 일을 끝내고 100 EXP를 모으면 한 마리씩 잡혀요!</div>
+    </div>
   </section>
 </div>
 
@@ -367,6 +408,13 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
+        <span class="set-sub">도감·기록 백업 (.json 파일) · 잡은 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요</span>
+        <button class="set-btn sb-backup" id="btn-backup-save">💾 백업 파일 저장 (.json)</button>
+        <button class="set-btn sb-backup" id="btn-backup-load">📂 백업 파일 불러오기</button>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <div class="btn-col">
         <button class="set-btn sb-test" id="btn-test">⏱ 시간 내 완료 테스트 (할 일 5개 완료 +50 EXP)</button>
         <button class="set-btn sb-test" id="btn-exp">🎯 포획 연출 바로 보기 (+50 EXP)</button>
         <button class="set-btn sb-reset" id="btn-reset-day">🧹 오늘 기록 초기화</button>
@@ -374,24 +422,35 @@ header{display:flex;gap:12px;height:150px;flex:0 0 auto;align-items:stretch}
         <button class="set-btn sb-close" id="btn-close-settings">닫기</button>
       </div>
     </div>
+    <input type="file" id="backup-file" accept="application/json,.json" class="hidden">
   </div>
 </div>
+
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 'use strict';
 /* ================= 데이터 ================= */
 const POKEMON=[
-  {id:1,  no:'001', name:'이상해씨'},
-  {id:4,  no:'004', name:'파이리'},
-  {id:7,  no:'007', name:'꼬부기'},
-  {id:25, no:'025', name:'피카츄'},
-  {id:39, no:'039', name:'푸린'},
-  {id:52, no:'052', name:'냐옹이'},
-  {id:131,no:'131', name:'라프라스'},
-  {id:133,no:'133', name:'이브이'},
-  {id:143,no:'143', name:'잠만보'},
-  {id:151,no:'151', name:'뮤'}
-];
+  /* [PokeAPI official-artwork ID = 전국도감 번호, 공식 한국어 이름] */
+  [1,'이상해씨'], [4,'파이리'], [7,'꼬부기'], [12,'버터플'], [18,'피죤투'], [25,'피카츄'],
+  [26,'라이츄'], [35,'삐삐'], [39,'푸린'], [52,'나옹'], [54,'고라파덕'], [58,'가디'],
+  [59,'윈디'], [63,'캐이시'], [65,'후딘'], [66,'알통몬'], [68,'괴력몬'], [74,'꼬마돌'],
+  [77,'포니타'], [92,'고오스'], [94,'팬텀'], [121,'아쿠스타'], [123,'스라크'], [129,'잉어킹'],
+  [130,'갸라도스'], [131,'라프라스'], [133,'이브이'], [134,'샤미드'], [135,'쥬피썬더'], [136,'부스터'],
+  [143,'잠만보'], [147,'미뇽'], [149,'망나뇽'], [150,'뮤츠'], [151,'뮤'], [155,'브케인'],
+  [157,'블레이범'], [158,'리아코'], [161,'꼬리선'], [172,'피츄'], [175,'토게피'], [179,'메리프'],
+  [181,'전룡'], [183,'마릴'], [184,'마릴리'], [196,'에브이'], [197,'블래키'], [212,'핫삼'],
+  [214,'헤라크로스'], [243,'라이코'], [245,'스이쿤'], [248,'마기라스'], [249,'루기아'], [250,'칠색조'],
+  [252,'나무지기'], [255,'아차모'], [257,'번치코'], [258,'물짱이'], [260,'대짱이'], [282,'가디안'],
+  [302,'깜까미'], [330,'플라이곤'], [334,'파비코리'], [350,'밀로틱'], [359,'앱솔'], [373,'보만다'],
+  [376,'메타그로스'], [380,'라티아스'], [381,'라티오스'], [382,'가이오가'], [383,'그란돈'], [384,'레쿠쟈'],
+  [387,'모부기'], [390,'불꽃숭이'], [392,'초염몽'], [393,'팽도리'], [395,'엠페르트'], [403,'꼬링크'],
+  [405,'렌트라'], [445,'한카리아스'], [448,'루카리오'], [468,'토게키스'], [470,'리피아'], [471,'글레이시아'],
+  [479,'로토무'], [483,'디아루가'], [484,'펄기아'], [487,'기라티나'], [491,'다크라이'], [493,'아르세우스'],
+  [571,'조로아크'], [637,'불카모스'], [658,'개굴닌자'], [700,'님피아'], [745,'루가루암'], [813,'염버니'],
+  [906,'나오하'], [912,'꾸왁스'], [1007,'코라이돈'], [1008,'미라이돈']
+].map(([id,name])=>({id,no:String(id).padStart(3,'0'),name}));
 const TASKS=[
   {n:1,label:'아침 할 일(화장실)'},
   {n:2,label:'가방 준비'},
@@ -454,7 +513,8 @@ function renderProgress(){
   document.getElementById('p-fill').style.width=pct+'%';
   const poke=nextTarget();
   const pp=document.getElementById('p-poke');
-  if(!pp.getAttribute('src'))pp.src=`assets/pokemon/${poke.id}.png`;
+  pp.src=`assets/pokemon/${poke.id}.png`;
+  pp.alt=poke.name;
   pp.style.left=pct+'%';
 }
 function fmtK(hm){const{h,m}=parseHM(hm),ap=h<12?'오전':'오후';let h12=h%12;if(h12===0)h12=12;return `${ap} ${h12}:${String(m).padStart(2,'0')}`;}
@@ -909,36 +969,181 @@ function fitTip(){
 }
 
 /* ================= 도감 ================= */
+let pkFilter='all';                 /* 'all' | 'caught' */
+function caughtDates(){
+  const m={};
+  S.caught.forEach(c=>{(m[c.id]=m[c.id]||[]).push(c.date);});
+  return m;
+}
 function renderPoke(){
   const grid=document.getElementById('pk-grid');grid.innerHTML='';
-  let cnt=0;
-  POKEMON.forEach(p=>{
-    const got=S.caught.filter(c=>c.id===p.id);
-    const last=got.length?got[got.length-1].date.replace(/-/g,'.'):'';
-    cnt+=got.length;
+  const m=caughtDates();
+  const kinds=POKEMON.filter(p=>m[p.id]).length;
+  document.getElementById('chip-all').textContent=`전체 (${POKEMON.length})`;
+  document.getElementById('chip-caught').textContent=`잡은 포켓몬 (${kinds})`;
+  document.querySelectorAll('.pk-chip').forEach(b=>b.classList.toggle('on',b.dataset.f===pkFilter));
+  const list=pkFilter==='caught'?POKEMON.filter(p=>m[p.id]):POKEMON;
+  const next=nextTarget();
+  list.forEach(p=>{
+    const got=m[p.id]||[];
+    const last=got.length?got[got.length-1].replace(/-/g,'.'):'';
     const card=document.createElement('div');
-    card.className='pk-card'+(got.length?' caught':'');
+    card.className='pk-card'+(got.length?' caught':'')+((!got.length&&p.id===next.id)?' next':'');
     card.innerHTML=`<div class="pk-no">No.${p.no}</div>
-      <img src="assets/pokemon/${p.id}.png" alt="${p.name}">
+      ${(!got.length&&p.id===next.id)?'<div class="pk-next">다음 목표</div>':''}
+      <img src="assets/pokemon/${p.id}.png" alt="${p.name}" loading="lazy" decoding="async">
       <div class="pk-name">${got.length?p.name:'???'}</div>
-      <div class="pk-date">${got.length?'잡은 날 '+last:'아직 못 잡았어요'}</div>
+      <div class="pk-date">${got.length?'잡은 날 '+last:''}</div>
       ${got.length>1?`<div class="pk-cnt">×${got.length}</div>`:''}`;
     grid.appendChild(card);
   });
   document.getElementById('pk-stats').textContent=
-    `잡은 포켓몬 ${cnt}마리 · 도감 ${S.caught.length?new Set(S.caught.map(c=>c.id)).size:0}/${POKEMON.length}종`;
+    `잡은 포켓몬 ${S.caught.length}마리 · 도감 ${kinds}/${POKEMON.length}종`;
+  document.getElementById('pk-count').textContent=
+    pkFilter==='caught'?`${list.length}마리 모아 보기`:'100마리 전체 (스크롤해 보세요 ↓)';
+  document.getElementById('pk-empty').classList.toggle('hidden',list.length>0);
+}
+function setPkFilter(f){
+  if(f!==pkFilter){pkFilter=f;renderPoke();document.getElementById('pk-scroll').scrollTop=0;}
 }
 
+/* ================= 백업 · 복원 (JSON) ================= */
+const BACKUP_APP='morning-dashboard', BACKUP_VER=1;
+const PRE_RESTORE_KEY='morningDashboard.beforeRestore.v1';
+const DATE_RE=/^\d{4}-\d{2}-\d{2}$/, HM_RE=/^([01]\d|2[0-3]):[0-5]\d$/;
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false};}
+function todaySnapshot(){
+  const k=todayKey(), d=S.days[k], t=nextTarget();
+  return {date:k, exp:(d&&d.exp)||0, tasksDone:d?Object.keys(d.tasks||{}).length:0,
+    poolExp:Math.max(0,poolExp()), catchGoal:EXP_PER_CATCH,
+    target:{id:t.id, no:t.no, name:t.name}};
+}
+function buildBackup(){
+  return {
+    app:BACKUP_APP, version:BACKUP_VER, exportedAt:new Date().toISOString(),
+    dexTotal:POKEMON.length,
+    caught:S.caught.map(c=>({id:c.id, date:c.date})),
+    today:todaySnapshot(),
+    settings:Object.assign(defaultSettings(),S.settings),
+    days:S.days
+  };
+}
+function downloadBackup(){
+  try{
+    const data=buildBackup();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='morning-dashboard-backup-'+todayKey()+'.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast(`백업 파일을 저장했어요 · 잡은 포켓몬 ${S.caught.length}마리`);
+    return true;
+  }catch(e){alert('백업 파일을 만들지 못했어요.\n'+(e&&e.message?e.message:e));return false;}
+}
+/* 파일 내용을 검사해 안전한 상태 객체로 만든다 (모르는 값은 버리고 기본값 사용) */
+function parseBackup(raw){
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('백업 파일 형식이 아니에요 (JSON 객체가 아님).');
+  if(raw.app&&raw.app!==BACKUP_APP)throw new Error('이 대시보드의 백업 파일이 아니에요.');
+  if(!Array.isArray(raw.caught)&&!raw.days&&!raw.settings)throw new Error('백업 내용을 찾지 못했어요 (caught / days / settings 없음).');
+  const ids=new Set(POKEMON.map(p=>p.id));
+  const caught=[];let skipped=0;
+  (Array.isArray(raw.caught)?raw.caught:[]).forEach(c=>{
+    const id=Number(c&&c.id);
+    if(!ids.has(id)){skipped++;return;}
+    const date=(c&&typeof c.date==='string'&&DATE_RE.test(c.date))?c.date:todayKey();
+    caught.push({id,date});
+  });
+  const days={};
+  const srcDays=(raw.days&&typeof raw.days==='object'&&!Array.isArray(raw.days))?raw.days:{};
+  Object.keys(srcDays).forEach(k=>{
+    const o=srcDays[k];
+    if(!DATE_RE.test(k)||!o||typeof o!=='object')return;
+    const tasks={},inTime={};
+    TASKS.forEach(t=>{
+      if(o.tasks&&o.tasks[t.n]===true)tasks[t.n]=true;
+      if(o.inTime&&o.inTime[t.n]===true)inTime[t.n]=true;
+    });
+    const exp=Number(o.exp);
+    const tm=(o.timer&&typeof o.timer==='object')?o.timer:{};
+    let left=Number(tm.left);
+    if(!Number.isFinite(left)||left<0)left=EAT_SECONDS;
+    left=Math.min(left,EAT_SECONDS);
+    const since=Number(tm.since);
+    const running=!!tm.running&&Number.isFinite(since)&&since>0;
+    days[k]={tasks,inTime,
+      exp:(Number.isFinite(exp)&&exp>=0)?Math.floor(exp):0,
+      chime:o.chime===true,
+      timer:{left,running,since:running?since:null,ended:left<=0}};
+  });
+  const rs=(raw.settings&&typeof raw.settings==='object')?raw.settings:{};
+  const settings=defaultSettings();
+  if(typeof rs.wake==='string'&&HM_RE.test(rs.wake))settings.wake=rs.wake;
+  if(typeof rs.depart==='string'&&HM_RE.test(rs.depart))settings.depart=rs.depart;
+  settings.sound=rs.sound===true;
+  return {v:1,days,caught,settings,skipped};
+}
+function applyBackup(r){
+  try{localStorage.setItem(PRE_RESTORE_KEY,JSON.stringify(S));}catch(e){}   /* 되돌릴 수 있게 복원 전 상태 보관 */
+  S={v:1,days:r.days,caught:r.caught,settings:r.settings};
+  day(todayKey());
+  save();
+  renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+  if(S.settings.sound)unlockAudio();
+}
+function loadBackupText(text){
+  let raw;
+  try{raw=JSON.parse(text);}catch(e){throw new Error('JSON을 읽지 못했어요. 백업 파일이 맞는지 확인해 주세요.');}
+  const r=parseBackup(raw);
+  const dayCount=Object.keys(r.days).length;
+  const msg=`백업 파일로 복원할까요?\n\n· 잡은 포켓몬 ${r.caught.length}마리`+
+    `\n· 기록한 날짜 ${dayCount}일`+
+    `\n· 기상 ${r.settings.wake} · 출발 ${r.settings.depart}`+
+    (r.skipped?`\n· 알 수 없는 포켓몬 ${r.skipped}개는 건너뜀`:'')+
+    `\n\n지금 기기의 도감·기록이 백업 내용으로 바뀝니다.`;
+  if(!confirm(msg))return null;
+  applyBackup(r);
+  toast(`복원 완료! 잡은 포켓몬 ${r.caught.length}마리 · 기록 ${dayCount}일`);
+  return r;
+}
+function openBackupPicker(){
+  const inp=document.getElementById('backup-file');
+  if(inp){inp.value='';inp.click();}
+}
 /* ================= 탭 · 설정 ================= */
 function switchTab(poke){
   document.getElementById('view-dash').classList.toggle('hidden',poke);
   document.getElementById('view-poke').classList.toggle('hidden',!poke);
   document.getElementById('tab-poke').classList.toggle('active',poke);
+  document.body.classList.toggle('dex-open',poke);   /* 도감을 볼 땐 진행 바를 접어 넓게 */
   if(poke)renderPoke();
 }
 document.getElementById('tab-dash').addEventListener('click',()=>switchTab(false));
 document.getElementById('tab-poke').addEventListener('click',()=>switchTab(true));
 document.getElementById('btn-sound').addEventListener('click',unlockAudio);
+document.getElementById('chip-all').addEventListener('click',()=>setPkFilter('all'));
+document.getElementById('chip-caught').addEventListener('click',()=>setPkFilter('caught'));
+document.getElementById('pk-backup').addEventListener('click',downloadBackup);
+document.getElementById('btn-backup-save').addEventListener('click',downloadBackup);
+document.getElementById('btn-backup-load').addEventListener('click',openBackupPicker);
+document.getElementById('backup-file').addEventListener('change',e=>{
+  const inp=e.target, f=inp.files&&inp.files[0];
+  if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{loadBackupText(String(rd.result));}
+    catch(err){alert('복원하지 못했어요.\n\n'+(err&&err.message?err.message:err));}
+    finally{inp.value='';}
+  };
+  rd.onerror=()=>{alert('파일을 읽지 못했어요. 다른 파일로 다시 시도해 주세요.');inp.value='';};
+  rd.readAsText(f,'utf-8');
+});
 
 const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
