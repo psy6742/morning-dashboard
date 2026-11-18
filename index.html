@@ -598,18 +598,9 @@ body.eve #p-title b.late{color:#D63A3A;font-size:26px}
 body.eve #p-msg{color:#B4622A}
 #view-dash.eve{grid-template-columns:repeat(5,1fr)}   /* 저녁도 아침과 같은 5칸 */
 .task .t-label.eve{font-size:15.5px;line-height:1.2;letter-spacing:-.5px;padding:3px 0 1px;word-break:keep-all}
-/* 남자아이 그림 크기를 아침 카드와 맞춘다.
-   저녁 카드는 사진 칸이 세로로 길어 cover 배율이 커지면서 아이가 크게 보였다.
-   아침 카드는 사진 높이가 332px로 고정되어 머리 폭이 약 96px인데,
-   저녁 그림은 카드가 세로로 길어 배율이 커졌던 것이라 칸 높이를 px로 고정한다.
-   (원본에서 머리 폭이 그림의 35%(한글책)·31%(영어책)·29%(샤워)라서
-     305·272·306px이면 아침과 같은 머리 폭 ≈ 87~96px가 된다.)
-   화면이 낮으면 flex-shrink로 함께 줄어 카드 밖으로 넘치지 않는다. */
-.task[data-k="eve_shower"] .task-img,
-.task[data-k="eve_kbook"] .task-img,
-.task[data-k="eve_ebook"] .task-img{flex:0 1 auto;min-height:0;max-height:100%;height:305px}
-.task[data-k="eve_kbook"] .task-img{object-position:center 38%;height:272px}
-.task[data-k="eve_ebook"] .task-img{object-position:center 34%;height:306px}
+/* 남자아이 그림 9장(아침 5 + 우유 + 저녁 3)은 모두 같은 화풍·같은 비율로 다시 그렸다.
+   모든 그림의 머리 폭이 정사각 캔버스의 28.3%(= 아침 카드와 같은 ≈94px)로 맞춰져 있어
+   카드별 높이·object-position 보정 없이 기본 규칙(.task .task-img)만으로 크기가 일치한다. */
 /* 보너스 배지는 카드 맨 아래에 고정 — 사진·글씨를 밀어내지 않는다 */
 .task[data-k="eve_eat"]{padding-bottom:30px}
 .task.rest-eat-bonus{padding-bottom:30px}   /* 쉬는 날 아침 밥 먹기 배지 자리 */
