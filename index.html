@@ -3585,13 +3585,15 @@ function closeBattle(){
   btEl('modal-battle').classList.add('hidden');
 }
 btEl('bt-close').addEventListener('click',closeBattle);
-btEl('modal-battle').addEventListener('click',e=>{if(e.target===btEl('modal-battle'))closeBattle();});
+/* 🔒 배틀 창은 바깥(어두운 배경)을 눌러도 닫히지 않는다.
+   게임하다 손가락이 창 밖을 스치는 일이 잦아, 실수로 판이 꺼지면 속상하기 때문.
+   닫는 길은 딱 둘: 오른쪽 위 ✕ 와 결과 화면의 닫기 버튼. (ESC도 배틀 창은 닫지 않는다) */
+btEl('modal-battle').addEventListener('click',e=>{
+  if(e.target===btEl('modal-battle'))e.stopPropagation();   /* 배경 탭: 아무 일도 일어나지 않는다 */
+});
 btEl('bt-start').addEventListener('click',btStart);
 btEl('bt-attack').addEventListener('click',()=>btTurn('attack'));
 btEl('bt-defend').addEventListener('click',()=>btTurn('defend'));
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!btEl('modal-battle').classList.contains('hidden'))closeBattle();
-});
 /* 숨은 버튼: 도감 앞 몬스터볼 (도감 버튼 안쪽이라 전파를 막아야 도감이 열리지 않는다) */
 /* 🔒 도감 앞 몬스터볼 잠금 (보호자용 설정 → ⚙️ 시스템)
    잠겨 있으면 몬스터볼은 그냥 그림이다: 누르면 아무 창·안내·소리 없이 그냥 아무 일도 일어나지 않고,
