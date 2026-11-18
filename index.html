@@ -310,6 +310,82 @@ body.dex-open #progress-card{display:none}
 .pk-rar{display:inline-block;font-size:9.5px;font-weight:900;line-height:1.5;border-radius:99px;padding:0 6px;margin:0 0 1px;
   border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px}
 .pk-rar.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+.pk-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.pk-card:hover{transform:translateY(-2px)}
+.pk-card:active{transform:translateY(0) scale(.985)}
+
+/* ── 🃏 포켓몬 카드 (앞면·뒷면) ───────────── */
+#modal-card{z-index:75;background:rgba(16,24,36,.68);overflow:hidden}
+.pc-shell{display:flex;flex-direction:column;align-items:center;gap:9px}
+.pc-card{position:relative;flex:0 0 auto;width:372px;height:516px;display:flex;flex-direction:column;gap:6px;padding:10px;
+  border:4px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:0 13px 0 rgba(20,28,40,.30),0 0 0 4px rgba(255,255,255,.82),0 20px 38px rgba(20,28,40,.34)}
+/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 */
+.pc-card.front{background:linear-gradient(158deg,var(--pc1) 0%,var(--pc2) 48%,#fff 100%)}
+.pc-card.front::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.62) 44%,rgba(255,255,255,0) 58%,rgba(255,255,255,.4) 72%,rgba(255,255,255,0) 86%);
+  background-size:280% 280%;animation:pcShine 7s linear infinite;mix-blend-mode:screen;opacity:.85}
+@keyframes pcShine{0%{background-position:135% -20%}100%{background-position:-35% 120%}}
+@media (prefers-reduced-motion:reduce){.pc-card.front::before{animation:none}}
+.pc-hd{position:relative;z-index:2;flex:0 0 auto;display:flex;flex-direction:column;gap:2px}
+.pc-hd1{display:flex;align-items:center;gap:6px}
+.pc-no{font-size:11.5px;font-weight:900;color:#3f4c5d;letter-spacing:.3px}
+.pc-rar{margin-left:auto;display:inline-block;font-size:10px;font-weight:900;line-height:1.6;border-radius:99px;
+  padding:0 8px;border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px;white-space:nowrap}
+.pc-rar.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+.pc-hd2{display:flex;align-items:center;gap:8px}
+.pc-nm{font-size:27px;font-weight:900;letter-spacing:-1px;line-height:1.02;color:var(--ink);
+  text-shadow:0 2px 0 #fff,0 -1px 0 #fff,1.5px 0 0 #fff,-1.5px 0 0 #fff,0 3px 0 rgba(34,43,56,.18)}
+.pc-hp{margin-left:auto;display:inline-flex;align-items:baseline;gap:3px;background:#fff;border:2.5px solid var(--ink);
+  border-radius:99px;padding:1px 10px 2px;box-shadow:0 2px 0 rgba(34,43,56,.20)}
+.pc-hp i{font-style:normal;font-size:10.5px;font-weight:900;color:#E4362B}
+.pc-hp b{font-size:17px;font-weight:900;line-height:1.25}
+.pc-tps{display:flex;gap:4px;flex-wrap:wrap;margin-top:1px}
+.pc-art{position:relative;z-index:2;flex:1 1 auto;min-height:0;border:3px solid var(--ink);border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 32%,#fff 0%,var(--pc2) 58%,var(--pc1) 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.88)}
+.pc-art img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 6px 7px rgba(20,28,40,.20))}
+.pc-evo{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;gap:6px;min-height:31px;
+  background:rgba(255,255,255,.94);border:2.5px solid var(--ink);border-radius:10px;padding:3px 8px}
+.pc-evo .lb{flex:0 0 auto;font-size:10px;font-weight:900;color:#63718a}
+.pc-evo .st{flex:0 0 auto;font-size:12px;font-weight:900;color:#3d2f00;background:var(--yellow);
+  border:2px solid var(--ink);border-radius:99px;padding:0 8px;line-height:1.55;white-space:nowrap}
+.pc-evo .ln{min-width:0;font-size:11.5px;font-weight:900;color:var(--ink);letter-spacing:-.3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-stats{position:relative;z-index:2;flex:0 0 auto;display:flex;flex-direction:column;gap:3px;
+  background:rgba(255,255,255,.94);border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px}
+.pc-st{display:flex;align-items:center;gap:6px}
+.pc-st .lb{flex:0 0 auto;width:32px;font-size:10.5px;font-weight:900;color:#63718a}
+.pc-st .bar{flex:1 1 auto;height:11px;background:#E7EBF2;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
+.pc-st .bar i{display:block;height:100%;border-radius:99px}
+.pc-st .bar i.hp{background:#37B24D}.pc-st .bar i.atk{background:#E4572E}.pc-st .bar i.def{background:#2F6FD0}
+.pc-st .vl{flex:0 0 auto;width:30px;text-align:right;font-size:12.5px;font-weight:900}
+.pc-foot{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:5px;
+  font-size:11px;font-weight:900;color:#25663a;background:#E8F8EC;border:2.5px solid var(--ink);
+  border-radius:10px;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 뒷면 — 아직 잡지 못한 포켓몬 (이름·그림·능력치 숨김) */
+.pc-card.back{background:radial-gradient(circle at 50% 32%,#3D63BF 0%,#25417F 42%,#16264F 74%,#0E1938 100%);border-color:var(--ink)}
+.pc-card.back::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,.13) 0 2px,rgba(255,255,255,0) 2px 10px);opacity:.34}
+.pcb-frame{position:absolute;inset:13px;z-index:2;border:3px solid #E9C24B;border-radius:13px;padding:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;
+  box-shadow:inset 0 0 0 2px rgba(233,194,75,.34),inset 0 0 44px rgba(0,0,0,.45)}
+.pcb-ball{position:relative;width:116px;height:116px;border-radius:50%;border:6px solid #E9C24B;
+  background:linear-gradient(180deg,rgba(233,194,75,.9) 0 44%,#0E1938 44% 56%,rgba(233,194,75,.9) 56% 100%);
+  box-shadow:0 0 26px rgba(233,194,75,.45),inset 0 0 22px rgba(0,0,0,.42)}
+.pcb-ball::after{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;border-radius:50%;
+  transform:translate(-50%,-50%);border:5px solid #E9C24B;background:#0E1938;box-shadow:inset 0 0 8px rgba(233,194,75,.35)}
+.pcb-q{font-size:54px;font-weight:900;letter-spacing:4px;line-height:1;color:#F7D968;
+  text-shadow:0 4px 0 rgba(0,0,0,.5),0 0 20px rgba(233,194,75,.55)}
+.pcb-t1{font-size:15px;font-weight:900;color:#FFF6D8;letter-spacing:-.3px}
+.pcb-t2{max-width:248px;text-align:center;font-size:12px;font-weight:800;line-height:1.55;color:#BBD0F5}
+.pcb-no{font-size:11.5px;font-weight:900;letter-spacing:2px;color:#8FA9DA}
+.pc-x{font-family:inherit;font-weight:900;font-size:14px;color:#fff;background:var(--ink);border:3px solid var(--ink);
+  border-radius:12px;padding:7px 24px;cursor:pointer;box-shadow:0 4px 0 rgba(20,28,40,.32)}
+.pc-x:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(20,28,40,.32)}
+@media (max-height:700px){.pc-card{width:340px;height:472px}}
+@media (max-width:480px){.pc-card{width:min(calc(100vw - 26px),372px);height:min(72vh,516px)}}
 
 /* ── ⚔️ 히든 포켓몬 배틀 ───────────────── */
 #modal-battle{z-index:70;background:rgba(20,28,40,.62)}
@@ -672,6 +748,14 @@ body.eve #p-msg{color:#B4622A}
   </section>
 </div>
 
+<!-- 🃏 포켓몬 카드 (앞면·뒷면) — 도감에서 포켓몬을 누르면 열림 -->
+<div id="modal-card" class="overlay hidden">
+  <div class="pc-shell">
+    <div class="pc-card" id="pc-card" role="dialog" aria-label="포켓몬 카드"></div>
+    <button type="button" class="pc-x" id="pc-card-close" aria-label="카드 닫기">✕ 닫기</button>
+  </div>
+</div>
+
 <!-- 포획 연출 -->
 <div id="modal-catch" class="overlay hidden">
   <div class="modal">
@@ -953,11 +1037,67 @@ const DEX_STATS={
   869:[65,60,75,'페어리'],887:[88,120,75,'드래곤','고스트'],906:[40,61,54,'풀'],912:[55,65,45,'물'],914:[85,120,80,'물','격투'],
   925:[74,75,70,'노말'],959:[85,75,77,'페어리','강철'],1000:[87,60,95,'강철','고스트'],1007:[100,135,115,'격투','드래곤'],1008:[100,85,100,'전기','드래곤']
 };
+/* 실제 진화 단계 · 진화 계열 (PokeAPI pokemon_species · evolution chain 원본 데이터, 200종)
+   [진화 단계, 진화 계열] — '기본' / '1진화' / '2진화' / '진화 없음' */
+const DEX_EVO={
+  1:['기본','이상해씨 → 이상해풀 → 이상해꽃'], 4:['기본','파이리 → 리자드 → 리자몽'], 7:['기본','꼬부기 → 어니부기 → 거북왕'], 12:['2진화','캐터피 → 단데기 → 버터플'],
+  18:['2진화','구구 → 피죤 → 피죤투'], 25:['1진화','피츄 → 피카츄 → 라이츄'], 26:['2진화','피츄 → 피카츄 → 라이츄'], 35:['1진화','삐 → 삐삐 → 픽시'],
+  39:['1진화','푸푸린 → 푸린 → 푸크린'], 52:['기본','나옹 → 2갈래 진화'], 54:['기본','고라파덕 → 골덕'], 58:['기본','가디 → 윈디'],
+  59:['1진화','가디 → 윈디'], 63:['기본','캐이시 → 윤겔라 → 후딘'], 65:['2진화','캐이시 → 윤겔라 → 후딘'], 66:['기본','알통몬 → 근육몬 → 괴력몬'],
+  68:['2진화','알통몬 → 근육몬 → 괴력몬'], 74:['기본','꼬마돌 → 데구리 → 딱구리'], 77:['기본','포니타 → 날쌩마'], 92:['기본','고오스 → 고우스트 → 팬텀'],
+  94:['2진화','고오스 → 고우스트 → 팬텀'], 121:['1진화','별가사리 → 아쿠스타'], 123:['기본','스라크 → 2갈래 진화'], 129:['기본','잉어킹 → 갸라도스'],
+  130:['1진화','잉어킹 → 갸라도스'], 131:['진화 없음',''], 133:['기본','이브이 → 8갈래 진화'], 134:['1진화','이브이 → 샤미드'],
+  135:['1진화','이브이 → 쥬피썬더'], 136:['1진화','이브이 → 부스터'], 143:['1진화','먹고자 → 잠만보'], 147:['기본','미뇽 → 신뇽 → 망나뇽'],
+  149:['2진화','미뇽 → 신뇽 → 망나뇽'], 150:['진화 없음',''], 151:['진화 없음',''], 155:['기본','브케인 → 마그케인 → 블레이범'],
+  157:['2진화','브케인 → 마그케인 → 블레이범'], 158:['기본','리아코 → 엘리게이 → 장크로다일'], 161:['기본','꼬리선 → 다꼬리'], 172:['기본','피츄 → 피카츄 → 라이츄'],
+  175:['기본','토게피 → 토게틱 → 토게키스'], 179:['기본','메리프 → 보송송 → 전룡'], 181:['2진화','메리프 → 보송송 → 전룡'], 183:['1진화','루리리 → 마릴 → 마릴리'],
+  184:['2진화','루리리 → 마릴 → 마릴리'], 196:['1진화','이브이 → 에브이'], 197:['1진화','이브이 → 블래키'], 212:['1진화','스라크 → 핫삼'],
+  214:['진화 없음',''], 243:['진화 없음',''], 245:['진화 없음',''], 248:['2진화','애버라스 → 데기라스 → 마기라스'],
+  249:['진화 없음',''], 250:['진화 없음',''], 252:['기본','나무지기 → 나무돌이 → 나무킹'], 255:['기본','아차모 → 영치코 → 번치코'],
+  257:['2진화','아차모 → 영치코 → 번치코'], 258:['기본','물짱이 → 늪짱이 → 대짱이'], 260:['2진화','물짱이 → 늪짱이 → 대짱이'], 282:['2진화','랄토스 → 킬리아 → 가디안'],
+  302:['진화 없음',''], 330:['2진화','톱치 → 비브라바 → 플라이곤'], 334:['1진화','파비코 → 파비코리'], 350:['1진화','빈티나 → 밀로틱'],
+  359:['진화 없음',''], 373:['2진화','아공이 → 쉘곤 → 보만다'], 376:['2진화','메탕 → 메탕구 → 메타그로스'], 380:['진화 없음',''],
+  381:['진화 없음',''], 382:['진화 없음',''], 383:['진화 없음',''], 384:['진화 없음',''],
+  387:['기본','모부기 → 수풀부기 → 토대부기'], 390:['기본','불꽃숭이 → 파이숭이 → 초염몽'], 392:['2진화','불꽃숭이 → 파이숭이 → 초염몽'], 393:['기본','팽도리 → 팽태자 → 엠페르트'],
+  395:['2진화','팽도리 → 팽태자 → 엠페르트'], 403:['기본','꼬링크 → 럭시오 → 렌트라'], 405:['2진화','꼬링크 → 럭시오 → 렌트라'], 445:['2진화','딥상어동 → 한바이트 → 한카리아스'],
+  448:['1진화','리오르 → 루카리오'], 468:['2진화','토게피 → 토게틱 → 토게키스'], 470:['1진화','이브이 → 리피아'], 471:['1진화','이브이 → 글레이시아'],
+  479:['진화 없음',''], 483:['진화 없음',''], 484:['진화 없음',''], 487:['진화 없음',''],
+  491:['진화 없음',''], 493:['진화 없음',''], 571:['1진화','조로아 → 조로아크'], 637:['1진화','활화르바 → 불카모스'],
+  658:['2진화','개구마르 → 개굴반장 → 개굴닌자'], 700:['1진화','이브이 → 님피아'], 745:['1진화','암멍이 → 루가루암'], 813:['기본','염버니 → 래비풋 → 에이스번'],
+  906:['기본','나오하 → 나로테 → 마스카나'], 912:['기본','꾸왁스 → 아꾸왁 → 웨이니발'], 1007:['진화 없음',''], 1008:['진화 없음',''],
+  2:['1진화','이상해씨 → 이상해풀 → 이상해꽃'], 3:['2진화','이상해씨 → 이상해풀 → 이상해꽃'], 5:['1진화','파이리 → 리자드 → 리자몽'], 6:['2진화','파이리 → 리자드 → 리자몽'],
+  8:['1진화','꼬부기 → 어니부기 → 거북왕'], 9:['2진화','꼬부기 → 어니부기 → 거북왕'], 15:['2진화','뿔충이 → 딱충이 → 독침붕'], 16:['기본','구구 → 피죤 → 피죤투'],
+  20:['1진화','꼬렛 → 레트라'], 22:['1진화','깨비참 → 깨비드릴조'], 24:['1진화','아보 → 아보크'], 34:['2진화','니드런♂ → 니드리노 → 니드킹'],
+  36:['2진화','삐 → 삐삐 → 픽시'], 38:['1진화','식스테일 → 나인테일'], 40:['2진화','푸푸린 → 푸린 → 푸크린'], 45:['2진화','뚜벅쵸 → 냄새꼬 → 라플레시아'],
+  47:['1진화','파라스 → 파라섹트'], 55:['1진화','고라파덕 → 골덕'], 62:['2진화','발챙이 → 슈륙챙이 → 강챙이'], 76:['2진화','꼬마돌 → 데구리 → 딱구리'],
+  78:['1진화','포니타 → 날쌩마'], 79:['기본','야돈 → 2갈래 진화'], 80:['1진화','야돈 → 야도란'], 82:['1진화','코일 → 레어코일 → 자포코일'],
+  85:['1진화','두두 → 두트리오'], 95:['기본','롱스톤 → 강철톤'], 99:['1진화','크랩 → 킹크랩'], 103:['1진화','아라리 → 나시'],
+  105:['1진화','탕구리 → 텅구리'], 110:['1진화','또가스 → 또도가스'], 112:['1진화','뿔카노 → 코뿌리 → 거대코뿌리'], 113:['1진화','핑복 → 럭키 → 해피너스'],
+  115:['진화 없음',''], 122:['1진화','흉내내 → 마임맨 → 마임꽁꽁'], 124:['1진화','뽀뽀라 → 루주라'], 125:['1진화','에레키드 → 에레브 → 에레키블'],
+  127:['진화 없음',''], 128:['진화 없음',''], 132:['진화 없음',''], 137:['기본','폴리곤 → 폴리곤2 → 폴리곤Z'],
+  142:['진화 없음',''], 144:['진화 없음',''], 145:['진화 없음',''], 146:['진화 없음',''],
+  148:['1진화','미뇽 → 신뇽 → 망나뇽'], 154:['2진화','치코리타 → 베이리프 → 메가니움'], 160:['2진화','리아코 → 엘리게이 → 장크로다일'], 164:['1진화','부우부 → 야부엉'],
+  169:['2진화','주뱃 → 골뱃 → 크로뱃'], 176:['1진화','토게피 → 토게틱 → 토게키스'], 182:['2진화','뚜벅쵸 → 냄새꼬 → 아르코'], 186:['2진화','발챙이 → 슈륙챙이 → 왕구리'],
+  199:['1진화','야돈 → 야도킹'], 208:['1진화','롱스톤 → 강철톤'], 227:['진화 없음',''], 229:['1진화','델빌 → 헬가'],
+  230:['2진화','쏘드라 → 시드라 → 킹드라'], 251:['진화 없음',''], 254:['2진화','나무지기 → 나무돌이 → 나무킹'], 262:['1진화','포챠나 → 그라에나'],
+  289:['2진화','게을로 → 발바로 → 게을킹'], 306:['2진화','가보리 → 갱도라 → 보스로라'], 310:['1진화','썬더라이 → 썬더볼트'], 362:['1진화','눈꼬마 → 얼음귀신'],
+  371:['기본','아공이 → 쉘곤 → 보만다'], 385:['진화 없음',''], 447:['기본','리오르 → 루카리오'], 461:['1진화','포푸니 → 포푸니라'],
+  462:['2진화','코일 → 레어코일 → 자포코일'], 466:['2진화','에레키드 → 에레브 → 에레키블'], 467:['2진화','마그비 → 마그마 → 마그마번'], 472:['1진화','글라이거 → 글라이온'],
+  474:['2진화','폴리곤 → 폴리곤2 → 폴리곤Z'], 475:['2진화','랄토스 → 킬리아 → 엘레이드'], 478:['1진화','눈꼬마 → 눈여아'], 494:['진화 없음',''],
+  497:['2진화','주리비얀 → 샤비 → 샤로다'], 500:['2진화','뚜꾸리 → 차오꿀 → 염무왕'], 503:['2진화','수댕이 → 쌍검자비 → 대검귀'], 530:['1진화','두더류 → 몰드류'],
+  553:['2진화','깜눈크 → 악비르 → 악비아르'], 567:['1진화','아켄 → 아케오스'], 609:['2진화','불켜미 → 램프라 → 샹델라'], 612:['2진화','터검니 → 액슨도 → 액스라이즈'],
+  635:['2진화','모노두 → 디헤드 → 삼삼드래'], 652:['2진화','도치마론 → 도치보구 → 브리가론'], 663:['2진화','화살꼬빈 → 불화살빈 → 파이어로'], 701:['진화 없음',''],
+  706:['2진화','미끄메라 → 미끄네일 → 미끄래곤'], 778:['진화 없음',''], 807:['진화 없음',''], 815:['2진화','염버니 → 래비풋 → 에이스번'],
+  818:['2진화','울머기 → 누겔레온 → 인텔리레온'], 823:['2진화','파라꼬 → 파크로우 → 아머까오'], 869:['1진화','마빌크 → 마휘핑'], 887:['2진화','드라꼰 → 드래런치 → 드래펄트'],
+  914:['2진화','꾸왁스 → 아꾸왁 → 웨이니발'], 925:['1진화','두리쥐 → 파밀리쥐'], 959:['2진화','어리짱 → 벼리짱 → 두드리짱'], 1000:['1진화','모으령 → 타부자고']
+};
+
 const POKEMON=[...DEX_BASE,...DEX_NEW].map(([id,name])=>{
-  const s=DEX_STATS[id]||[80,80,80,'노말'];
+  const s=DEX_STATS[id]||[80,80,80,'노말'], e=DEX_EVO[id]||['진화 없음',''];
   return {id,no:String(id).padStart(3,'0'),name,
     r:DEX_LEGEND.has(id)?'legend':(DEX_RARE.has(id)?'rare':'normal'),
-    hp:s[0],atk:s[1],def:s[2],types:s.slice(3).filter(Boolean)};
+    hp:s[0],atk:s[1],def:s[2],types:s.slice(3).filter(Boolean),
+    stage:e[0],line:e[1]};
 });
 const TASKS=[                                  /* 등원 날 5가지 */
   {k:'toilet',label:'화장실',            img:'task-1'},
@@ -1420,6 +1560,7 @@ function toggleTask(k){
     if(st.bonus)delete st.bonus[k];
   }
   if(st.tasks[k])playDoneSound();      /* 완료로 바뀔 때만 피카츄 효과음 */
+  if(st.tasks[k])pauseTimerForTask(k); /* 완료 상태가 되면 그 할 일의 타이머·음원도 바로 멈춤 */
   recalcExp(d);
   save();renderTasks();renderExp();renderProgress();
   tickWake();                                  /* 쉬는 날: 양치(5번) 체크하면 화면 유지 해제 */
@@ -1502,6 +1643,25 @@ function renderEveBonus(){
 function renderMorBonus(){
   const d=day(todayKey());
   paintEatBonus('bonus-eat',d,d.timer,'eat');   /* 쉬는 날·등원 날 모두: 배지가 없으면 그냥 지나감 */
+}
+/* 할 일을 '완료'로 바꾸면 그 할 일의 타이머를 그 자리에서 멈춘다 (▶ 시작을 누르면 이어서 다시 흐름).
+   샤워하기는 유튜브 음원까지 바로 끄고, 밥 먹기의 11초 버저는 타이머가 자연히 00:00으로 흐를 때만 울린다. */
+function timerDefOf(k){
+  const eve=EVETASKS.find(t=>t.k===k);
+  if(eve)return eve;
+  return dayTasks().find(t=>t.k===k)||null;
+}
+function pauseTimerForTask(k){
+  const def=timerDefOf(k);
+  if(!def||!def.timer)return false;
+  const t=timerOf(k);
+  if(!t)return false;
+  let stopped=false;
+  if(t.running){t.left=liveLeft(t);t.running=false;t.since=null;stopped=true;}
+  if(k==='eve_shower')showerYtStop();       /* 샤워 음원 즉시 정지 */
+  else if(k==='eat'||k==='eve_eat')stopBuzz();   /* 밥 먹기 버저가 울리는 중이면 정지 (11초 버저 설정은 그대로) */
+  renderTimerKey(k);
+  return stopped;
 }
 function timerAct(k,act){
   const t=timerOf(k),total=timerTotalOf(k);
@@ -2725,6 +2885,8 @@ function renderPoke(){
     const last=got.length?got[got.length-1].replace(/-/g,'.'):'';
     const card=document.createElement('div');
     card.className='pk-card'+(got.length?' caught':'')+((!got.length&&p.id===next.id)?' next':'');
+    card.dataset.id=p.id;
+    card.title=got.length?`${p.name} 카드 보기`:'아직 만나지 못한 포켓몬 — 카드 뒷면';
     card.innerHTML=`<div class="pk-no">No.${p.no}</div>
       ${(!got.length&&p.id===next.id)?'<div class="pk-next">다음 목표</div>':''}
       <img src="assets/pokemon/${p.id}.png" alt="${p.name}" loading="lazy" decoding="async">
@@ -2743,6 +2905,68 @@ function renderPoke(){
 function setPkFilter(f){
   if(f!==pkFilter){pkFilter=f;renderPoke();document.getElementById('pk-scroll').scrollTop=0;}
 }
+
+/* ================= 🃏 포켓몬 카드 (앞면 · 뒷면) =================
+   도감에서 포켓몬을 누르면 카드가 열린다.
+   · 잡은 포켓몬 → 앞면: 타입·HP·공격·방어·진화 단계(진짜 진화 계열)를 담은 카드
+   · 아직 못 잡은 포켓몬 → 뒷면: 이름·그림·능력치를 모두 숨긴 카드 뒷면 */
+const TYPE_GRAD={
+  노말:['#DCE0E8','#F4F6FA'], 격투:['#E8A184','#FBDCCB'], 비행:['#C3D6F5','#E7F1FF'],
+  독:['#D8B6E4','#F3E4F9'], 땅:['#E5CFA1','#F8EFD7'], 바위:['#D6C9A0','#F2EDDA'],
+  벌레:['#CFE08A','#EEF6CC'], 고스트:['#BFB4DE','#E9E4F7'], 강철:['#CFD6DF','#EFF2F8'],
+  불꽃:['#F9B48C','#FFE4CE'], 물:['#A8CBEF','#DCEDFF'], 풀:['#B4E0A0','#E3F7D7'],
+  전기:['#F9DF8A','#FFF3C9'], 에스퍼:['#F5B8CB','#FDE2EC'], 얼음:['#BDE9EC','#E5FAFB'],
+  드래곤:['#BFAFF2','#E8E1FF'], 악:['#B7B2BC','#ECEAEF'], 페어리:['#F7C6E2','#FEE8F4']
+};
+function pokeCardFront(p,got){
+  const bar=(lb,v,cls)=>`<div class="pc-st"><span class="lb">${lb}</span>
+    <span class="bar"><i class="${cls}" style="width:${Math.max(6,Math.min(100,Math.round(v/160*100)))}%"></i></span>
+    <span class="vl">${v}</span></div>`;
+  const last=got.length?String(got[got.length-1]).replace(/-/g,'.'):'';
+  return `<div class="pc-hd">
+      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span>${p.r!=='normal'?`<span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]}</span>`:''}</div>
+      <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp}</b></span></div>
+      <div class="pc-tps">${p.types.map(typeBadge).join('')}</div>
+    </div>
+    <div class="pc-art"><img src="assets/pokemon/${p.id}.png" alt="${p.name}"></div>
+    <div class="pc-evo"><span class="lb">진화 단계</span><span class="st">${p.stage}</span>${p.line?`<span class="ln">${p.line}</span>`:''}</div>
+    <div class="pc-stats">${bar('HP',p.hp,'hp')}${bar('공격',p.atk,'atk')}${bar('방어',p.def,'def')}</div>
+    <div class="pc-foot">${got.length>1?`🏅 ${got.length}마리 포획 · 최근 ${last}`:`🏅 포획 완료!${last?' · '+last:''}`}</div>`;
+}
+function pokeCardBack(){
+  return `<div class="pcb-frame">
+      <div class="pcb-ball"></div>
+      <div class="pcb-q">???</div>
+      <div class="pcb-t1">아직 만나지 못한 포켓몬</div>
+      <div class="pcb-t2">"EXP를 모아 포획하면 앞면을 볼 수 있어요!"</div>
+      <div class="pcb-no">No.???</div>
+    </div>`;
+}
+function openPokeCard(id){
+  const p=POKEMON.find(x=>x.id===Number(id));
+  if(!p)return;
+  const got=caughtDates()[p.id]||[];
+  const el=document.getElementById('pc-card');
+  const g=TYPE_GRAD[p.types[0]]||TYPE_GRAD['노말'];
+  el.className='pc-card '+(got.length?'front':'back');
+  el.style.setProperty('--pc1',g[0]);el.style.setProperty('--pc2',g[1]);
+  el.setAttribute('aria-label',got.length?`${p.name} 포켓몬 카드`:'아직 만나지 못한 포켓몬 카드 뒷면');
+  el.innerHTML=got.length?pokeCardFront(p,got):pokeCardBack();
+  document.getElementById('modal-card').classList.remove('hidden');
+}
+function closePokeCard(){document.getElementById('modal-card').classList.add('hidden');}
+/* 도감 그리드 전체에 한 번만 붙이는 위임 클릭 (잡은·못 잡은 포켓몬 모두 열림) */
+document.getElementById('pk-grid').addEventListener('click',e=>{
+  const c=e.target.closest?e.target.closest('.pk-card'):null;
+  if(c&&c.dataset.id)openPokeCard(c.dataset.id);
+});
+document.getElementById('pc-card-close').addEventListener('click',closePokeCard);
+document.getElementById('modal-card').addEventListener('click',e=>{
+  if(e.target&&e.target.id==='modal-card')closePokeCard();     /* 바깥을 눌러도 닫힘 */
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!document.getElementById('modal-card').classList.contains('hidden'))closePokeCard();
+});
 
 /* ================= 백업 · 복원 (JSON) ================= */
 const BACKUP_APP='morning-dashboard', BACKUP_VER=1;
@@ -3358,6 +3582,7 @@ function grantMissedTask(k){
   if(!t)return;
   if(st.tasks[k]&&st.inTime[k]){toast(`이미 인정했어요 · ${t.label}`);return;}   /* 이미 인정된 할 일은 그대로 */
   st.tasks[k]=true;st.inTime[k]=true;
+  pauseTimerForTask(k);            /* 인정받은 할 일의 타이머·음원도 같이 멈춤 */
   const d=day(todayKey());recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
   tickWake();                       /* 저녁: 밥 먹기·책을 인정하면 화면 유지 조건이 바뀜 */
@@ -3371,6 +3596,7 @@ function grantAllMissedChecked(){
   if(!n){renderSettingsMissedTasks();return;}
   mT.forEach(t=>{d.tasks[t.k]=true;d.inTime[t.k]=true;});
   eT.forEach(t=>{ev.tasks[t.k]=true;ev.inTime[t.k]=true;});
+  mT.concat(eT).forEach(t=>pauseTimerForTask(t.k));   /* 한꺼번에 인정해도 돌고 있던 타이머는 멈춤 */
   recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
   tickWake();
