@@ -395,6 +395,7 @@ body.eve #p-msg{color:#B4622A}
 .task[data-k="eve-ebook"] .task-img{object-position:center 34%}
 /* 보너스 배지는 카드 맨 아래에 고정 — 사진·글씨를 밀어내지 않는다 */
 .task[data-k="eve_eat"]{padding-bottom:30px}
+.task.rest-eat-bonus{padding-bottom:30px}   /* 쉬는 날 아침 밥 먹기 배지 자리 */
 .eve-bonus{position:absolute;left:7px;right:7px;bottom:4px;display:block;font-size:11.5px;font-weight:900;color:#7a4a00;
   background:#FFF3C4;border:2px solid var(--ink);border-radius:99px;padding:1px 6px;line-height:1.35;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;text-align:center;z-index:3}
@@ -579,7 +580,8 @@ body.eve #p-msg{color:#B4622A}
       <div class="missed-group"><div class="missed-title">🌙 저녁 루틴</div><div id="missed-chips-eve" class="missed-chips"></div></div>
       <div class="missed-foot">
         <button class="set-btn sb-grant" id="btn-grant-checked" type="button">✨ 완료 표시된 일 모두 인정</button>
-        <button class="set-btn sb-grant" id="btn-bonus-eve" type="button">⚡ 밥 먹기 20분 보너스 +10</button>
+        <button class="set-btn sb-grant" id="btn-bonus-mor" type="button">⚡ 아침 밥 먹기 20분 보너스 +10</button>
+        <button class="set-btn sb-grant" id="btn-bonus-eve" type="button">⚡ 저녁 밥 먹기 20분 보너스 +10</button>
         <span class="set-sub" id="missed-note"></span>
       </div>
     </div>
@@ -794,8 +796,18 @@ function renderStudyList(){
 }
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
-  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false}};
-  return S.days[k];
+  if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false,ran:false}};
+  const d=S.days[k];
+  /* 아침 밥 먹기 타이머에도 20분 보너스용 ran(타이머를 시작했는지)을 둔다.
+     ran이 없는 옛 기록은 시작 여부를 알 수 없으니 false로 두고(보너스 없음), 지금 돌고 있으면 true. */
+  if(!d.timer||typeof d.timer!=='object')d.timer={left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false,ran:false};
+  if(typeof d.timer.ran!=='boolean')d.timer.ran=!!d.timer.running;
+  return d;
+}
+/* 쉬는 날 아침 밥 먹기 20분 보너스 기록 자리 (d.bonus={eat:true}) */
+function morBonus(d){
+  if(!d.bonus||typeof d.bonus!=='object'||Array.isArray(d.bonus))d.bonus={};
+  return d.bonus;
 }
 
 /* ================= 화면 모드 (☀️ 아침 / 🌙 저녁) =================
@@ -846,11 +858,11 @@ function eveState(k){
 /* 지금 화면의 할 일 저장소 (아침 = 그날 기록 / 저녁 = 그날 .eve) */
 function curState(){
   if(isEveMode()){const ev=eveState(todayKey());return {tasks:ev.tasks,inTime:ev.inTime,bonus:ev.bonus};}
-  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:null};
+  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:morBonus(d)};
 }
 function stateFor(k){
   if(String(k).indexOf('eve_')===0){const ev=eveState(todayKey());return {tasks:ev.tasks,inTime:ev.inTime,bonus:ev.bonus};}
-  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:null};
+  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:morBonus(d)};
 }
 
 /* ================= 쉬는 날 (주말 · 법정공휴일 · 방학 · 개인 결석) =================
@@ -1060,7 +1072,8 @@ function buildTasks(){
   main.classList.toggle('eve',eve);
   dayTasks().forEach((t,i)=>{
     const el=document.createElement('div');
-    el.className='task'+(eve?' eve-task':'');
+    const morEatBonus=!eve&&t.k==='eat'&&isRestDay();   /* 쉬는 날 아침 밥 먹기(30분)만 20분 보너스 */
+    el.className='task'+(eve?' eve-task':'')+(morEatBonus?' rest-eat-bonus':'');
     el.id=`task-${i+1}`;el.dataset.k=t.k;
     const total=t.secs||(t.timer?dayTotalSec(todayKey()):0);
     let inner=`<div class="num">${i+1}</div>
@@ -1078,6 +1091,7 @@ function buildTasks(){
       <div class="t-label${eve?' eve':''}">${t.label}</div>
       ${t.k==='study'?'<div class="study-list" id="study-list"></div>':''}
       ${t.k==='eve_eat'?'<div class="eve-bonus" id="bonus-eve_eat">⚡ 20분 이내 +10 보너스</div>':''}
+      ${morEatBonus?'<div class="eve-bonus" id="bonus-eat">⚡ 20분 이내 +10 보너스</div>':''}
       <div class="check">✔</div><div class="done-badge">완료!</div>`;
     el.innerHTML=inner;
     el.addEventListener('click',()=>toggleTask(t.k));
@@ -1094,7 +1108,12 @@ function isBeforeDepart(){
 }
 function recalcExp(d){
   let e=0;
-  MOR_KEYS.forEach(k=>{if(d.tasks[k]&&d.inTime&&d.inTime[k])e+=EXP_PER_TASK;});      /* 아침·쉬는 날 */
+  MOR_KEYS.forEach(k=>{                                                    /* 아침·쉬는 날 */
+    if(d.tasks[k]&&d.inTime&&d.inTime[k]){
+      e+=EXP_PER_TASK;
+      if(k==='eat'&&d.bonus&&d.bonus.eat)e+=EXP_PER_TASK;    /* ⚡ 쉬는 날 아침 밥 먹기 20분 이내 +10 보너스 */
+    }
+  });
   const ev=d.eve;
   if(ev&&ev.tasks&&ev.inTime){
     EVETASKS.forEach(t=>{
@@ -1114,6 +1133,9 @@ function toggleTask(k){
     st.tasks[k]=true;
     st.inTime[k]=isEveMode()?beforeBedtime():(isRestDay()?true:isBeforeDepart());
     if(isEveMode()&&k==='eve_eat'&&eatBonusNow())st.bonus[k]=true;    /* 30분 타이머의 20분 안에 끝냈으면 보너스 */
+    else if(!isEveMode()&&k==='eat'&&isRestDay()&&morEatBonusNow()){  /* ⚡ 쉬는 날 아침 밥 먹기(30분)도 20분 안에 끝냈으면 */
+      st.bonus=morBonus(d);st.bonus.eat=true;
+    }
   }else{
     delete st.tasks[k];delete st.inTime[k];
     if(st.bonus)delete st.bonus[k];
@@ -1140,6 +1162,7 @@ function renderTasks(){
   renderTimer();
   renderStudyList();
   if(isEveMode())renderEveBonus();
+  else renderMorBonus();
 }
 /* 타이머 — 아침 밥 먹기(20분/쉬는 날 30분), 저녁 밥 먹기 30분 · 샤워하기 10분 */
 function fmtSec(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
@@ -1172,12 +1195,17 @@ function eatBonusNow(){
   const t=eveState().timers.eat;
   return !!t.ran&&liveLeft(t)>=EVE_BONUS_LEFT;
 }
-function renderEveBonus(){
-  const el=document.getElementById('bonus-eve_eat');
+/* 쉬는 날 아침 밥 먹기(30분 타이머)의 20분 보너스 판정 — 남은 시간 600초 이상 */
+function morEatBonusNow(){
+  const t=day(todayKey()).timer;
+  return !!t.ran&&liveLeft(t)>=EVE_BONUS_LEFT;
+}
+/* 저녁·쉬는 날 아침 밥 먹기 배지 — 같은 문구·색을 쓴다 */
+function paintEatBonus(elId,st,timer,key){
+  const el=document.getElementById(elId);
   if(!el)return;
-  const ev=eveState();
-  const done=!!ev.tasks.eve_eat,won=done&&!!(ev.bonus&&ev.bonus.eve_eat);
-  const left=liveLeft(ev.timers.eat),ran=!!ev.timers.eat.ran;
+  const done=!!st.tasks[key],won=done&&!!(st.bonus&&st.bonus[key]);
+  const left=liveLeft(timer),ran=!!timer.ran;
   const onTrack=!done&&ran&&left>=EVE_BONUS_LEFT;
   el.classList.toggle('won',!!won);
   el.classList.toggle('on',onTrack);
@@ -1187,6 +1215,14 @@ function renderEveBonus(){
     :onTrack?'⚡ 지금 끝내면 +10 보너스!'
     :(ran&&left<EVE_BONUS_LEFT)?'⚡ 20분이 넘었어요'
     :'⚡ 20분 이내 +10 보너스';
+}
+function renderEveBonus(){
+  const ev=eveState();
+  paintEatBonus('bonus-eve_eat',ev,ev.timers.eat,'eve_eat');
+}
+function renderMorBonus(){
+  const d=day(todayKey());
+  paintEatBonus('bonus-eat',d,d.timer,'eat');   /* 쉬는 날·등원 날 모두: 배지가 없으면 그냥 지나감 */
 }
 function timerAct(k,act){
   const t=timerOf(k),total=timerTotalOf(k);
@@ -1206,6 +1242,7 @@ function timerAct(k,act){
   }
   save();renderTimerKey(k);
   if(k==='eve_eat')renderEveBonus();
+  else if(k==='eat')renderMorBonus();
 }
 function tickOneTimer(k){
   const t=timerOf(k);
@@ -1228,6 +1265,7 @@ function tickOneTimer(k){
 function tickTimer(){
   tickOneTimer('eat');tickOneTimer('eve_eat');tickOneTimer('eve_shower');
   if(isEveMode())renderEveBonus();
+  else renderMorBonus();
 }
 
 /* ================= 화면 모드 전환 ================= */
@@ -2258,7 +2296,12 @@ function parseBackup(raw){
       exp:(Number.isFinite(exp)&&exp>=0)?Math.floor(exp):0,
       chime:o.chime===true,
       restOverride:(typeof o.restOverride==='boolean')?o.restOverride:undefined,
-      timer:{left,running,since:running?since:null,ended:left<=0,cue11:tm.cue11===true}};
+      timer:{left,running,since:running?since:null,ended:left<=0,cue11:tm.cue11===true,
+        ran:tm.ran===true||running||left<EAT_SCHOOL}};   /* ⚡ 20분 보너스용: 타이머를 시작했던 기록 */
+    /* ⚡ 쉬는 날 아침 밥 먹기 20분 보너스 — 밥 먹기가 완료·인정된 날만 되살린다 (없는 옛 백업은 없음) */
+    const mBonus={};
+    if(o.bonus&&typeof o.bonus==='object'&&o.bonus.eat===true&&tasks.eat&&inTime.eat)mBonus.eat=true;
+    days[k].bonus=mBonus;
     /* 🌙 저녁 루틴 기록 (없는 옛 백업은 빈 상태로) */
     const se=(o.eve&&typeof o.eve==='object'&&!Array.isArray(o.eve))?o.eve:{};
     const eTasks={},eIn={},eBonus={};
@@ -2373,7 +2416,9 @@ document.getElementById('backup-file').addEventListener('change',e=>{
 function missedChip(t,st,isEve){
   const granted=!!(st.tasks[t.k]&&st.inTime[t.k]);
   const checked=!!st.tasks[t.k];
-  const bonus=!!(isEve&&t.k==='eve_eat'&&st.bonus&&st.bonus[t.k]&&granted);
+  /* 아침 밥 먹기 보너스는 쉬는 날(30분 타이머)에만 있다 */
+  const canBonus=isEve?(t.k==='eve_eat'):(t.k==='eat'&&isRestDay());
+  const bonus=!!(canBonus&&st.bonus&&st.bonus[t.k]&&granted);
   const exp=granted?(bonus?EXP_PER_TASK*2:EXP_PER_TASK):0;
   const cls=granted?'missed-chip granted':(checked?'missed-chip late':'missed-chip');
   const mark=granted?'✅':(checked?'⏰':'○');
@@ -2401,15 +2446,27 @@ function renderSettingsMissedTasks(){
     const ok=!!(ev.tasks.eve_eat&&ev.inTime.eve_eat);
     const has=!!(ok&&ev.bonus&&ev.bonus.eve_eat);
     bb.disabled=!ok||has;
-    bb.textContent=has?'⚡ 밥 먹기 20분 보너스 인정됨':'⚡ 밥 먹기 20분 보너스 +10';
-    bb.title=ok?'밥 먹기를 인정한 상태라 20분 이내 보너스 +10을 더 줄 수 있어요':'먼저 아래 저녁 목록에서 밥 먹기를 인정해 주세요';
+    bb.textContent=has?'⚡ 저녁 밥 먹기 20분 보너스 인정됨':'⚡ 저녁 밥 먹기 20분 보너스 +10';
+    bb.title=ok?'저녁 밥 먹기를 인정한 상태라 20분 이내 보너스 +10을 더 줄 수 있어요':'먼저 아래 저녁 목록에서 밥 먹기를 인정해 주세요';
+  }
+  const mb=document.getElementById('btn-bonus-mor');
+  if(mb){
+    const rest=isRestDay();
+    const ok=!!(rest&&d.tasks.eat&&d.inTime.eat);
+    const has=!!(ok&&d.bonus&&d.bonus.eat);
+    mb.classList.toggle('hidden',!rest);          /* 등원 날 아침은 20분 타이머라 보너스가 없어요 */
+    mb.disabled=!ok||has;
+    mb.textContent=has?'⚡ 아침 밥 먹기 20분 보너스 인정됨':'⚡ 아침 밥 먹기 20분 보너스 +10';
+    mb.title=rest?(ok?'쉬는 날 아침 밥 먹기를 인정한 상태라 20분 이내 보너스 +10을 더 줄 수 있어요':'먼저 위 아침 목록에서 밥 먹기를 인정해 주세요')
+      :'오늘은 등원 날이라 아침 밥 먹기는 20분 타이머예요 (보너스 없음)';
   }
   const note=document.getElementById('missed-note');
   if(note){
     const mOk=mList.filter(t=>d.tasks[t.k]&&d.inTime[t.k]).length;
     const eOk=eList.filter(t=>ev.tasks[t.k]&&ev.inTime[t.k]).length;
     const bOk=(ev.bonus&&ev.bonus.eve_eat&&ev.tasks.eve_eat&&ev.inTime.eve_eat)?1:0;
-    note.textContent=`아침 ${mOk}/${mList.length} · 저녁 ${eOk}/${eList.length} 인정${bOk?' · 보너스 +10':''}`;
+    const mB=(isRestDay()&&d.bonus&&d.bonus.eat&&d.tasks.eat&&d.inTime.eat)?1:0;
+    note.textContent=`아침 ${mOk}/${mList.length} · 저녁 ${eOk}/${eList.length} 인정${(bOk+mB)?` · 보너스 +${(bOk+mB)*EXP_PER_TASK}`:''}`;
   }
 }
 function grantMissedTask(k){
@@ -2443,10 +2500,23 @@ function grantEveBonus(){
   ev.bonus.eve_eat=true;
   const d=day(todayKey());recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
-  if(!checkCatch())toast('⚡ 밥 먹기 20분 보너스 +10 EXP 인정!');
+  if(!checkCatch())toast('⚡ 저녁 밥 먹기 20분 보너스 +10 EXP 인정!');
+}
+/* 쉬는 날 아침 밥 먹기의 20분 보너스 인정 (등원 날은 20분 타이머라 보너스 없음) */
+function grantMorBonus(){
+  if(!isRestDay()){toast('오늘은 등원 날이라 아침 밥 먹기는 20분 타이머예요 (보너스 없음)');return;}
+  const d=day(todayKey());
+  if(!(d.tasks.eat&&d.inTime.eat)){toast('먼저 아침 목록에서 밥 먹기를 인정해 주세요');return;}
+  const b=morBonus(d);
+  if(b.eat){toast('이미 20분 보너스를 인정했어요');return;}
+  b.eat=true;
+  recalcExp(d);save();
+  renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
+  if(!checkCatch())toast('⚡ 아침 밥 먹기 20분 보너스 +10 EXP 인정!');
 }
 document.getElementById('btn-grant-checked').addEventListener('click',grantAllMissedChecked);
 document.getElementById('btn-bonus-eve').addEventListener('click',grantEveBonus);
+document.getElementById('btn-bonus-mor').addEventListener('click',grantMorBonus);
 
 const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
@@ -2604,7 +2674,8 @@ document.getElementById('btn-exp').addEventListener('click',()=>{
 document.getElementById('btn-reset-day').addEventListener('click',()=>{
   if(confirm('오늘 기록(아침·저녁 할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
     S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,
-      timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false},
+      timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false,ran:false},
+      bonus:{},
       eve:{tasks:{},inTime:{},bonus:{},timers:{eat:eveTimerBlank(EVE_EAT_SEC),shower:eveTimerBlank(EVE_SHOWER_SEC)}}};
     stopSong();
     save();renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
@@ -2635,6 +2706,8 @@ function refreshRest(){
   if(d.timer&&!d.timer.running&&d.timer.since===null&&(d.timer.left===EAT_SCHOOL||d.timer.left===EAT_REST)){
     d.timer.left=dayTotalSec(todayKey());
   }
+  /* 등원 날로 바뀌면 아침 밥 먹기는 20분 타이머라 20분 보너스는 적용하지 않는다 */
+  if(!isRestDay()&&d.bonus&&d.bonus.eat)delete d.bonus.eat;
   recalcExp(d);
   save();
   buildTasks();renderTasks();renderProgress();renderExp();renderTimer();renderRestBits();tickWake();
