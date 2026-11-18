@@ -333,6 +333,7 @@ body.dex-open #progress-card{display:none}
 .pc-rar{margin-left:auto;display:inline-block;font-size:10px;font-weight:900;line-height:1.6;border-radius:99px;
   padding:0 8px;border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px;white-space:nowrap}
 .pc-rar.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+.pc-rar.normal{border-color:#B7C2D0;background:#F2F5FA;color:#5A6879}
 .pc-hd2{display:flex;align-items:center;gap:8px}
 .pc-nm{font-size:27px;font-weight:900;letter-spacing:-1px;line-height:1.02;color:var(--ink);
   text-shadow:0 2px 0 #fff,0 -1px 0 #fff,1.5px 0 0 #fff,-1.5px 0 0 #fff,0 3px 0 rgba(34,43,56,.18)}
@@ -2924,7 +2925,7 @@ function pokeCardFront(p,got){
     <span class="vl">${v}</span></div>`;
   const last=got.length?String(got[got.length-1]).replace(/-/g,'.'):'';
   return `<div class="pc-hd">
-      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span>${p.r!=='normal'?`<span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]}</span>`:''}</div>
+      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
       <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp}</b></span></div>
       <div class="pc-tps">${p.types.map(typeBadge).join('')}</div>
     </div>
