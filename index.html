@@ -222,11 +222,18 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 /* 아침 공부 카드: 제목 아래에 그날의 공부 목록(요일별) */
 .task[data-k="study"]{padding-bottom:10px}
 .task[data-k="study"] .t-label{padding:2px 0 0}
-.study-list{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;
-  width:100%;padding:2px 0 0;min-height:0}
-.study-pill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-size:11px;font-weight:900;line-height:1.2;color:#1d5cad;background:#EAF4FF;
-  border:2px solid var(--ink);border-radius:99px;padding:0 5px;letter-spacing:-.2px}
+.study-list{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px 4px;
+  width:100%;padding:3px 0 0;min-height:0}
+/* 목록 알약: 아이가 읽기 쉽게 글씨를 키우고, 앞에 미니 몬스터볼을 붙인다 */
+.study-pill{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0;overflow:hidden;
+  font-size:13.5px;font-weight:900;line-height:1.22;color:#1d5cad;background:#EAF4FF;
+  border:2px solid var(--ink);border-radius:99px;padding:1px 8px 1px 5px;letter-spacing:-.2px}
+.study-pill .pill-tx{min-width:0;line-height:1.16;text-align:center;word-break:keep-all;overflow-wrap:anywhere}
+/* 미니 몬스터볼(14px) — #p-ball과 같은 빨강/검정/흰색 배색 */
+.mini-ball{flex:0 0 auto;position:relative;width:14px;height:14px;border-radius:50%;border:1.7px solid var(--ink);
+  background:linear-gradient(180deg,var(--red) 0 44%,var(--ink) 44% 56%,#fff 56% 100%)}
+.mini-ball::after{content:"";position:absolute;left:50%;top:50%;width:4.4px;height:4.4px;transform:translate(-50%,-50%);
+  background:#fff;border:1.4px solid var(--ink);border-radius:50%}
 .task.active{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(250,204,21,.35),0 6px 0 rgba(34,43,56,.14),0 10px 22px rgba(34,43,56,.12)}
 .task.done{border-color:var(--green);background:var(--green-l)}
 .task .check{position:absolute;top:6px;right:8px;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;
@@ -717,7 +724,7 @@ function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function renderStudyList(){
   const box=document.getElementById('study-list');
   if(!box)return;
-  box.innerHTML=studyItems(todayDow()).map(x=>`<span class="study-pill">${escHtml(x)}</span>`).join('');
+  box.innerHTML=studyItems(todayDow()).map(x=>`<span class="study-pill"><span class="mini-ball" aria-hidden="true"></span><span class="pill-tx">${escHtml(x)}</span></span>`).join('');
 }
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
