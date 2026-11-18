@@ -53,12 +53,12 @@ body{
 /* ── 상단 (하늘 위) ────────────────────── */
 header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 
-/* 좌: 도감 버튼 + EXP */
-#hl{width:252px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.hl-top{display:flex;align-items:center;gap:8px}
-.dex-btn{display:flex;align-items:center;gap:8px;font-family:inherit;cursor:pointer;
-  background:#fff;border:var(--bw) solid var(--ink);border-radius:14px;padding:6px 12px 6px 8px;
-  font-weight:900;font-size:15px;color:var(--ink);box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
+/* 좌: 도감 버튼 + 포켓몬 센터 버튼 + EXP (v25: 두 버튼과 소리·설정 아이콘이 한 줄에) */
+#hl{width:352px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.hl-top{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.dex-btn{display:flex;align-items:center;gap:6px;font-family:inherit;cursor:pointer;
+  background:#fff;border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 9px 5px 6px;
+  font-weight:900;font-size:13.5px;letter-spacing:-.4px;color:var(--ink);box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
 .dex-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 .dex-btn.active{background:var(--yellow-l)}
 .pokeball{width:30px;height:30px;border-radius:50%;border:3px solid var(--ink);position:relative;flex:0 0 auto;
@@ -67,9 +67,20 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   background:#fff;border:3px solid var(--ink);border-radius:50%}
 .pokeball.sm{width:22px;height:22px;border-width:2.5px}
 .pokeball.sm::after{width:7px;height:7px;border-width:2.5px}
-.hl-icons{display:flex;gap:6px;margin-left:auto}
-.icon-btn{width:40px;height:40px;font-family:inherit;font-size:18px;cursor:pointer;background:#fff;
-  border:var(--bw) solid var(--ink);border-radius:12px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
+.dex-btn .pokeball{width:24px;height:24px;border-width:2.5px}
+.dex-btn .pokeball::after{width:8px;height:8px;border-width:2.5px}
+.hl-top .dex-btn{height:36px}   /* 도감·센터 두 버튼 높이를 맞춰 한 줄로 반듯하게 */
+/* 🏥 포켓몬 센터 버튼 — 도감 버튼 바로 옆 */
+.center-btn{background:#FFF3F6}
+.center-btn .ct-ic{font-size:15px;line-height:1}
+.center-btn .ct-tx{white-space:nowrap}
+.center-btn .ct-candy{display:none;font-size:10.5px;font-weight:900;color:#7A3E00;background:#FFE6B8;
+  border:2px solid var(--ink);border-radius:99px;padding:0 5px;line-height:1.5;letter-spacing:-.3px}
+.center-btn .ct-candy.show{display:inline-block}
+.center-btn.has-candy{background:#FFE9F0}
+.hl-icons{display:flex;gap:5px;margin-left:auto}
+.icon-btn{width:34px;height:34px;font-family:inherit;font-size:16px;cursor:pointer;background:#fff;
+  border:var(--bw) solid var(--ink);border-radius:10px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
 .icon-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 /* ── 유튜브 오디오 '우리는 모두 친구' (화면엔 2px, 소리만) ──
    아이패드는 1×1px·opacity .01 플레이어를 '안 보이는 요소'로 보고 재생을 막는 경우가 있어,
@@ -142,6 +153,13 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 
 /* 우: 날씨 박스 — 1)지역·링크·미세 2)현재 3)시간대 4)팁 */
 #weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:18px}
+/* v25: 헤더 왼쪽에 포켓몬 센터 버튼이 늘어난 만큼, 좁은 화면(1024)에서는 날씨 카드를 살짝 줄이고 시계도 함께 줄인다 */
+@media (max-width:1120px){
+  #weather-card{width:420px}
+  #clock .d{font-size:58px}
+  #clock .colon{font-size:49px}
+  #date-line{font-size:17px}
+}
 #w-top{flex:0 0 auto;display:flex;align-items:center;gap:4px;min-height:21px}
 #w-place{font-size:12px;font-weight:900;color:var(--ink);white-space:nowrap}
 .w-link{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;text-decoration:none;background:#EAF4FF;
@@ -362,8 +380,13 @@ body.dex-open #progress-card{display:none}
 @keyframes pcShine{0%{background-position:135% -20%}100%{background-position:-35% 120%}}
 @media (prefers-reduced-motion:reduce){.pc-card.front::before{animation:none}}
 .pc-hd{position:relative;z-index:2;flex:0 0 auto;display:flex;flex-direction:column;gap:2px}
-.pc-hd1{display:flex;align-items:center;gap:6px}
+.pc-hd1{display:flex;align-items:center;gap:5px}
 .pc-no{font-size:11.5px;font-weight:900;color:#3f4c5d;letter-spacing:.3px}
+/* ⭐ 레벨 배지 (v25 — 사탕으로 키운 만큼 카드에도 보인다) */
+.pc-lv{display:inline-block;font-size:10px;font-weight:900;line-height:1.6;letter-spacing:-.3px;white-space:nowrap;
+  border-radius:99px;padding:0 7px;border:2px solid #C98A00;color:#5A3B00;
+  background:linear-gradient(180deg,#FFF6C4,#FFD75E);box-shadow:inset 0 1px 0 #fff,0 0 8px rgba(255,196,60,.5)}
+.pc-lv.max{border-color:#A9760A;color:#4E3000;background:linear-gradient(180deg,#FFF0A8,#FFB800)}
 .pc-rar{margin-left:auto;display:inline-block;font-size:10px;font-weight:900;line-height:1.6;border-radius:99px;
   padding:0 8px;border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px;white-space:nowrap}
 .pc-rar.rare{border-color:#6F8199;color:#2B394B;
@@ -407,13 +430,20 @@ body.dex-open #progress-card{display:none}
   background:rgba(255,255,255,.94);border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px}
 .pc-st{display:flex;align-items:center;gap:6px}
 .pc-st .lb{flex:0 0 auto;width:32px;font-size:10.5px;font-weight:900;color:#63718a}
-.pc-st .bar{flex:1 1 auto;height:11px;background:#E7EBF2;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
-.pc-st .bar i{display:block;height:100%;border-radius:99px}
+.pc-st .bar{flex:1 1 auto;display:flex;height:11px;background:#E7EBF2;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
+.pc-st .bar i{display:block;height:100%}
 .pc-st .bar i.hp{background:#37B24D}.pc-st .bar i.atk{background:#E4572E}.pc-st .bar i.def{background:#2F6FD0}
-.pc-st .vl{flex:0 0 auto;width:30px;text-align:right;font-size:12.5px;font-weight:900}
-.pc-foot{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:5px;
+/* 강화로 늘어난 만큼은 금색 막대로 이어 보여 준다 */
+.pc-st .bar i.bonus{background:linear-gradient(180deg,#FFE066,#F5B300);border-left:2px solid #8A5A00}
+.pc-st .vl{flex:0 0 auto;min-width:26px;text-align:right;font-size:12.5px;font-weight:900;white-space:nowrap}
+.pc-st .vl b{font-size:10.5px;color:#B8860B;letter-spacing:-.3px}
+.pc-foot{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:5px;
   font-size:11px;font-weight:900;color:#25663a;background:#E8F8EC;border:2.5px solid var(--ink);
-  border-radius:10px;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  border-radius:10px;padding:3px 8px;white-space:nowrap;overflow:hidden}
+.pc-foot .pcf-l{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pc-foot .pcf-up{flex:0 0 auto;font-size:9.5px;font-weight:900;letter-spacing:-.3px;color:#8A5A00;
+  background:#FFF0BE;border:2px solid #D9A21B;border-radius:99px;padding:0 7px;line-height:1.6}
+.pc-foot .pcf-up.max{color:#4E3000;border-color:#A9760A;background:linear-gradient(180deg,#FFF0A8,#FFC93C)}
 /* 뒷면 — 아직 잡지 못한 포켓몬 (이름·그림·능력치 숨김) */
 .pc-card.back{background:radial-gradient(circle at 50% 32%,#3D63BF 0%,#25417F 42%,#16264F 74%,#0E1938 100%);border-color:var(--ink)}
 .pc-card.back::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
@@ -538,6 +568,9 @@ body.dex-open #progress-card{display:none}
 .bt-name{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:900;letter-spacing:-.4px}
 .bt-name .rr{font-size:9.5px;font-weight:900;border-radius:99px;padding:0 6px;line-height:1.5;border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00}
 .bt-name .rr.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+/* ⭐ 내가 키운 레벨 (배틀에서도 보이게) */
+.bt-name .blv{font-size:9.5px;font-weight:900;letter-spacing:-.3px;border-radius:99px;padding:0 6px;line-height:1.55;
+  border:2px solid #C98A00;background:#FFE9A8;color:#5A3B00;white-space:nowrap}
 /* 타입 배지 */
 .tp{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:900;line-height:1.55;border-radius:99px;
   padding:0 6px;border:2px solid rgba(34,43,56,.5);color:#222B38;background:#E7EBF2;letter-spacing:-.3px;white-space:nowrap}
@@ -731,6 +764,147 @@ body.eve #p-msg{color:#B4622A}
 .missed-group{margin-top:7px}
 .missed-title{font-size:11.5px;font-weight:900;color:#41505F;margin:0 0 2px}
 
+/* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ─────────────
+   집안일을 도우면 사탕 1개, 그 사탕으로 잡은 포켓몬을 Lv.10까지 키운다.
+   왼쪽: 오늘의 집안일 / 오른쪽: 내 포켓몬을 골라 바로 강화. */
+#modal-center{z-index:78;background:rgba(16,24,36,.62)}
+.pct-modal{width:min(96vw,960px);height:min(92vh,566px);display:flex;flex-direction:column;overflow:hidden;
+  background:#FFFDF4;border:4px solid var(--ink);border-radius:26px;box-shadow:0 16px 0 rgba(20,28,40,.26)}
+.pct-top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:linear-gradient(180deg,#FF8496 0%,#F2435C 100%);border-bottom:4px solid var(--ink)}
+.pct-badge{flex:0 0 auto;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:25px;
+  background:#fff;border:3px solid var(--ink);border-radius:13px;box-shadow:0 3px 0 rgba(34,43,56,.22)}
+.pct-tt{min-width:0;flex:0 1 auto}
+.pct-tt h2{margin:0;font-family:inherit;font-size:24px;font-weight:900;line-height:1.1;letter-spacing:-.6px;color:#fff;
+  text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink),0 3px 0 rgba(34,43,56,.32)}
+.pct-tt p{margin:1px 0 0;font-size:12.5px;font-weight:900;letter-spacing:-.4px;color:#fff;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:-1.5px -1.5px 0 rgba(34,43,56,.6),1.5px -1.5px 0 rgba(34,43,56,.6),-1.5px 1.5px 0 rgba(34,43,56,.6),1.5px 1.5px 0 rgba(34,43,56,.6)}
+.pct-candy{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:900;
+  color:#6A3D00;background:#FFE9A8;border:3px solid var(--ink);border-radius:99px;padding:3px 12px;
+  box-shadow:0 3px 0 rgba(34,43,56,.22);white-space:nowrap}
+.pct-candy b{font-family:"Arial Black",Arial,sans-serif;font-size:19px;line-height:1;letter-spacing:-.5px}
+.pct-x{flex:0 0 auto;width:34px;height:34px;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;
+  background:#fff;border:3px solid var(--ink);border-radius:99px;box-shadow:0 3px 0 rgba(34,43,56,.22)}
+.pct-x:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.22)}
+.pct-body{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:11px}
+.pct-sec{display:flex;flex-direction:column;min-height:0;border:3px solid var(--ink);border-radius:18px;background:#fff;overflow:hidden}
+.pct-sec-h{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 10px;background:#FFF6E2;
+  border-bottom:2.5px solid var(--ink);font-weight:900;font-size:15px;letter-spacing:-.4px}
+.pct-sec-h .pct-note{margin-left:auto;font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;white-space:nowrap}
+.pct-sec-h .pct-note.pill{background:#FFE9A8;border:2px solid var(--ink);border-radius:99px;padding:0 8px;line-height:1.6;color:#7A3E00}
+.pct-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:7px;padding:8px 8px 6px}
+.pct-list::-webkit-scrollbar{width:10px}
+.pct-list::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
+.pct-list::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px;border:3px solid #F2F6FC}
+.pct-chore{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:9px 10px;font-family:inherit;
+  border:3px solid var(--ink);border-radius:14px;background:#fff;cursor:pointer;text-align:left;
+  box-shadow:0 3px 0 rgba(34,43,56,.14);transition:transform .1s,box-shadow .1s,background .12s}
+.pct-chore:hover{background:#FFFDF6}
+.pct-chore:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.14)}
+.pct-chore .ic{flex:0 0 auto;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  background:#FFF6E2;border:2.5px solid var(--ink);border-radius:13px}
+.pct-chore .ic svg{width:38px;height:38px;display:block}
+.pct-chore .ic .em{font-size:29px;line-height:1}
+.pct-chore .tx{flex:1 1 auto;min-width:0}
+.pct-chore .nm{display:flex;align-items:center;gap:5px;font-size:16.5px;font-weight:900;letter-spacing:-.5px;color:var(--ink);line-height:1.25}
+.pct-chore .nm .t{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-chore .sb{display:block;font-size:11px;font-weight:800;color:#7E8A98;letter-spacing:-.3px;margin-top:1px}
+.pct-chore .rw{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-size:12.5px;font-weight:900;
+  color:#8A5A00;background:#FFF3C4;border:2.5px solid var(--ink);border-radius:99px;padding:1px 9px;line-height:1.5;white-space:nowrap}
+.pct-chore.done{background:#E8F8EC;border-color:#2E9E4F;cursor:default;box-shadow:0 3px 0 rgba(46,158,79,.2)}
+.pct-chore.done .ic{background:#DCF7E2}
+.pct-chore.done .sb{color:#2E7D4F}
+.pct-chore.done .rw{color:#fff;background:#35A45B;border-color:#227A3F;padding:1px 10px}
+.pct-chore.water{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(34,43,56,.14)}
+.pct-chore.water.done{box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(46,158,79,.2)}
+.water-badge{display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:900;color:#fff;background:#3B82F6;
+  border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap;animation:waterPulse 1.5s ease-in-out infinite}
+@keyframes waterPulse{50%{transform:scale(1.07)}}
+.pct-tip{flex:0 0 auto;margin:0 8px 8px;padding:5px 9px;font-size:11.5px;font-weight:900;color:#7A5A12;
+  background:#FFF9E4;border:2.5px dashed #E3C87A;border-radius:12px;line-height:1.4;letter-spacing:-.3px;text-align:center}
+/* 오른쪽: 포켓몬 강화소 */
+.pct-strip{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:8px 9px 6px}
+.pct-strip::-webkit-scrollbar{height:8px}
+.pct-strip::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px}
+.pct-thumb{position:relative;flex:0 0 auto;width:54px;height:54px;padding:2px;border:2.5px solid #C9D5E4;border-radius:12px;
+  background:#F7FAFF;cursor:pointer;transition:transform .1s,border-color .12s}
+.pct-thumb img{width:100%;height:100%;object-fit:contain}
+.pct-thumb:active{transform:translateY(2px)}
+.pct-thumb.on{border-color:var(--ink);background:#FFF7D6;box-shadow:0 0 0 3px rgba(250,204,21,.6)}
+.pct-thumb .lv{position:absolute;right:-5px;bottom:-6px;font-size:9px;font-weight:900;color:#5A3B00;
+  background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:0 4px;line-height:1.5}
+.pct-thumb.max .lv{background:#FFC93C}
+#pct-pane{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:0 9px}
+.pct-card{position:relative;flex:1 1 auto;display:flex;flex-direction:column;gap:5px;margin:0 0 8px;padding:8px;
+  border:3px solid var(--ink);border-radius:16px;background:linear-gradient(160deg,#FFFDF2,#FFF1CE);
+  box-shadow:0 4px 0 rgba(34,43,56,.12)}
+.pct-card .row1{display:flex;gap:9px;align-items:center;min-height:0}
+.pct-card .art{flex:0 0 auto;width:104px;height:104px;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 38%,#fff,#FFF0C6 80%);border:2.5px solid var(--ink);border-radius:14px;overflow:hidden}
+.pct-card .art img{width:94%;height:94%;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(34,43,56,.16))}
+.pct-card .info{flex:1 1 auto;min-width:0}
+.pct-card .nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:20px;font-weight:900;letter-spacing:-.7px;line-height:1.1;color:var(--ink)}
+.pct-lvpill{display:inline-block;font-size:11px;font-weight:900;letter-spacing:-.3px;color:#5A3B00;
+  background:linear-gradient(180deg,#FFF6C4,#FFD75E);border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6}
+.pct-lvpill.max{background:linear-gradient(180deg,#FFF0A8,#FFB800);color:#4E3000}
+.pct-stats{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.pct-stat{display:flex;align-items:baseline;gap:5px;font-size:13px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.pct-stat .lb{flex:0 0 auto;width:29px;font-size:11.5px;color:#63718a}
+.pct-stat .now{font-size:15px}
+.pct-stat .nx{font-size:15px;color:#C2571B}
+.pct-stat .add{font-size:11px;color:#B8860B}
+.pct-stat .ar{font-size:12px;color:#9AA6B4}
+.pct-card .up-sum{flex:0 0 auto;margin-top:2px;font-size:11px;font-weight:900;color:#6B7480;letter-spacing:-.3px}
+.pct-card .up-sum b{color:#C2571B}
+/* 레벨 진행 표시 (사탕 10칸) + 안내 */
+.pct-more{margin-top:auto;padding-top:9px;border-top:2px dashed #E6D6AC;display:flex;flex-direction:column;gap:5px}
+.pct-more .tps{display:flex;gap:4px;flex-wrap:wrap}
+.pct-more .mx{font-size:11.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.4}
+.pct-more .mx b{color:#C2571B;font-size:13px}
+.pct-track{display:flex;align-items:center;gap:4px;padding-top:6px;flex-wrap:nowrap}
+.pct-track .tt{flex:0 0 auto;font-size:11px;font-weight:900;color:#7A6A48;margin-right:2px}
+.pct-pip{flex:0 0 auto;width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#EDEFF4}
+.pct-pip.on{background:linear-gradient(180deg,#FFE066,#F5B300)}
+.pct-pip.cur{box-shadow:0 0 0 3px rgba(250,204,21,.45)}
+.pct-track .tk{margin-left:auto;font-size:11px;font-weight:900;color:#8A5A00;background:#FFF3C4;border:2px solid var(--ink);
+  border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap}
+.pct-guide{flex:0 0 auto;font-size:11.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.35}
+.pct-guide b{color:#C2571B}
+/* 강화 순간 반짝 */
+.pct-card.pop{animation:lvPop .5s ease}
+@keyframes lvPop{0%{transform:scale(1)}35%{transform:scale(1.035)}100%{transform:scale(1)}}
+.pct-fx{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;
+  font-family:"Arial Black",Arial,sans-serif;font-size:34px;font-weight:900;color:#FF9A1F;opacity:0;
+  text-shadow:0 2px 0 #fff,-2px 0 0 #fff,2px 0 0 #fff,0 -2px 0 #fff,0 5px 0 rgba(34,43,56,.2)}
+.pct-fx.show{animation:lvFx .95s ease-out}
+@keyframes lvFx{0%{opacity:0;transform:translateY(10px) scale(.6)}25%{opacity:1;transform:translateY(-4px) scale(1.16)}
+  70%{opacity:1;transform:translateY(-16px) scale(1)}100%{opacity:0;transform:translateY(-30px) scale(.92)}}
+.pct-empty{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  text-align:center;padding:10px 14px;font-size:14px;font-weight:900;line-height:1.65;color:#5C6979;letter-spacing:-.3px}
+.pct-empty .em{font-size:46px;line-height:1}
+.pct-empty b{color:#C2571B}
+.pct-up{flex:0 0 auto;margin:0 9px 9px;font-family:inherit;font-weight:900;font-size:17.5px;letter-spacing:-.5px;color:#3D2F00;
+  background:linear-gradient(180deg,#FFD75E,#F0A81E);border:3px solid var(--ink);border-radius:15px;padding:10px;
+  cursor:pointer;box-shadow:0 5px 0 rgba(34,43,56,.24);transition:transform .1s,box-shadow .1s}
+.pct-up:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(34,43,56,.24)}
+.pct-up:disabled{opacity:.55;cursor:default;transform:none;box-shadow:0 3px 0 rgba(34,43,56,.14);filter:grayscale(.3)}
+.pct-up.max{background:linear-gradient(180deg,#FFE9A8,#E8C46A);opacity:1;filter:none}
+/* 설정: 집안일 목록 편집 */
+.chore-rows{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.chore-row{display:flex;align-items:center;gap:6px}
+.chore-ic-view{flex:0 0 36px;width:36px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:#FFF6E2;border:2.5px solid var(--ink);border-radius:10px}
+.chore-ic-view svg{width:24px;height:24px;display:block}
+.chore-ic-view .em{font-size:17px;line-height:1}
+.chore-row .chore-name{flex:1 1 auto;min-width:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink);
+  border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px;background:#fff}
+.chore-row .chore-name:focus{outline:3px solid rgba(250,204,21,.55);outline-offset:-1px}
+.chore-del{flex:0 0 32px;height:34px;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer;color:#A63D12;
+  background:#FFE2D6;border:2.5px solid var(--ink);border-radius:10px;box-shadow:0 2px 0 rgba(34,43,56,.16)}
+.chore-del:active{transform:translateY(2px);box-shadow:none}
+.chore-foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+
 /* ── 알림 토스트 ───────────────────────── */
 #toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);background:#fff;color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:14px;padding:9px 18px;font-weight:900;font-size:14.5px;
@@ -752,6 +926,9 @@ body.eve #p-msg{color:#B4622A}
       <div class="hl-top">
         <button class="dex-btn" id="tab-poke" title="포켓몬 도감 열기">
           <span class="pokeball"></span><span>포켓몬 도감</span>
+        </button>
+        <button class="dex-btn center-btn" id="tab-center" title="포켓몬 센터 열기 — 집안일을 도우면 받은 사탕으로 포켓몬을 키워요">
+          <span class="ct-ic" aria-hidden="true">🏥</span><span class="ct-tx">포켓몬 센터</span><span class="ct-candy" id="ct-candy">🍬 0</span>
         </button>
         <div class="hl-icons">
           <button class="icon-btn" id="btn-sound" title="소리 켜기">🔇</button>
@@ -891,7 +1068,7 @@ body.eve #p-msg{color:#B4622A}
     <div id="bt-step-fight" class="bt-step hidden">
       <div class="bt-arena">
         <div class="bt-side bt-me">
-          <div class="bt-name"><span id="bt-me-name">-</span><span class="rr" id="bt-me-rar" hidden></span></div>
+          <div class="bt-name"><span id="bt-me-name">-</span><span class="blv" id="bt-me-lv" hidden></span><span class="rr" id="bt-me-rar" hidden></span></div>
           <div class="bt-types" id="bt-me-types"></div>
           <div class="bt-hp-row"><div class="bt-hp"><div class="bt-hp-fill" id="bt-me-hp-fill"></div></div><b class="bt-hp-text" id="bt-me-hp-text">HP 100 / 100</b></div>
           <div class="bt-bench" id="bt-me-bench"></div>
@@ -903,7 +1080,7 @@ body.eve #p-msg{color:#B4622A}
         </div>
         <div class="bt-mid">VS</div>
         <div class="bt-side bt-foe">
-          <div class="bt-name"><span id="bt-foe-name">-</span><span class="rr" id="bt-foe-rar" hidden></span></div>
+          <div class="bt-name"><span id="bt-foe-name">-</span><span class="blv" id="bt-foe-lv" hidden></span><span class="rr" id="bt-foe-rar" hidden></span></div>
           <div class="bt-types" id="bt-foe-types"></div>
           <div class="bt-hp-row"><div class="bt-hp"><div class="bt-hp-fill" id="bt-foe-hp-fill"></div></div><b class="bt-hp-text" id="bt-foe-hp-text">HP 100 / 100</b></div>
           <div class="bt-bench" id="bt-foe-bench"></div>
@@ -924,6 +1101,36 @@ body.eve #p-msg{color:#B4622A}
     <!-- 3단계: 결과 (3:3 한 판이면 끝) -->
     <div id="bt-step-end" class="bt-step hidden">
       <div class="bt-result" id="bt-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 🏥 포켓몬 센터 (집안일 돕기 · 사탕으로 강화) -->
+<div id="modal-center" class="overlay hidden">
+  <div class="pct-modal" role="dialog" aria-label="포켓몬 센터">
+    <div class="pct-top">
+      <div class="pct-badge" aria-hidden="true">🏥</div>
+      <div class="pct-tt">
+        <h2>포켓몬 센터</h2>
+        <p>집안일을 도우며 받은 사탕으로 내 포켓몬을 강하게 키워요!</p>
+      </div>
+      <div class="pct-candy">🍬 보유 사탕: <b id="pct-candy-n">0</b>개</div>
+      <button class="pct-x" id="pct-close" type="button" title="닫기" aria-label="닫기">✕</button>
+    </div>
+    <div class="pct-body">
+      <!-- 왼쪽: 오늘의 집안일 돕기 -->
+      <section class="pct-sec">
+        <div class="pct-sec-h"><span>🧹 오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
+        <div class="pct-list" id="pct-chores"></div>
+        <div class="pct-tip" id="pct-tip"></div>
+      </section>
+      <!-- 오른쪽: 포켓몬 강화소 -->
+      <section class="pct-sec">
+        <div class="pct-sec-h"><span>✨ 포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
+        <div class="pct-strip" id="pct-strip"></div>
+        <div id="pct-pane"></div>
+        <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
+      </section>
     </div>
   </div>
 </div>
@@ -1000,6 +1207,16 @@ body.eve #p-msg{color:#B4622A}
       <div class="ball-lock-row">
         <button class="set-btn sb-lock" id="btn-ball-lock" type="button" aria-pressed="false">🔒 잠금 (숨김)</button>
         <span class="set-sub" id="ball-lock-note"></span>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7FB;border:2px solid #F2C9DA;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>🧹 포켓몬 센터 집안일 목록 <b style="font-size:12px;color:#A63D6E">· 보호자용</b></span>
+      <span class="set-sub">🏥 포켓몬 센터에서 아이가 도울 집안일이에요. 이름을 고치거나 <b>✕</b>로 빼고, <b>＋ 집안일 추가</b>로 더할 수 있어요. 아이가 하나를 도우면 <b>🍬 사탕 1개</b>를 받고, 같은 집안일은 <b>하루 1번</b>만 받아요.</span>
+      <div class="chore-rows" id="chore-rows"></div>
+      <div class="chore-foot">
+        <button class="set-btn sb-backup" id="btn-chore-add" type="button">＋ 집안일 추가</button>
+        <button class="set-btn sb-reset" id="btn-chore-reset" type="button">↺ 기본 4개로 되돌리기</button>
+        <span class="set-sub" id="chore-note"></span>
       </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
@@ -1252,6 +1469,24 @@ const STUDY_DEFAULT={
   6:'책 발자국(그림) / ORT'
 };
 
+/* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ──
+   집안일 항목당 하루 1번 사탕 1개, 사탕 1개 = 능력치 +5 (Lv.1 → Lv.10, 최대 +45) */
+const POKE_MAX_LV=10, LV_STEP=5;
+const CHORES_DEFAULT=[
+  {id:'shoes',   name:'신발 정리',          icon:'👟'},
+  {id:'laundry', name:'빨래 정리',          icon:'🧺'},
+  {id:'roller',  name:'돌돌이',             icon:'roller'},
+  {id:'water',   name:'물주기 (1일, 15일)', icon:'🌱', water:true}
+];
+/* 돌돌이 = 테이프클리너(롤러). 빗자루가 아니라 테이프 롤러 모양으로 그린다. */
+const LINT_ROLLER_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<rect x="3.5" y="6" width="29" height="16" rx="8" fill="#CFE8FF" stroke="#2A3442" stroke-width="3"/>'+
+  '<path d="M11 7.5v13M18 7.5v13M25 7.5v13" stroke="#7FB6E8" stroke-width="2.2" stroke-linecap="round"/>'+
+  '<path d="M27 22.5 33.5 30.5" stroke="#2A3442" stroke-width="3.8" stroke-linecap="round"/>'+
+  '<rect x="30" y="29" width="11" height="13.5" rx="5" fill="#FFD75E" stroke="#2A3442" stroke-width="3"/>'+
+  '<path d="M4.5 11c-3.4 1.4-3.4 6.6 0 8" fill="#fff" stroke="#2A3442" stroke-width="2.6" stroke-linecap="round"/></svg>';
+function defaultChores(){return CHORES_DEFAULT.map(c=>Object.assign({},c));}
+
 function todayKey(d=new Date()){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
@@ -1271,6 +1506,19 @@ if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEA
 /* 🔒 도감 앞 몬스터볼 잠금: 이 값이 없는 옛 기록은 잠금(false) — 새로고침해도 아이가 열 수 없다 */
 function battleAllowed(){return !!(S.settings&&S.settings.battleEnabled===true);}
 if(typeof S.settings.battleEnabled!=='boolean')S.settings.battleEnabled=false;
+/* 🏥 포켓몬 센터: 보유 사탕 · 오늘 도운 집안일 · 포켓몬 레벨 · 집안일 목록
+   (값이 없는 옛 기록은 사탕 0 · 도움 기록 없음 · 모두 Lv.1 · 기본 4개로 시작) */
+S.candy=(typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;
+if(!S.choresDone||typeof S.choresDone!=='object'||Array.isArray(S.choresDone))S.choresDone={};
+if(!S.pokeLv||typeof S.pokeLv!=='object'||Array.isArray(S.pokeLv))S.pokeLv={};
+if(!Array.isArray(S.settings.chores))S.settings.chores=defaultChores();
+/* 집안일 기록은 최근 40일만 남긴다 (오래 쓴 기기에서도 저장 공간이 작게 유지되도록) */
+(function pruneChoreDays(){
+  const cut=todayKey(new Date(Date.now()-40*864e5));
+  Object.keys(S.choresDone).forEach(k=>{
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||k<cut)delete S.choresDone[k];
+  });
+})();
 /* 🌙 취침 시각: 없는 옛 기록은 20:10로 */
 if(typeof S.settings.bedtime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(S.settings.bedtime)){S.settings.bedtime='20:10';save();}
 /* 예전 버전은 중계 주소 기본값이 빈 문자열이었다 → 사용자가 직접 비운 기록(proxyCustom)이 없으면 기본 워커 주소를 넣는다 */
@@ -2328,6 +2576,21 @@ function sfxDefeat(){
   const t=ac.currentTime+0.01;
   [392,329.63,261.63].forEach((f,i)=>btTone(ac,f,f*0.995,t+i*0.19,0.42,'triangle',0.11));
 }
+/* 🏥 포켓몬 센터 — 집안일을 도왔을 때(짧고 밝은 두 음)와 강화했을 때(반짝이는 4음) */
+function sfxChore(){
+  if(!soundUnlocked)return;
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  btTone(ac,880,880,t,0.11,'triangle',0.13);
+  btTone(ac,1174.66,1174.66,t+0.08,0.16,'triangle',0.11);
+}
+function sfxUpgrade(){
+  if(!soundUnlocked)return;
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  [659.25,830.61,987.77,1318.51].forEach((f,i)=>btTone(ac,f,f,t+i*0.075,0.22,'triangle',0.13));
+  btTone(ac,1975.53,1975.53,t+0.3,0.34,'sine',0.09);
+}
 
 function updateSoundBtn(){
   document.getElementById('btn-sound').textContent=soundUnlocked?'🔊':'🔇';
@@ -3049,22 +3312,29 @@ const TYPE_GRAD={
   드래곤:['#BFAFF2','#E8E1FF'], 악:['#B7B2BC','#ECEAEF'], 페어리:['#F7C6E2','#FEE8F4']
 };
 function pokeCardFront(p,got){
-  const bar=(lb,v,cls)=>`<div class="pc-st"><span class="lb">${lb}</span>
-    <span class="bar"><i class="${cls}" style="width:${Math.max(6,Math.min(100,Math.round(v/160*100)))}%"></i></span>
-    <span class="vl">${v}</span></div>`;
+  /* v25: 사탕으로 키운 레벨만큼 HP·공격·방어가 +5씩 오르고, 늘어난 만큼은 금색 막대로 보여 준다 */
+  const lv=pkLv(p.id), bonus=(lv-1)*LV_STEP, maxLv=lv>=POKE_MAX_LV;
+  const bar=(lb,base,cls)=>{
+    const total=base+bonus;
+    const bw=Math.max(4,Math.min(100,Math.round(base/160*100)));
+    const gw=bonus?Math.min(100-bw,Math.round(bonus/160*100)):0;
+    return `<div class="pc-st"><span class="lb">${lb}</span>
+    <span class="bar"><i class="${cls}" style="width:${bw}%"></i>${gw?`<i class="bonus" style="width:${gw}%"></i>`:''}</span>
+    <span class="vl">${total}${bonus?`<b>(+${bonus})</b>`:''}</span></div>`;
+  };
   const last=got.length?String(got[got.length-1]).replace(/-/g,'.'):'';
   const stars=p.r==='legend'?'★✦★✦★✦':(p.r==='rare'?'✦✦✦✦✦✦':'');
   const fx=p.r==='normal'?'':`<div class="pc-fx fx-${p.r}" aria-hidden="true">${
     stars.split('').map(c=>`<i>${c}</i>`).join('')}</div>`;
   return `${fx}<div class="pc-hd">
-      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
-      <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp}</b></span></div>
+      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-lv${maxLv?' max':''}">${maxLv?'👑 Lv.10 MAX':'⭐ Lv.'+lv+' / 10'}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
+      <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp+bonus}</b></span></div>
       <div class="pc-tps">${p.types.map(typeBadge).join('')}</div>
     </div>
     <div class="pc-art"><img src="assets/pokemon/${p.id}.png" alt="${p.name}"></div>
     <div class="pc-evo"><span class="lb">진화 단계</span><span class="st">${p.stage}</span>${p.line?`<span class="ln">${p.line}</span>`:''}</div>
     <div class="pc-stats">${bar('HP',p.hp,'hp')}${bar('공격',p.atk,'atk')}${bar('방어',p.def,'def')}</div>
-    <div class="pc-foot">${got.length>1?`🏅 ${got.length}마리 포획 · 최근 ${last}`:`🏅 포획 완료!${last?' · '+last:''}`}</div>`;
+    <div class="pc-foot"><span class="pcf-l">${got.length>1?`🏅 ${got.length}마리 포획 · 최근 ${last}`:`🏅 포획 완료!${last?' · '+last:''}`}</span><span class="pcf-up${maxLv?' max':''}">${maxLv?'👑 MAX':'🍬 강화 가능'}</span></div>`;
 }
 function pokeCardBack(){
   return `<div class="pcb-frame">
@@ -3101,6 +3371,176 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!document.getElementById('modal-card').classList.contains('hidden'))closePokeCard();
 });
 
+/* ================= 🏥 포켓몬 센터 =================
+   · 왼쪽: 오늘의 집안일 돕기 — 항목당 하루 1번, 도우면 🍬 사탕 +1
+   · 오른쪽: 포켓몬 강화소 — 사탕 1개로 잡은 포켓몬 Lv +1 (능력치 +5, Lv.10 MAX)
+   · 물주기: 목록에 늘 있고, 1일·15일에만 💧 오늘 물 주는 날! 표시가 반짝인다. */
+let centerSel=null;
+function choreListRaw(){
+  if(!Array.isArray(S.settings.chores))S.settings.chores=defaultChores();
+  return S.settings.chores;
+}
+function chores(){
+  const out=[];
+  choreListRaw().forEach((c,i)=>{
+    if(!c||typeof c!=='object'||Array.isArray(c))return;
+    const name=String(c.name==null?'':c.name).trim();
+    if(!name)return;
+    out.push({id:String(c.id||('c'+i)),name,icon:String(c.icon||'🧹'),water:c.water===true});
+  });
+  return out.length?out:defaultChores();
+}
+function choreIcon(c){
+  if(c.icon==='roller')return LINT_ROLLER_SVG;
+  return `<span class="em">${escHtml(c.icon||'🧹')}</span>`;
+}
+function choresDoneToday(){
+  const k=todayKey();
+  if(!S.choresDone||typeof S.choresDone!=='object')S.choresDone={};
+  if(!S.choresDone[k]||typeof S.choresDone[k]!=='object')S.choresDone[k]={};
+  return S.choresDone[k];
+}
+function isWaterDay(){const d=new Date().getDate();return d===1||d===15;}
+function candyN(){return (typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;}
+function pkLv(id){
+  const v=Number(S.pokeLv?S.pokeLv[String(id)]:1);
+  if(!isFinite(v)||v<1)return 1;
+  return Math.min(POKE_MAX_LV,Math.floor(v));
+}
+function lvBonus(id){return (pkLv(id)-1)*LV_STEP;}
+function renderCandyBadge(){
+  const n=candyN(),b=document.getElementById('ct-candy'),btn=document.getElementById('tab-center');
+  if(b){b.textContent='🍬 '+n;b.classList.toggle('show',n>0);}
+  if(btn)btn.classList.toggle('has-candy',n>0);
+}
+function renderCenter(pop){
+  const n=candyN();
+  const cn=document.getElementById('pct-candy-n');if(cn)cn.textContent=n;
+  /* ── 왼쪽: 오늘의 집안일 ── */
+  const box=document.getElementById('pct-chores');
+  const list=chores(),done=choresDoneToday(),wd=isWaterDay();
+  if(box){
+    box.innerHTML=list.map(c=>{
+      const ok=done[c.id]===true,wet=!!c.water&&wd;
+      return `<button type="button" class="pct-chore${ok?' done':''}${wet?' water':''}" data-chore="${escHtml(c.id)}">`+
+        `<span class="ic" aria-hidden="true">${choreIcon(c)}</span>`+
+        `<span class="tx"><span class="nm"><span class="t">${escHtml(c.name)}</span>`+
+        (wet?'<span class="water-badge">💧 오늘 물 주는 날!</span>':'')+`</span>`+
+        `<span class="sb">${ok?'오늘 도와줬어요! 내일 또 도와줘요 😊':'완료하면 🍬 사탕 1개'}</span></span>`+
+        `<span class="rw">${ok?'✅ 오늘 완료! (+🍬 1)':'🍬 +1'}</span></button>`;
+    }).join('');
+    box.querySelectorAll('[data-chore]').forEach(b=>b.addEventListener('click',()=>doChore(b.dataset.chore)));
+    const tip=document.getElementById('pct-tip');
+    if(tip){
+      const cnt=list.filter(c=>done[c.id]===true).length;
+      tip.textContent=cnt>=list.length&&list.length
+        ? `오늘 집안일을 모두 도왔어요! 🎉 내일 또 도와줘요 (${cnt} / ${list.length})`
+        : `오늘 도운 집안일 ${cnt} / ${list.length} · 모은 사탕은 오른쪽에서 내 포켓몬을 키우는 데 써요!`;
+    }
+  }
+  /* ── 오른쪽: 포켓몬 강화소 ── */
+  const strip=document.getElementById('pct-strip'),pane=document.getElementById('pct-pane');
+  const up=document.getElementById('pct-up'),pill=document.getElementById('pct-next');
+  const m=caughtDates(),caught=POKEMON.filter(p=>m[p.id]);
+  if(!caught.length){
+    centerSel=null;
+    if(strip)strip.innerHTML='';
+    if(pill){pill.hidden=true;pill.textContent='';}
+    if(pane)pane.innerHTML='<div class="pct-empty"><span class="em">🥚</span><div>아직 잡은 포켓몬이 없어요!<br>아침·저녁 루틴으로 친구를 먼저 만나봐요!</div></div>';
+    if(up){up.classList.remove('max');up.disabled=true;up.textContent='🍬 사탕 1개로 강화하기! (+5)';}
+    return;
+  }
+  if(centerSel==null||!caught.some(p=>p.id===centerSel))centerSel=caught[0].id;
+  const p=POKEMON.find(x=>x.id===centerSel)||caught[0];
+  const lv=pkLv(p.id),bonus=(lv-1)*LV_STEP,max=lv>=POKE_MAX_LV;
+  if(strip){
+    strip.innerHTML=caught.map(q=>{
+      const ql=pkLv(q.id);
+      return `<button type="button" class="pct-thumb${q.id===p.id?' on':''}${ql>=POKE_MAX_LV?' max':''}" data-poke="${q.id}" title="${escHtml(q.name)} · Lv.${ql}">`+
+        `<img src="assets/pokemon/${q.id}.png" alt="${escHtml(q.name)}"><span class="lv">Lv.${ql}</span></button>`;
+    }).join('');
+    strip.querySelectorAll('[data-poke]').forEach(b=>b.addEventListener('click',()=>{centerSel=Number(b.dataset.poke);renderCenter();}));
+  }
+  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.10 MAX':`⭐ Lv.${lv} → Lv.${lv+1}`;}
+  const row=(lb,base)=>{
+    const now=base+bonus;
+    return '<div class="pct-stat"><span class="lb">'+lb+'</span><span class="now">'+now+'</span>'+
+      (max?`<span class="add">(+${bonus})</span>`
+        :`<span class="ar">→</span><span class="nx">${now+LV_STEP}</span><span class="add">(+${LV_STEP})</span>`)+'</div>';
+  };
+  /* 레벨 진행 표시 (사탕 10칸) — 카드 아래 빈 자리를 채우고, 몇 번 더 키우면 만렙인지 보여 준다 */
+  let pips='';
+  for(let i=1;i<=POKE_MAX_LV;i++)pips+=`<span class="pct-pip${i<=lv?' on':''}${i===lv?' cur':''}"></span>`;
+  if(pane)pane.innerHTML='<div class="pct-card" id="pct-card"><div class="row1">'+
+      `<div class="art"><img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}"></div>`+
+      '<div class="info">'+
+        `<div class="nm">${escHtml(p.name)}<span class="pct-lvpill${max?' max':''}">${max?'👑 Lv.10 MAX':'⭐ Lv.'+lv+' / 10'}</span></div>`+
+        `<div class="pct-stats">${row('HP',p.hp)}${row('공격',p.atk)}${row('방어',p.def)}</div>`+
+        `<div class="up-sum">${max?'👑 만렙! 더 키울 필요 없어요':`강화 ${lv-1}번 · 지금까지 <b>+${bonus}</b>`}</div>`+
+      '</div></div>'+
+      `<div class="pct-more"><div class="tps">${p.types.map(typeBadge).join('')}</div>`+
+      `<div class="mx">👑 만렙(Lv.10)이 되면 <b>HP ${p.hp+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>공격 ${p.atk+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>방어 ${p.def+LV_STEP*(POKE_MAX_LV-1)}</b>!</div></div>`+
+      `<div class="pct-track"><span class="tt">레벨</span>${pips}`+
+      `<span class="tk">${max?'👑 MAX':`🍬 ${POKE_MAX_LV-lv}개 더 먹이면 만렙!`}</span></div>`+
+      '<div class="pct-guide">🍬 사탕 1개를 먹일 때마다 <b>HP·공격·방어가 +5</b>씩 올라요!</div>'+
+      '<div class="pct-fx" id="pct-fx"></div></div>';
+  if(pop){
+    const card=document.getElementById('pct-card'),fx=document.getElementById('pct-fx');
+    if(card)card.classList.add('pop');
+    if(fx){fx.textContent=pop;fx.classList.add('show');}
+  }
+  if(up){
+    up.classList.toggle('max',max);
+    up.disabled=!!max||n<=0;
+    up.textContent=max?'👑 MAX · 만렙이에요!':(n<=0?'🍬 사탕이 없어요 · 집안일을 도와 모아요':'🍬 사탕 1개로 강화하기! (+5)');
+  }
+}
+function doChore(id){
+  const c=chores().find(x=>x.id===String(id));
+  if(!c)return;
+  const done=choresDoneToday();
+  if(done[c.id]===true){toast('오늘은 이미 도왔어요! 내일 또 도와줘요 😊');return;}
+  done[c.id]=true;
+  S.candy=candyN()+1;
+  save();
+  try{btAc();}catch(e){}
+  sfxChore();
+  renderCandyBadge();renderCenter();
+  toast(`✅ ${c.name} 완료! 🍬 사탕 +1`);
+}
+function upgradePoke(){
+  if(centerSel==null)return;
+  const m=caughtDates();
+  const p=POKEMON.filter(q=>m[q.id]).find(q=>q.id===centerSel);
+  if(!p)return;
+  const lv=pkLv(p.id);
+  if(lv>=POKE_MAX_LV){toast('이미 👑 MAX 만렙이에요! 다른 친구를 키워 봐요');return;}
+  if(candyN()<=0){toast('사탕이 없어요. 집안일을 도와 사탕을 모아요!');return;}
+  S.candy=candyN()-1;
+  if(!S.pokeLv||typeof S.pokeLv!=='object')S.pokeLv={};
+  S.pokeLv[String(p.id)]=lv+1;
+  save();
+  try{btAc();}catch(e){}
+  sfxUpgrade();
+  renderCandyBadge();renderCenter('Lv.'+(lv+1)+'!  +'+LV_STEP);
+  toast(`✨ ${p.name} Lv.${lv+1}! 능력치 +${LV_STEP}`);
+}
+function openCenter(){
+  document.getElementById('modal-center').classList.remove('hidden');
+  renderCenter();
+}
+function closeCenter(){document.getElementById('modal-center').classList.add('hidden');}
+document.getElementById('tab-center').addEventListener('click',openCenter);
+document.getElementById('pct-close').addEventListener('click',closeCenter);
+document.getElementById('pct-up').addEventListener('click',upgradePoke);
+/* 바깥(어두운 배경)을 눌러도 닫힌다 — 배틀과 달리 아이가 손대다 꺼져도 손해가 없다 */
+document.getElementById('modal-center').addEventListener('click',e=>{
+  if(e.target&&e.target.id==='modal-center')closeCenter();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!document.getElementById('modal-center').classList.contains('hidden'))closeCenter();
+});
+
 /* ================= 백업 · 복원 (JSON) ================= */
 const BACKUP_APP='morning-dashboard', BACKUP_VER=1;
 const PRE_RESTORE_KEY='morningDashboard.beforeRestore.v1';
@@ -3111,7 +3551,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false,chores:defaultChores()};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -3134,6 +3574,10 @@ function buildBackup(){
     targetId:S.targetId,
     today:todaySnapshot(),
     settings:Object.assign(defaultSettings(),S.settings),
+    /* 🏥 포켓몬 센터 — 모은 사탕·오늘 도운 집안일·포켓몬 레벨도 함께 담는다 */
+    candy:candyN(),
+    choresDone:S.choresDone||{},
+    pokeLv:S.pokeLv||{},
     days:S.days
   };
 }
@@ -3237,20 +3681,52 @@ function parseBackup(raw){
   if(Array.isArray(rs.holidays)){
     settings.holidays=rs.holidays.filter(k=>typeof k==='string'&&DATE_RE.test(k));
   }
+  /* 🧹 포켓몬 센터 집안일 목록 — 옛 백업에 없으면 기본 4개 */
+  const ch=Array.isArray(rs.chores)?rs.chores:[];
+  settings.chores=[];
+  ch.forEach((c,i)=>{
+    if(!c||typeof c!=='object'||Array.isArray(c))return;
+    const nm=(typeof c.name==='string')?c.name.trim():'';
+    if(!nm)return;
+    settings.chores.push({id:(typeof c.id==='string'&&c.id&&c.id.length<=40)?c.id:('c'+i),
+      name:nm.slice(0,30),icon:(typeof c.icon==='string'&&c.icon)?c.icon:'🧹',water:c.water===true});
+  });
+  if(!settings.chores.length)settings.chores=defaultChores();
+  /* 🍬 사탕·오늘 도운 집안일·포켓몬 레벨 (없는 옛 백업은 사탕 0 · 기록 없음 · 모두 Lv.1) */
+  const candy=(typeof raw.candy==='number'&&isFinite(raw.candy)&&raw.candy>0)?Math.floor(raw.candy):0;
+  const choresDone={};
+  const srcCh=(raw.choresDone&&typeof raw.choresDone==='object'&&!Array.isArray(raw.choresDone))?raw.choresDone:{};
+  Object.keys(srcCh).forEach(k=>{
+    if(!DATE_RE.test(k))return;
+    const o=srcCh[k];
+    if(!o||typeof o!=='object'||Array.isArray(o))return;
+    const mark={};
+    Object.keys(o).forEach(cid=>{if(o[cid]===true&&cid.length<=40)mark[cid]=true;});
+    choresDone[k]=mark;
+  });
+  const pokeLv={};
+  const srcLv=(raw.pokeLv&&typeof raw.pokeLv==='object'&&!Array.isArray(raw.pokeLv))?raw.pokeLv:{};
+  Object.keys(srcLv).forEach(id=>{
+    const n=Number(id),lv=Number(srcLv[id]);
+    if(!ids.has(n)||!isFinite(lv)||lv<2)return;
+    pokeLv[String(n)]=Math.min(POKE_MAX_LV,Math.floor(lv));
+  });
   /* 진행 중인 목표는 (잡지 않은 포켓몬일 때만) 백업에서 되살린다 */
   let targetId=null;
   const tid=Number(raw.targetId);
   if(raw.targetId!=null&&ids.has(tid)&&!caught.some(c=>c.id===tid))targetId=tid;
-  return {v:1,days,caught,targetId,settings,skipped};
+  return {v:1,days,caught,targetId,settings,candy,choresDone,pokeLv,skipped};
 }
 function applyBackup(r){
   try{localStorage.setItem(PRE_RESTORE_KEY,JSON.stringify(S));}catch(e){}   /* 되돌릴 수 있게 복원 전 상태 보관 */
-  S={v:1,days:r.days,caught:r.caught,targetId:(r.targetId!=null)?r.targetId:null,settings:r.settings};
+  S={v:1,days:r.days,caught:r.caught,targetId:(r.targetId!=null)?r.targetId:null,settings:r.settings,
+     candy:(r.candy>0)?Math.floor(r.candy):0,choresDone:r.choresDone||{},pokeLv:r.pokeLv||{}};
   day(todayKey());
   recalcExp(day(todayKey()));
   save();
   applyMode(true);                                       /* 복원한 설정의 취침 시각까지 반영해 화면 다시 그림 */
   renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();applyBallLock();
+  renderCandyBadge();renderCenter();buildChoreRows();          /* 🏥 포켓몬 센터(사탕·집안일·레벨)도 바로 맞춘다 */
   const sm=document.getElementById('modal-settings');            /* 설정을 열어 둔 채 복원해도 칸이 바로 맞춰지게 */
   if(sm&&!sm.classList.contains('hidden')){renderSettingsMissedTasks();buildStudyRows();}
   if(S.settings.sound)unlockAudio();
@@ -3264,6 +3740,7 @@ function loadBackupText(text){
     `\n· 기록한 날짜 ${dayCount}일`+
     `\n· 기상 ${r.settings.wake} · 출발 ${r.settings.depart}`+
     (r.skipped?`\n· 알 수 없는 포켓몬 ${r.skipped}개는 건너뜀`:'')+
+    `\n· 보유 사탕 ${r.candy||0}개 · 집안일 기록 ${Object.keys(r.choresDone||{}).length}일`+
     `\n\n지금 기기의 도감·기록이 백업 내용으로 바뀝니다.`;
   if(!confirm(msg))return null;
   applyBackup(r);
@@ -3336,7 +3813,7 @@ const BT={stage:'pick',me:[],foe:[],meB:[],foeB:[],mi:0,fi:0,busy:true,token:0};
 const btSleep=ms=>new Promise(r=>setTimeout(r,ms));
 function btEl(id){return document.getElementById(id);}
 /* 두 팀을 같은 배틀 레벨로 맞춘다. 포켓몬마다의 강약은 팀 안에서 그대로 남는다. */
-function btPrep(list){
+function btPrep(list,mine){
   const n=list.length||1;
   const mh=list.reduce((s,p)=>s+p.hp,0)/n;
   const ma=list.reduce((s,p)=>s+p.atk,0)/n;
@@ -3344,8 +3821,12 @@ function btPrep(list){
   const cl=(v,mean,lo,hi)=>{const r=mean?v/mean:1;return Math.min(hi,Math.max(lo,r));};
   /* HP는 좁게(0.8~1.25) 묶어 HP 숫자가 서로 너무 벌어지지 않게, 공격·방어는 조금 넓게 */
   return list.map(p=>{
-    const max=Math.round(BT_REF_HP*cl(p.hp,mh,0.8,1.25));
-    return {p,hp:max,max,atk:BT_REF_ATK*cl(p.atk,ma,0.65,1.5),def:BT_REF_DEF*cl(p.def,md,0.65,1.5),shield:1};
+    /* ⭐ 사탕으로 키운 레벨(내 팀만)은 두 팀을 같은 배틀 레벨로 맞춘 뒤에 그대로 더한다.
+       그래서 집안일로 키운 포켓몬은 배틀에서도 진짜로 더 강하다. (상대 팀은 레벨 없음) */
+    const lv=mine?pkLv(p.id):1;
+    const lb=mine?Math.max(0,(lv-1)*LV_STEP):0;
+    const max=Math.round(BT_REF_HP*cl(p.hp,mh,0.8,1.25))+lb;
+    return {p,hp:max,max,atk:BT_REF_ATK*cl(p.atk,ma,0.65,1.5)+lb,def:BT_REF_DEF*cl(p.def,md,0.65,1.5)+lb,shield:1,lv};
   });
 }
 function btDamage(a,d,side){
@@ -3414,6 +3895,12 @@ function btRenderSide(side){
   img.classList.remove('faint');
   btAnim(side,'enter',470);
   btEl(`bt-${side}-name`).textContent=b.p.name;
+  const lvEl=btEl(`bt-${side}-lv`);          /* ⭐ 내가 집안일로 키운 레벨 (1이면 숨김) */
+  if(lvEl){
+    const lv=me?(b.lv||1):1;
+    lvEl.hidden=!(me&&lv>1);
+    if(!lvEl.hidden)lvEl.textContent='⭐ Lv.'+lv;
+  }
   btEl(`bt-${side}-types`).innerHTML=typeBadges(b.p);
   const rr=btEl(`bt-${side}-rar`);
   rr.className='rr'+(b.p.r==='rare'?' rare':'');
@@ -3470,8 +3957,8 @@ function btStart(){
   const pool=POKEMON.slice(), foe=[];
   while(foe.length<3&&pool.length)foe.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
   BT.foe=foe;BT.mi=0;BT.fi=0;
-  BT.meB=btPrep(BT.me);
-  BT.foeB=btPrep(BT.foe);
+  BT.meB=btPrep(BT.me,true);
+  BT.foeB=btPrep(BT.foe,false);
   BT.stage='fight';BT.busy=true;
   btEl('bt-step-pick').classList.add('hidden');
   btEl('bt-step-end').classList.add('hidden');
@@ -3803,6 +4290,7 @@ document.getElementById('btn-settings').addEventListener('click',()=>{
   renderRestSettings();
   renderSettingsMissedTasks();
   buildStudyRows();
+  buildChoreRows();
   switchSetTab('time');
   setModal.classList.remove('hidden');
   const body=document.querySelector('#modal-settings .set-body');
@@ -3854,6 +4342,57 @@ document.getElementById('btn-study-reset').addEventListener('click',()=>{
   S.settings.study=defaultStudy();save();
   buildStudyRows();renderStudyList();
   toast('요일별 공부 목록을 기본값으로 되돌렸어요');
+});
+
+/* ── 🧹 포켓몬 센터 집안일 목록 편집 (⚙️ 시스템 · 보호자용) ── */
+function updateChoreNote(){
+  const el=document.getElementById('chore-note');
+  if(!el)return;
+  el.textContent=`지금 ${chores().length}개 · 센터 왼쪽에 이 순서로 보여요.`;
+}
+function buildChoreRows(){
+  const box=document.getElementById('chore-rows');
+  if(!box)return;
+  const arr=choreListRaw();
+  box.innerHTML=arr.map((c,i)=>{
+    const icon=choreIcon({icon:String((c&&c.icon)||'🧹')});
+    const name=(c&&typeof c.name==='string')?c.name:'';
+    return `<div class="chore-row">
+      <span class="chore-ic-view" aria-hidden="true">${icon}</span>
+      <input type="text" class="chore-name" data-i="${i}" value="${escHtml(name)}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="예: 장난감 정리">
+      <button type="button" class="chore-del" data-del="${i}" title="이 집안일 빼기">✕</button>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('input.chore-name').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const arr2=choreListRaw(),i=Number(inp.dataset.i);
+      if(arr2[i]){arr2[i].name=inp.value;save();}
+      updateChoreNote();
+    });
+  });
+  box.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click',()=>{
+    const arr2=choreListRaw(),i=Number(b.dataset.del),c=arr2[i];
+    if(!c)return;
+    if(arr2.length<=1){toast('집안일은 하나 이상 남겨 주세요');return;}
+    if(!confirm(`'${String(c.name||'').trim()}' 집안일을 목록에서 뺄까요?\n(이미 받은 사탕은 그대로예요)`))return;
+    arr2.splice(i,1);save();buildChoreRows();renderCenter();
+    toast('집안일 목록에서 뺐어요');
+  }));
+  updateChoreNote();
+}
+document.getElementById('btn-chore-add').addEventListener('click',()=>{
+  const arr=choreListRaw();
+  if(arr.length>=10){toast('집안일은 10개까지 넣을 수 있어요');return;}
+  arr.push({id:'c'+Date.now().toString(36),name:'새 집안일',icon:'🧹'});
+  save();buildChoreRows();renderCenter();
+  const inputs=document.querySelectorAll('#chore-rows input.chore-name');
+  const last=inputs[inputs.length-1];
+  if(last){last.focus();last.select();}
+});
+document.getElementById('btn-chore-reset').addEventListener('click',()=>{
+  if(!confirm('집안일 목록을 처음 기본 4개(신발 정리·빨래 정리·돌돌이·물주기)로 되돌릴까요?\n(직접 넣거나 고친 목록은 사라져요. 모은 사탕과 오늘 완료 표시는 그대로예요)'))return;
+  S.settings.chores=defaultChores();save();buildChoreRows();renderCenter();
+  toast('집안일 목록을 기본 4개로 되돌렸어요');
 });
 function renderDepartSongHint(){
   const el=document.getElementById('set-depart-song');
@@ -4046,6 +4585,7 @@ curMode=modeNow();                                   /* 지금 시각에 맞는 
 syncModeChrome();
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+renderCandyBadge();      /* 🍬 모은 사탕 배지(헤더 포켓몬 센터 버튼) */
 updateModeChips();
 doneAudio();   /* 할 일 완료 효과음 미리 받아 두기(터치 순간 바로 울리도록) */
 initWeather();
