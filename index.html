@@ -835,10 +835,10 @@ body.eve #p-msg{color:#B4622A}
 .pct-tip{flex:0 0 auto;margin:0 8px 8px;padding:5px 9px;font-size:11.5px;font-weight:900;color:#7A5A12;
   background:#FFF9E4;border:2.5px dashed #E3C87A;border-radius:12px;line-height:1.4;letter-spacing:-.3px;text-align:center}
 /* 오른쪽: 포켓몬 강화소 */
-.pct-strip{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:8px 9px 6px}
+.pct-strip{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:5px 9px 4px}
 .pct-strip::-webkit-scrollbar{height:8px}
 .pct-strip::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px}
-.pct-thumb{position:relative;flex:0 0 auto;width:54px;height:54px;padding:2px;border:2.5px solid #C9D5E4;border-radius:12px;
+.pct-thumb{position:relative;flex:0 0 auto;width:50px;height:50px;padding:2px;border:2.5px solid #C9D5E4;border-radius:12px;
   background:#F7FAFF;cursor:pointer;transition:transform .1s,border-color .12s}
 .pct-thumb img{width:100%;height:100%;object-fit:contain}
 .pct-thumb:active{transform:translateY(2px)}
@@ -847,7 +847,7 @@ body.eve #p-msg{color:#B4622A}
   background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:0 4px;line-height:1.5}
 .pct-thumb.max .lv{background:#FFC93C}
 #pct-pane{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:0 9px}
-.pct-card{position:relative;flex:1 1 auto;display:flex;flex-direction:column;gap:5px;margin:0 0 8px;padding:8px;
+.pct-card{position:relative;flex:1 1 auto;display:flex;flex-direction:column;gap:4px;margin:0 0 8px;padding:7px;
   border:3px solid var(--ink);border-radius:16px;background:linear-gradient(160deg,#FFFDF2,#FFF1CE);
   box-shadow:0 4px 0 rgba(34,43,56,.12)}
 .pct-card .row1{display:flex;gap:9px;align-items:center;min-height:0}
@@ -859,7 +859,7 @@ body.eve #p-msg{color:#B4622A}
 .pct-lvpill{display:inline-block;font-size:11px;font-weight:900;letter-spacing:-.3px;color:#5A3B00;
   background:linear-gradient(180deg,#FFF6C4,#FFD75E);border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6}
 .pct-lvpill.max{background:linear-gradient(180deg,#FFF0A8,#FFB800);color:#4E3000}
-.pct-stats{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.pct-stats{display:flex;flex-direction:column;gap:1px;margin-top:5px}
 .pct-stat{display:flex;align-items:baseline;gap:5px;font-size:13px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
 .pct-stat .lb{flex:0 0 auto;width:29px;font-size:11.5px;color:#63718a}
 .pct-stat .now{font-size:15px}
@@ -869,19 +869,29 @@ body.eve #p-msg{color:#B4622A}
 .pct-card .up-sum{flex:0 0 auto;margin-top:2px;font-size:11px;font-weight:900;color:#6B7480;letter-spacing:-.3px}
 .pct-card .up-sum b{color:#C2571B}
 /* 레벨 진행 표시 (사탕 10칸) + 안내 */
-.pct-more{margin-top:auto;padding-top:9px;border-top:2px dashed #E6D6AC;display:flex;flex-direction:column;gap:5px}
+.pct-more{margin-top:auto;padding-top:7px;border-top:2px dashed #E6D6AC;display:flex;flex-direction:column;gap:5px}
 .pct-more .tps{display:flex;gap:4px;flex-wrap:wrap}
 .pct-more .mx{font-size:11.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.4}
 .pct-more .mx b{color:#C2571B;font-size:13px}
-.pct-track{display:flex;align-items:center;gap:4px;padding-top:6px;flex-wrap:nowrap}
+.pct-track{display:flex;align-items:center;gap:4px;padding-top:4px;flex-wrap:nowrap}
 .pct-track .tt{flex:0 0 auto;font-size:11px;font-weight:900;color:#7A6A48;margin-right:2px}
 .pct-pip{flex:0 0 auto;width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#EDEFF4}
 .pct-pip.on{background:linear-gradient(180deg,#FFE066,#F5B300)}
 .pct-pip.cur{box-shadow:0 0 0 3px rgba(250,204,21,.45)}
 .pct-track .tk{margin-left:auto;font-size:11px;font-weight:900;color:#8A5A00;background:#FFF3C4;border:2px solid var(--ink);
   border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap}
-.pct-guide{flex:0 0 auto;font-size:11.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.35}
-.pct-guide b{color:#C2571B}
+/* 🍬 레벨별 사탕 참조표 — 다음 레벨에 드는 사탕을 미리 보고, 지금 구간을 노랗게 켠다 */
+.pct-cost{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;margin-top:1px}
+.pct-cost .h{font-size:11.5px;font-weight:900;color:#7A6A48;letter-spacing:-.4px;line-height:1.2;white-space:nowrap}
+.pct-cost .h b{color:#C2571B;font-size:12.5px}
+.pct-cfs{display:flex;gap:4px}
+.pct-cf{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  padding:2px 2px;border:2.5px solid #CBD6E4;border-radius:10px;background:#F7FAFF;line-height:1.15}
+.pct-cf i{font-style:normal;font-size:11px;font-weight:900;color:#63718A;letter-spacing:-.5px;white-space:nowrap}
+.pct-cf b{font-size:15px;font-weight:900;color:#8A5A00;letter-spacing:-.5px;white-space:nowrap}
+.pct-cf.on{border-color:var(--ink);background:linear-gradient(180deg,#FFF6C4,#FFD75E);box-shadow:0 0 0 2.5px rgba(250,204,21,.45)}
+.pct-cf.on i{color:#5A3B00}
+.pct-cf.on b{color:#4E3000}
 /* 강화 순간 반짝 */
 .pct-card.pop{animation:lvPop .5s ease}
 @keyframes lvPop{0%{transform:scale(1)}35%{transform:scale(1.035)}100%{transform:scale(1)}}
@@ -901,6 +911,8 @@ body.eve #p-msg{color:#B4622A}
 .pct-up:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(34,43,56,.24)}
 .pct-up:disabled{opacity:.55;cursor:default;transform:none;box-shadow:0 3px 0 rgba(34,43,56,.14);filter:grayscale(.3)}
 .pct-up.max{background:linear-gradient(180deg,#FFE9A8,#E8C46A);opacity:1;filter:none}
+/* 사탕이 모자랄 때: 누를 수는 없지만 '몇 개 더 필요해요!'를 또렷하게 읽을 수 있게 */
+.pct-up.short{background:linear-gradient(180deg,#FFF4CE,#F3D98A);color:#7A4A00;opacity:1;filter:none}
 /* 설정: 집안일 목록 편집 */
 .chore-rows{display:flex;flex-direction:column;gap:5px;margin-top:8px}
 .chore-row{display:flex;align-items:center;gap:6px}
@@ -1489,7 +1501,7 @@ const STUDY_DEFAULT={
 };
 
 /* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ──
-   집안일 항목당 하루 1번 사탕 1개, 사탕 1개 = 능력치 +5 (Lv.1 → Lv.10, 최대 +45) */
+   집안일 항목당 하루 1번 사탕 1개, 레벨별 강화 비용은 1/2/3/5개 (Lv.1 → Lv.10 합계 18개, 최대 +45) */
 const POKE_MAX_LV=10, LV_STEP=5;
 const CHORES_DEFAULT=[
   {id:'shoes',   name:'신발 정리',          icon:'👟'},
@@ -3398,7 +3410,7 @@ document.addEventListener('keydown',e=>{
 
 /* ================= 🏥 포켓몬 센터 =================
    · 왼쪽: 오늘의 집안일 돕기 — 항목당 하루 1번, 도우면 🍬 사탕 +1
-   · 오른쪽: 포켓몬 강화소 — 사탕 1개로 잡은 포켓몬 Lv +1 (능력치 +5, Lv.10 MAX)
+   · 오른쪽: 포켓몬 강화소 — 레벨이 오를수록 사탕이 더 든다 (Lv.2~5=1개 · Lv.6~8=2개 · Lv.9=3개 · Lv.10=5개, 능력치 +5, Lv.10 MAX)
    · 물주기: 목록에 늘 있고, 1일·15일에만 💧 오늘 물 주는 날! 표시가 반짝인다. */
 let centerSel=null;
 function choreListRaw(){
@@ -3427,6 +3439,26 @@ function choresDoneToday(){
 }
 function isWaterDay(){const d=new Date().getDate();return d===1||d===15;}
 function candyN(){return (typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;}
+/* 🍬 레벨별 사탕 참조표 — 레벨이 오를수록 드는 사탕이 늘어난다.
+   Lv.1→10까지 다 키우면 1+1+1+1 + 2+2+2 + 3 + 5 = 18개. */
+const CANDY_TIERS=[
+  {from:2,to:5,cost:1,label:'Lv.2~5'},
+  {from:6,to:8,cost:2,label:'Lv.6~8'},
+  {from:9,to:9,cost:3,label:'Lv.9'},
+  {from:10,to:10,cost:5,label:'Lv.10'}
+];
+function lvCost(nextLv){                       /* nextLv = 올라갈 목표 레벨 (curLv + 1) */
+  const n=Math.floor(Number(nextLv)||0);
+  if(n>=10)return 5;
+  if(n>=9)return 3;
+  if(n>=6)return 2;
+  return 1;
+}
+function candiesToMax(curLv){                  /* 지금 레벨에서 만렙(Lv.10)까지 필요한 사탕 합계 */
+  let sum=0;
+  for(let lv=Math.floor(Number(curLv)||1)+1;lv<=POKE_MAX_LV;lv++)sum+=lvCost(lv);
+  return sum;
+}
 function pkLv(id){
   const v=Number(S.pokeLv?S.pokeLv[String(id)]:1);
   if(!isFinite(v)||v<1)return 1;
@@ -3479,7 +3511,7 @@ function renderCenter(pop){
     if(strip)strip.innerHTML='';
     if(pill){pill.hidden=true;pill.textContent='';}
     if(pane)pane.innerHTML='<div class="pct-empty"><span class="em">🥚</span><div>아직 잡은 포켓몬이 없어요!<br>아침·저녁 루틴으로 친구를 먼저 만나봐요!</div></div>';
-    if(up){up.classList.remove('max');up.disabled=true;up.textContent='🍬 사탕 1개로 강화하기! (+5)';}
+    if(up){up.classList.remove('max','short');up.disabled=true;up.textContent='🍬 강화할 포켓몬이 없어요';}
     return;
   }
   if(centerSel==null||!caught.some(p=>p.id===centerSel))centerSel=caught[0].id;
@@ -3493,7 +3525,7 @@ function renderCenter(pop){
     }).join('');
     strip.querySelectorAll('[data-poke]').forEach(b=>b.addEventListener('click',()=>{centerSel=Number(b.dataset.poke);renderCenter();}));
   }
-  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.10 MAX':`⭐ Lv.${lv} → Lv.${lv+1}`;}
+  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.10 MAX':`⭐ Lv.${lv} → Lv.${lv+1} · 🍬${lvCost(lv+1)}`;}
   const row=(lb,base)=>{
     const now=base+bonus;
     return '<div class="pct-stat"><span class="lb">'+lb+'</span><span class="now">'+now+'</span>'+
@@ -3513,8 +3545,8 @@ function renderCenter(pop){
       `<div class="pct-more"><div class="tps">${p.types.map(typeBadge).join('')}</div>`+
       `<div class="mx">👑 만렙(Lv.10)이 되면 <b>HP ${p.hp+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>공격 ${p.atk+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>방어 ${p.def+LV_STEP*(POKE_MAX_LV-1)}</b>!</div></div>`+
       `<div class="pct-track"><span class="tt">레벨</span>${pips}`+
-      `<span class="tk">${max?'👑 MAX':`🍬 ${POKE_MAX_LV-lv}개 더 먹이면 만렙!`}</span></div>`+
-      '<div class="pct-guide">🍬 사탕 1개를 먹일 때마다 <b>HP·공격·방어가 +5</b>씩 올라요!</div>'+
+      `<span class="tk">${max?'👑 MAX':`🍬 ${candiesToMax(lv)}개 더 먹이면 만렙!`}</span></div>`+
+      candyCostStrip(max?0:lv+1)+
       '<div class="pct-fx" id="pct-fx"></div></div>';
   if(pop){
     const card=document.getElementById('pct-card'),fx=document.getElementById('pct-fx');
@@ -3522,10 +3554,19 @@ function renderCenter(pop){
     if(fx){fx.textContent=pop;fx.classList.add('show');}
   }
   if(up){
+    const cost=max?0:lvCost(lv+1);
     up.classList.toggle('max',max);
-    up.disabled=!!max||n<=0;
-    up.textContent=max?'👑 MAX · 만렙이에요!':(n<=0?'🍬 사탕이 없어요 · 집안일을 도와 모아요':'🍬 사탕 1개로 강화하기! (+5)');
+    up.classList.toggle('short',!max&&n<cost);
+    up.disabled=!!max||n<cost;
+    up.textContent=max?'👑 MAX · 만렙이에요!'
+      :(n<cost?`🍬 사탕이 ${cost-n}개 더 필요해요!`:`🍬 사탕 ${cost}개로 강화하기! (+5)`);
   }
+}
+/* 🍬 레벨별 사탕 참조표 — 아이가 다음 레벨에 드는 사탕을 미리 보는 표 (지금 구간은 노랗게) */
+function candyCostStrip(nextLv){
+  return '<div class="pct-cost" aria-label="레벨별 사탕 비용"><div class="h">🍬 레벨별 사탕 · 한 번에 <b>능력치 +5</b></div><div class="pct-cfs">'+
+    CANDY_TIERS.map(t=>`<span class="pct-cf${(nextLv&&nextLv>=t.from&&nextLv<=t.to)?' on':''}" data-cost="${t.cost}">`+
+      `<i>${t.label}</i><b>🍬 ${t.cost}개</b></span>`).join('')+'</div></div>';
 }
 function doChore(id){
   const c=chores().find(x=>x.id===String(id));
@@ -3547,10 +3588,10 @@ function upgradePoke(){
   const m=caughtDates();
   const p=POKEMON.filter(q=>m[q.id]).find(q=>q.id===centerSel);
   if(!p)return;
-  const lv=pkLv(p.id);
+  const lv=pkLv(p.id),cost=lvCost(lv+1);
   if(lv>=POKE_MAX_LV){toast('이미 👑 MAX 만렙이에요! 다른 친구를 키워 봐요');return;}
-  if(candyN()<=0){toast('사탕이 없어요. 집안일을 도와 사탕을 모아요!');return;}
-  S.candy=candyN()-1;
+  if(candyN()<cost){toast(`🍬 사탕이 ${cost-candyN()}개 더 필요해요! 집안일을 도와 모아요`);return;}
+  S.candy=candyN()-cost;
   if(!S.pokeLv||typeof S.pokeLv!=='object')S.pokeLv={};
   S.pokeLv[String(p.id)]=lv+1;
   save();
