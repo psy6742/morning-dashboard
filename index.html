@@ -78,6 +78,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   border:2px solid var(--ink);border-radius:99px;padding:0 5px;line-height:1.5;letter-spacing:-.3px}
 .center-btn .ct-candy.show{display:inline-block}
 .center-btn.has-candy{background:#FFE9F0}
+.center-btn.active{background:var(--yellow-l)}
 .hl-icons{display:flex;gap:5px;margin-left:auto}
 .icon-btn{width:34px;height:34px;font-family:inherit;font-size:16px;cursor:pointer;background:#fff;
   border:var(--bw) solid var(--ink);border-radius:10px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
@@ -767,27 +768,23 @@ body.eve #p-msg{color:#B4622A}
 /* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ─────────────
    집안일을 도우면 사탕 1개, 그 사탕으로 잡은 포켓몬을 Lv.10까지 키운다.
    왼쪽: 오늘의 집안일 / 오른쪽: 내 포켓몬을 골라 바로 강화. */
-#modal-center{z-index:78;background:rgba(16,24,36,.62)}
-.pct-modal{width:min(96vw,960px);height:min(92vh,566px);display:flex;flex-direction:column;overflow:hidden;
-  background:#FFFDF4;border:4px solid var(--ink);border-radius:26px;box-shadow:0 16px 0 rgba(20,28,40,.26)}
-.pct-top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 12px;
-  background:linear-gradient(180deg,#FF8496 0%,#F2435C 100%);border-bottom:4px solid var(--ink)}
-.pct-badge{flex:0 0 auto;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:25px;
-  background:#fff;border:3px solid var(--ink);border-radius:13px;box-shadow:0 3px 0 rgba(34,43,56,.22)}
-.pct-tt{min-width:0;flex:0 1 auto}
-.pct-tt h2{margin:0;font-family:inherit;font-size:24px;font-weight:900;line-height:1.1;letter-spacing:-.6px;color:#fff;
-  text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink),0 3px 0 rgba(34,43,56,.32)}
-.pct-tt p{margin:1px 0 0;font-size:12.5px;font-weight:900;letter-spacing:-.4px;color:#fff;line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  text-shadow:-1.5px -1.5px 0 rgba(34,43,56,.6),1.5px -1.5px 0 rgba(34,43,56,.6),-1.5px 1.5px 0 rgba(34,43,56,.6),1.5px 1.5px 0 rgba(34,43,56,.6)}
-.pct-candy{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:900;
+/* v26: 팝업(어두운 배경)이 아니라 도감·루틴처럼 전체 화면 메인 뷰로 전환 */
+#view-center{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#FFFDF4;
+  border:var(--bw) solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:10px 12px 10px}
+#ct-head{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ct-badge{flex:0 0 auto;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:26px;
+  background:#fff;border:3px solid var(--ink);border-radius:13px;box-shadow:0 3px 0 rgba(34,43,56,.16)}
+.ct-tt{min-width:0;flex:1 1 auto}
+.ct-tt b{display:block;font-size:23px;font-weight:900;letter-spacing:-.6px;line-height:1.1;color:var(--ink)}
+.ct-tt p{margin:1px 0 0;font-size:12.5px;font-weight:800;letter-spacing:-.4px;color:var(--ink-soft);line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ct-head .pct-candy{margin-left:0}
+#ct-head .sp{display:flex;align-items:center;gap:7px;flex:0 0 auto;margin-left:auto}
+.pct-candy{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:900;
   color:#6A3D00;background:#FFE9A8;border:3px solid var(--ink);border-radius:99px;padding:3px 12px;
   box-shadow:0 3px 0 rgba(34,43,56,.22);white-space:nowrap}
 .pct-candy b{font-family:"Arial Black",Arial,sans-serif;font-size:19px;line-height:1;letter-spacing:-.5px}
-.pct-x{flex:0 0 auto;width:34px;height:34px;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;
-  background:#fff;border:3px solid var(--ink);border-radius:99px;box-shadow:0 3px 0 rgba(34,43,56,.22)}
-.pct-x:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.22)}
-.pct-body{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:11px}
+.pct-body{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:0}
 .pct-sec{display:flex;flex-direction:column;min-height:0;border:3px solid var(--ink);border-radius:18px;background:#fff;overflow:hidden}
 .pct-sec-h{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 10px;background:#FFF6E2;
   border-bottom:2.5px solid var(--ink);font-weight:900;font-size:15px;letter-spacing:-.4px}
@@ -933,10 +930,10 @@ body.eve #p-msg{color:#B4622A}
     <!-- 좌: 도감 + EXP -->
     <div id="hl">
       <div class="hl-top">
-        <button class="dex-btn" id="tab-poke" title="포켓몬 도감 열기">
+        <button class="dex-btn" id="tab-poke" title="포켓몬 도감 열기" aria-pressed="false">
           <span class="pokeball"></span><span>포켓몬 도감</span>
         </button>
-        <button class="dex-btn center-btn" id="tab-center" title="포켓몬 센터 열기 — 집안일을 도우면 받은 사탕으로 포켓몬을 키워요">
+        <button class="dex-btn center-btn" id="tab-center" title="포켓몬 센터 열기 — 집안일을 도우면 받은 사탕으로 포켓몬을 키워요" aria-pressed="false">
           <span class="ct-ic" aria-hidden="true">🏥</span><span class="ct-tx">포켓몬 센터</span><span class="ct-candy" id="ct-candy">🍬 0</span>
         </button>
         <div class="hl-icons">
@@ -1031,6 +1028,36 @@ body.eve #p-msg{color:#B4622A}
       <div id="pk-empty" class="hidden"><span class="em">🥚</span>아직 잡은 포켓몬이 없어요.<br>할 일을 끝내고 100 EXP를 모으면 한 마리씩 잡혀요!</div>
     </div>
   </section>
+
+  <!-- 🏥 포켓몬 센터 (집안일 돕기 · 사탕으로 강화) — 도감처럼 전체 화면 메인 뷰 -->
+  <section id="view-center" class="hidden">
+    <div id="ct-head">
+      <div class="ct-badge" aria-hidden="true">🏥</div>
+      <div class="ct-tt">
+        <b>포켓몬 센터</b>
+        <p>집안일을 도우며 받은 사탕으로 내 포켓몬을 강하게 키워요!</p>
+      </div>
+      <span class="pct-candy">🍬 보유 사탕: <b id="pct-candy-n">0</b>개</span>
+      <span class="sp">
+        <button class="back-btn" id="ct-back">← 등원 준비로 돌아가기</button>
+      </span>
+    </div>
+    <div class="pct-body">
+      <!-- 왼쪽: 오늘의 집안일 돕기 -->
+      <section class="pct-sec">
+        <div class="pct-sec-h"><span>🧹 오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
+        <div class="pct-list" id="pct-chores"></div>
+        <div class="pct-tip" id="pct-tip"></div>
+      </section>
+      <!-- 오른쪽: 포켓몬 강화소 -->
+      <section class="pct-sec">
+        <div class="pct-sec-h"><span>✨ 포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
+        <div class="pct-strip" id="pct-strip"></div>
+        <div id="pct-pane"></div>
+        <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
+      </section>
+    </div>
+  </section>
 </div>
 
 <!-- 🃏 포켓몬 카드 (앞면·뒷면) — 도감에서 포켓몬을 누르면 열림 -->
@@ -1110,36 +1137,6 @@ body.eve #p-msg{color:#B4622A}
     <!-- 3단계: 결과 (3:3 한 판이면 끝) -->
     <div id="bt-step-end" class="bt-step hidden">
       <div class="bt-result" id="bt-result"></div>
-    </div>
-  </div>
-</div>
-
-<!-- 🏥 포켓몬 센터 (집안일 돕기 · 사탕으로 강화) -->
-<div id="modal-center" class="overlay hidden">
-  <div class="pct-modal" role="dialog" aria-label="포켓몬 센터">
-    <div class="pct-top">
-      <div class="pct-badge" aria-hidden="true">🏥</div>
-      <div class="pct-tt">
-        <h2>포켓몬 센터</h2>
-        <p>집안일을 도우며 받은 사탕으로 내 포켓몬을 강하게 키워요!</p>
-      </div>
-      <div class="pct-candy">🍬 보유 사탕: <b id="pct-candy-n">0</b>개</div>
-      <button class="pct-x" id="pct-close" type="button" title="닫기" aria-label="닫기">✕</button>
-    </div>
-    <div class="pct-body">
-      <!-- 왼쪽: 오늘의 집안일 돕기 -->
-      <section class="pct-sec">
-        <div class="pct-sec-h"><span>🧹 오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
-        <div class="pct-list" id="pct-chores"></div>
-        <div class="pct-tip" id="pct-tip"></div>
-      </section>
-      <!-- 오른쪽: 포켓몬 강화소 -->
-      <section class="pct-sec">
-        <div class="pct-sec-h"><span>✨ 포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
-        <div class="pct-strip" id="pct-strip"></div>
-        <div id="pct-pane"></div>
-        <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
-      </section>
     </div>
   </div>
 </div>
@@ -2113,6 +2110,8 @@ function syncModeChrome(){
   document.body.classList.toggle('eve',curMode==='pm');
   const back=document.getElementById('tab-dash');
   if(back)back.textContent=curMode==='pm'?'← 저녁 루틴으로 돌아가기':'← 등원 준비로 돌아가기';
+  const cback=document.getElementById('ct-back');
+  if(cback)cback.textContent=curMode==='pm'?'← 저녁 루틴으로 돌아가기':'← 등원 준비로 돌아가기';
 }
 function applyMode(force){
   const m=modeNow();
@@ -3543,21 +3542,12 @@ function upgradePoke(){
   renderCandyBadge();renderCenter('Lv.'+(lv+1)+'!  +'+LV_STEP);
   toast(`✨ ${p.name} Lv.${lv+1}! 능력치 +${LV_STEP}`);
 }
+/* 포켓몬 센터는 팝업이 아니라 main 뷰 전환으로 연다 (도감과 같은 방식) */
 function openCenter(){
-  document.getElementById('modal-center').classList.remove('hidden');
-  renderCenter();
+  switchTab('center');
 }
-function closeCenter(){document.getElementById('modal-center').classList.add('hidden');}
 document.getElementById('tab-center').addEventListener('click',openCenter);
-document.getElementById('pct-close').addEventListener('click',closeCenter);
 document.getElementById('pct-up').addEventListener('click',upgradePoke);
-/* 바깥(어두운 배경)을 눌러도 닫힌다 — 배틀과 달리 아이가 손대다 꺼져도 손해가 없다 */
-document.getElementById('modal-center').addEventListener('click',e=>{
-  if(e.target&&e.target.id==='modal-center')closeCenter();
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!document.getElementById('modal-center').classList.contains('hidden'))closeCenter();
-});
 
 /* ================= 백업 · 복원 (JSON) ================= */
 const BACKUP_APP='morning-dashboard', BACKUP_VER=1;
@@ -4155,15 +4145,24 @@ document.getElementById('btn-test-poke').addEventListener('click',()=>{
 });
 
 /* ================= 탭 · 설정 ================= */
-function switchTab(poke){
-  document.getElementById('view-dash').classList.toggle('hidden',poke);
-  document.getElementById('view-poke').classList.toggle('hidden',!poke);
-  document.getElementById('tab-poke').classList.toggle('active',poke);
-  document.body.classList.toggle('dex-open',poke);   /* 도감을 볼 땐 진행 바를 접어 넓게 */
-  if(poke)renderPoke();
+/* view: 'dash' | 'poke' | 'center' — 진행 바는 전체 화면 뷰에서 접는다 */
+function switchTab(view){
+  if(view===true)view='poke';
+  if(view===false||view==null)view='dash';
+  document.getElementById('view-dash').classList.toggle('hidden',view!=='dash');
+  document.getElementById('view-poke').classList.toggle('hidden',view!=='poke');
+  document.getElementById('view-center').classList.toggle('hidden',view!=='center');
+  document.getElementById('tab-poke').classList.toggle('active',view==='poke');
+  document.getElementById('tab-center').classList.toggle('active',view==='center');
+  document.getElementById('tab-poke').setAttribute('aria-pressed',view==='poke'?'true':'false');
+  document.getElementById('tab-center').setAttribute('aria-pressed',view==='center'?'true':'false');
+  document.body.classList.toggle('dex-open',view!=='dash');   /* 전체 화면 뷰에선 진행 바를 접어 넓게 */
+  if(view==='poke')renderPoke();
+  if(view==='center')renderCenter();
 }
-document.getElementById('tab-dash').addEventListener('click',()=>switchTab(false));
-document.getElementById('tab-poke').addEventListener('click',()=>switchTab(true));
+document.getElementById('tab-dash').addEventListener('click',()=>switchTab('dash'));
+document.getElementById('ct-back').addEventListener('click',()=>switchTab('dash'));
+document.getElementById('tab-poke').addEventListener('click',()=>switchTab('poke'));
 document.getElementById('btn-sound').addEventListener('click',unlockAudio);
 document.getElementById('chip-all').addEventListener('click',()=>setPkFilter('all'));
 document.getElementById('chip-caught').addEventListener('click',()=>setPkFilter('caught'));
