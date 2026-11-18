@@ -79,6 +79,11 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .center-btn .ct-candy.show{display:inline-block}
 .center-btn.has-candy{background:#FFE9F0}
 .center-btn.active{background:var(--yellow-l)}
+/* 🙈 포켓몬 센터 숨김(기본): 센터 버튼이 없을 때는 왼쪽 칸도 줄여
+   `포켓몬 도감` 옆에 빈틈이 남지 않게 한다(남는 폭은 가운데 시계가 쓴다).
+   목표 이름이 길어져도 폭이 흔들리지 않도록 214px 고정 — 이름은 넘치면 …로 줄어든다. */
+body.center-hidden #hl{width:214px}
+body.center-hidden .hl-icons{margin-left:0}
 .hl-icons{display:flex;gap:5px;margin-left:auto}
 .icon-btn{width:34px;height:34px;font-family:inherit;font-size:16px;cursor:pointer;background:#fff;
   border:var(--bw) solid var(--ink);border-radius:10px;box-shadow:0 4px 0 rgba(34,43,56,.20);transition:.12s}
@@ -1215,6 +1220,14 @@ body.eve #p-msg{color:#B4622A}
         <span class="set-sub" id="ball-lock-note"></span>
       </div>
     </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F3F8FF;border:2px solid #C8DBF2;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>🏥 포켓몬 센터 공개 (기본 숨김) <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
+      <span class="set-sub">헤더의 <b>🏥 포켓몬 센터</b> 버튼을 아이에게 보여 줄지 정해요. <b>🙈 숨김</b>이면 버튼이 아예 보이지 않고(기본), <b>👀 공개</b>일 때만 <b>포켓몬 도감</b> 옆에 나타나요. 서연 님이 혼자 시험해 볼 때만 켜 두면 돼요.</span>
+      <div class="ball-lock-row">
+        <button class="set-btn sb-lock" id="btn-center-lock" type="button" aria-pressed="false">🙈 숨김 (기본)</button>
+        <span class="set-sub" id="center-lock-note"></span>
+      </div>
+    </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7FB;border:2px solid #F2C9DA;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
       <span>🧹 포켓몬 센터 집안일 목록 <b style="font-size:12px;color:#A63D6E">· 보호자용</b></span>
       <span class="set-sub">🏥 포켓몬 센터에서 아이가 도울 집안일이에요. 이름을 고치거나 <b>✕</b>로 빼고, <b>＋ 집안일 추가</b>로 더할 수 있어요. 아이가 하나를 도우면 <b>🍬 사탕 1개</b>를 받고, 같은 집안일은 <b>하루 1번</b>만 받아요.</span>
@@ -1512,6 +1525,10 @@ if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEA
 /* 🔒 도감 앞 몬스터볼 잠금: 이 값이 없는 옛 기록은 잠금(false) — 새로고침해도 아이가 열 수 없다 */
 function battleAllowed(){return !!(S.settings&&S.settings.battleEnabled===true);}
 if(typeof S.settings.battleEnabled!=='boolean')S.settings.battleEnabled=false;
+/* 🙈 포켓몬 센터 공개 여부: 이 값이 없는 옛 기록은 숨김(false) — 헤더의 🏥 포켓몬 센터 버튼이 보이지 않는다.
+   보호자용 설정(⚙️ 시스템)에서 켜면 바로 나타나고, 켠 상태는 새로고침·백업에도 유지된다. */
+function centerAllowed(){return !!(S.settings&&S.settings.centerEnabled===true);}
+if(typeof S.settings.centerEnabled!=='boolean')S.settings.centerEnabled=false;
 /* 🏥 포켓몬 센터: 보유 사탕 · 오늘 도운 집안일 · 포켓몬 레벨 · 집안일 목록
    (값이 없는 옛 기록은 사탕 0 · 도움 기록 없음 · 모두 Lv.1 · 기본 4개로 시작) */
 S.candy=(typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;
@@ -3559,7 +3576,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false,chores:defaultChores()};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false,centerEnabled:false,chores:defaultChores()};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -3678,6 +3695,7 @@ function parseBackup(raw){
   if(!settings.weatherProxy&&!settings.proxyCustom)settings.weatherProxy=DEFAULT_WEATHER_PROXY;
   settings.sound=rs.sound===true;
   settings.battleEnabled=rs.battleEnabled===true;          /* 백업에 잠금 상태도 담김(옛 백업은 잠금) */
+  settings.centerEnabled=rs.centerEnabled===true;          /* 🙈 센터 공개 여부도 담김(옛 백업엔 없으므로 숨김) */
   /* 요일별 공부 목록 (0=일 … 6=토) — 옛 백업에 없으면 기본값 */
   const st=(rs.study&&typeof rs.study==='object'&&!Array.isArray(rs.study))?rs.study:{};
   settings.study={};
@@ -3733,7 +3751,7 @@ function applyBackup(r){
   recalcExp(day(todayKey()));
   save();
   applyMode(true);                                       /* 복원한 설정의 취침 시각까지 반영해 화면 다시 그림 */
-  renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();applyBallLock();
+  renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();applyBallLock();applyCenterVisible();
   renderCandyBadge();renderCenter();buildChoreRows();          /* 🏥 포켓몬 센터(사탕·집안일·레벨)도 바로 맞춘다 */
   const sm=document.getElementById('modal-settings');            /* 설정을 열어 둔 채 복원해도 칸이 바로 맞춰지게 */
   if(sm&&!sm.classList.contains('hidden')){renderSettingsMissedTasks();buildStudyRows();}
@@ -4132,6 +4150,34 @@ document.getElementById('btn-ball-lock').addEventListener('click',()=>{
   toast(battleAllowed()?'포켓몬 도감 추가 기능을 켰어요':'포켓몬 도감 추가 기능을 잠갔어요');
 });
 
+/* 🙈 포켓몬 센터 버튼 공개 여부 (보호자용 설정 → ⚙️ 시스템)
+   기본은 숨김이자: 헤더 버튼을 아예 감추고(body.center-hidden → #hl 폭도 함께 줄어듦),
+   숨긴 상태에서 센터 화면에 남아 있으면 대시보드로 돌려놓는다. */
+function renderCenterToggle(){
+  const b=document.getElementById('btn-center-lock'), n=document.getElementById('center-lock-note');
+  if(!b)return;
+  const on=centerAllowed();
+  b.textContent=on?'👀 공개':'🙈 숨김 (기본)';
+  b.classList.toggle('on',on);
+  b.setAttribute('aria-pressed',on?'true':'false');
+  if(n)n.textContent=on?'지금은 헤더에 🏥 포켓몬 센터 버튼이 보여요.':'지금은 헤더에 버튼이 보이지 않아요(아이에게는 숨김).';
+}
+function applyCenterVisible(){
+  const on=centerAllowed();
+  const btn=document.getElementById('tab-center');
+  if(btn)btn.classList.toggle('hidden',!on);
+  document.body.classList.toggle('center-hidden',!on);
+  renderCenterToggle();
+  const vc=document.getElementById('view-center');
+  if(!on&&vc&&!vc.classList.contains('hidden'))switchTab('dash');   /* 숨긴 채 센터 화면에 남겨 두지 않는다 */
+}
+applyCenterVisible();                /* 저장된 공개 상태로 시작(없는 옛 기록은 숨김) */
+document.getElementById('btn-center-lock').addEventListener('click',()=>{
+  S.settings.centerEnabled=!centerAllowed();
+  save();applyCenterVisible();
+  toast(centerAllowed()?'헤더에 🏥 포켓몬 센터 버튼을 보여 줄게요':'🏥 포켓몬 센터 버튼을 숨겼어요');
+});
+
 /* 🧪 테스트용 포켓몬 3마리 등록 (보호자용 설정 → 시스템) */
 document.getElementById('btn-test-poke').addEventListener('click',()=>{
   const have={};S.caught.forEach(c=>{have[Number(c.id)]=true;});
@@ -4149,6 +4195,7 @@ document.getElementById('btn-test-poke').addEventListener('click',()=>{
 function switchTab(view){
   if(view===true)view='poke';
   if(view===false||view==null)view='dash';
+  if(view==='center'&&!centerAllowed())view='dash';   /* 🙈 숨긴 센터는 어떤 경로로도 열리지 않는다 */
   document.getElementById('view-dash').classList.toggle('hidden',view!=='dash');
   document.getElementById('view-poke').classList.toggle('hidden',view!=='poke');
   document.getElementById('view-center').classList.toggle('hidden',view!=='center');
