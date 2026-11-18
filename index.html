@@ -183,13 +183,27 @@ body.center-hidden .hl-icons{margin-left:0}
 #w-now{flex:0 0 auto;display:flex;align-items:center;gap:7px;min-height:52px;padding:1px 2px}
 #w-icon{font-size:40px;line-height:1;flex:0 0 auto;filter:drop-shadow(0 2px 2px rgba(34,43,56,.15))}
 #w-temp{font-size:40px;font-weight:900;line-height:1;letter-spacing:-1px}
-#w-desc{font-size:15px;font-weight:900;padding-top:13px;white-space:nowrap}
-#w-side{margin-left:auto;display:flex;align-items:center;gap:7px;min-width:0}
-#w-minmax{font-size:16.5px;font-weight:900;color:var(--ink);white-space:nowrap;letter-spacing:-.3px}
+#w-desc{font-size:15px;font-weight:900;padding-top:13px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#w-side{margin-left:auto;display:flex;align-items:center;gap:6px;flex:0 0 auto}
+/* v30: 최고·최저 온도는 두 줄로 세워 글씨를 16.5→22px로 키운다(멀리서도 읽히게) */
+#w-minmax{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  font-size:22px;font-weight:900;color:var(--ink);line-height:1.08;letter-spacing:-.5px;white-space:nowrap}
+#w-minmax:empty{display:none}
+#w-minmax>span{display:block}
 #w-live{font-family:inherit;font-size:10.5px;font-weight:900;color:#1d5cad;background:#EAF4FF;cursor:pointer;
   border:2.5px solid var(--ink);border-radius:99px;padding:1px 8px;line-height:1.5;white-space:nowrap;
   box-shadow:0 2px 0 rgba(34,43,56,.18)}
 #w-live:active{transform:translateY(2px);box-shadow:none}
+/* v30: 1024 폭에서도 최고·최저 글씨와 날씨 문구가 함께 들어가도록 간격을 살짝 조인다.
+   온도 글씨는 22→20px로 한 단계만 낮춘다(그래도 예전 16.5px보다 21% 크다) */
+@media (max-width:1120px){
+  #w-now{gap:4px}
+  #w-side{gap:5px}
+  #w-icon{font-size:37px}
+  #w-live{padding:1px 4px;font-size:10px}
+  #weather-card{padding:6px 6px}
+  #w-minmax{font-size:20px}
+}
 
 .w-hours{flex:0 0 auto;display:flex;gap:6px}
 .wh-chip{flex:1 1 0;min-width:0;border:2.5px solid var(--ink);border-radius:12px;background:#F1F2F4;text-align:center;
@@ -3302,8 +3316,9 @@ function renderWeather(){
   document.getElementById('w-icon').textContent=icon;
   document.getElementById('w-temp').textContent=round1(W.temp)+'°';
   document.getElementById('w-desc').textContent=desc;
-  document.getElementById('w-minmax').textContent=
-    (typeof W.tmax==='number'&&typeof W.tmin==='number')?`최고 ${round1(W.tmax)}° / 최저 ${round1(W.tmin)}°`:'';
+  document.getElementById('w-minmax').innerHTML=
+    (typeof W.tmax==='number'&&typeof W.tmin==='number')
+      ?`<span>최고 ${round1(W.tmax)}°</span><span>최저 ${round1(W.tmin)}°</span>`:'';
   renderLive();
   /* 3줄: 시간대별 예보 8/12/16/20시 */
   const hours=document.getElementById('w-hours');hours.innerHTML='';
