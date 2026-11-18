@@ -73,6 +73,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 #yt-player,#yt-player iframe{width:2px;height:2px;border:0}
 #yt-timer,#yt-timer iframe{width:2px;height:2px;border:0}
 #yt-shower,#yt-shower iframe{width:2px;height:2px;border:0}
+#yt-battle,#yt-battle iframe{width:2px;height:2px;border:0}
 #song-bar{position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:70}
 #btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
@@ -558,7 +559,7 @@ body.eve #p-msg{color:#B4622A}
 <div id="sky"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c4"></span></div>
 
 <!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
-<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div><div id="yt-shower"></div></div>
+<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div><div id="yt-shower"></div><div id="yt-battle"></div></div>
 
 <div id="app">
   <header>
@@ -1546,6 +1547,7 @@ function tickOneTimer(k){
 function tickTimer(){
   tickOneTimer('eat');tickOneTimer('eve_eat');tickOneTimer('eve_shower');
   showerYtTick();            /* 10분 7초(607초) 또는 타이머 0 → 샤워 음원 정지 */
+  battleBgmTick();           /* 배틀 BGM: 배틀 밖이면 끄고, 끝났으면 반복 */
   if(isEveMode())renderEveBonus();
   else renderMorBonus();
 }
@@ -1631,6 +1633,7 @@ function ytCreate(){
   }catch(e){ytFailed=true;}
   yttCreate();                       /* 식사 타이머 버저 플레이어도 함께 준비 */
   ytShowerCreate();                  /* 샤워 타이머 음원 플레이어도 함께 준비 */
+  ytBattleCreate();                  /* 배틀 BGM 플레이어도 함께 준비 */
 }
 /* 사용자 제스처(소리 켜기·화면 클릭) 때 플레이어를 미리 깨워 두기
    → 모바일·태블릿 Chrome에서도 출발 1분 전(기본 08:09)에 자동재생이 막히지 않음 */
@@ -1809,6 +1812,55 @@ function showerYtTick(){
   }catch(e){showerYtStop();}
 }
 
+/* ── 🎵 배틀 BGM (유튜브 1adyXYI8JZg — 역대 야생 포캛몬 배틀) ─────────
+   배틀 창을 여는 터치(몬스터볼) 안에서 바로 재생하고, 배틀에서 나가면 즉시 멈춥니다.
+   공격·방어 효과음이 잘 들리도록 음량은 작게(30) 두고, 영상이 끝나면 처음부터 반복합니다. */
+const YT_BATTLE_ID='1adyXYI8JZg';
+const BATTLE_BGM_VOL=30;
+let YTB=null,ybReady=false,ybFailed=false,ybWantPlay=false,ybPending=false;
+function ytBattleCreate(){
+  if(YTB||ybReady)return;
+  try{
+    YTB=new YT.Player('yt-battle',{
+      videoId:YT_BATTLE_ID,
+      playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3},
+      events:{
+        onReady(){
+          ybReady=true;ybFailed=false;
+          try{YTB.setVolume(BATTLE_BGM_VOL);}catch(e){}
+          if(ybPending&&battleOpen()){ybPending=false;battleBgmStart();}
+        },
+        onStateChange(e){
+          if(e.data===0&&ybWantPlay&&battleOpen()){    /* 영상이 끝났으면 처음부터 다시 */
+            try{YTB.seekTo(0,true);YTB.playVideo();}catch(err){}
+          }
+        },
+        onError(){ybFailed=true;ybWantPlay=false;ybPending=false;}
+      }
+    });
+  }catch(e){ybFailed=true;}
+}
+function battleOpen(){return !btEl('modal-battle').classList.contains('hidden');}
+function battleBgmStart(){
+  if(!ybReady||ybFailed||!YTB){ybPending=!ybFailed;return false;}
+  try{
+    ybPending=false;ybWantPlay=true;
+    YTB.setVolume(BATTLE_BGM_VOL);YTB.unMute();YTB.seekTo(0,true);YTB.playVideo();
+    return true;
+  }catch(e){ybWantPlay=false;return false;}
+}
+function battleBgmStop(){
+  ybWantPlay=false;ybPending=false;
+  try{if(YTB&&ybReady)YTB.stopVideo();}catch(e){}
+}
+/* 배틀 밖으로 나가고도 남아 있으면 끄고, 끝난 채 멈춰 있으면 다시 틀어 준다 */
+function battleBgmTick(){
+  if(!ybWantPlay&&!ybPending)return;
+  if(!battleOpen()){battleBgmStop();return;}
+  if(!ybWantPlay)return;
+  try{if(YTB&&YTB.getPlayerState&&YTB.getPlayerState()===0){YTB.seekTo(0,true);YTB.playVideo();}}catch(e){}
+}
+
 function watchStart(ms){
   ytClearFb();
   ytFbTimer=setTimeout(()=>{
@@ -1822,12 +1874,12 @@ function watchStart(ms){
   },ms);
 }
 (function loadYouTubeAPI(){
-  window.onYouTubeIframeAPIReady=function(){try{ytCreate();ytShowerCreate();}catch(e){ytFailed=true;}};
+  window.onYouTubeIframeAPIReady=function(){try{ytCreate();ytShowerCreate();ytBattleCreate();}catch(e){ytFailed=true;}};
   const s=document.createElement('script');
   s.src='https://www.youtube.com/iframe_api';s.async=true;
   s.onerror=function(){ytFailed=true;};                 /* 스크립트 로드 실패 → 폴백 */
   document.head.appendChild(s);
-  setTimeout(function(){if(!ytReady)ytFailed=true;if(!yttReady)yttFailed=true;if(!ysReady)ysFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
+  setTimeout(function(){if(!ytReady)ytFailed=true;if(!yttReady)yttFailed=true;if(!ysReady)ysFailed=true;if(!ybReady)ybFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
 })();
 
 function unlockAudio(){
@@ -3166,9 +3218,11 @@ function openBattle(){
   btEl('bt-round').textContent='3 : 3 한 판';
   btPickRender();
   btEl('modal-battle').classList.remove('hidden');
+  battleBgmStart();                 /* 배틀 BGM 시작(몬스터볼 터치 안) */
 }
 function closeBattle(){
   BT.token++;BT.busy=true;BT.stage='end';
+  battleBgmStop();                  /* 배틀 화면을 나가면 즉시 BGM 정지 */
   btEl('modal-battle').classList.add('hidden');
 }
 btEl('bt-close').addEventListener('click',closeBattle);
