@@ -87,7 +87,20 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 
 .exp-mini{display:flex;align-items:center;gap:8px;background:#fff;border:var(--bw) solid var(--ink);
   border-radius:16px;padding:6px 10px;box-shadow:0 4px 0 rgba(34,43,56,.18)}
-#today-poke-img{width:42px;height:42px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+/* 오늘의 목표 칸 — 3단계로 모습을 바꿔 보여 준다(0~50 몬스터볼+?, 51~89 그림자+?, 90~100 그림자+이름) */
+#today-poke-img{position:relative;width:42px;height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.td-ball{position:relative;width:34px;height:34px;border-radius:50%;border:3px solid var(--ink);
+  background:linear-gradient(180deg,var(--red) 0 44%,var(--ink) 44% 56%,#fff 56% 100%);
+  box-shadow:0 2px 0 rgba(34,43,56,.20),inset -3px -4px 0 rgba(0,0,0,.10),inset 2px 2px 0 rgba(255,255,255,.30)}
+.td-ball::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#fff;border:2.5px solid var(--ink)}
+.td-sil{width:40px;height:40px;object-fit:contain;position:relative;z-index:1;
+  filter:brightness(0) drop-shadow(0 2px 2px rgba(34,43,56,.22));opacity:.88}
+/* 목표가 아직 모습을 감추고 있을 때의 은은한 안개빛 */
+#today-poke-img.hint::before{content:"";position:absolute;inset:-4px;border-radius:50%;z-index:0;
+  background:radial-gradient(circle,rgba(118,140,180,.34) 0%,rgba(118,140,180,0) 72%);
+  animation:tdMist 3.2s ease-in-out infinite}
+@keyframes tdMist{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}
 .exp-info{flex:1;min-width:0}
 #today-poke-name{font-size:13px;font-weight:900;line-height:1.1}
 #exp-text{font-size:10px;font-weight:800;color:var(--ink-soft);margin:1px 0 3px}
@@ -213,8 +226,15 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   border-radius:11px;padding:2px 9px;font-size:12.5px;font-weight:900;color:#3d2f00;display:none;z-index:3;
   box-shadow:0 3px 0 rgba(34,43,56,.2);white-space:nowrap}
 .task.active .active-bubble{display:block}
-.poke-mini{position:absolute;top:6px;right:6px;width:46px;height:46px;object-fit:contain;display:none;z-index:2;
-  filter:drop-shadow(0 2px 2px rgba(34,43,56,.2))}
+/* 할 일 카드 오른쪽 위 미니 아이콘 — 어떤 단계에서도 항상 몬스터볼(목표를 미리 보여 주지 않는다) */
+.poke-mini{position:absolute;top:6px;right:6px;width:42px;height:42px;border-radius:50%;display:none;z-index:2;
+  border:3px solid var(--ink);
+  background:linear-gradient(180deg,var(--red) 0 44%,var(--ink) 44% 56%,#fff 56% 100%);
+  box-shadow:0 2px 0 rgba(34,43,56,.22),inset -3px -4px 0 rgba(0,0,0,.08),inset 2px 2px 0 rgba(255,255,255,.30)}
+.poke-mini::before{content:"";position:absolute;left:50%;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#fff;border:3px solid var(--ink)}
+.poke-mini::after{content:"";position:absolute;left:9px;top:8px;width:8px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.55);transform:rotate(-25deg)}
 .task.active .poke-mini{display:block}
 .task .task-img{flex:1 1 auto;min-height:0;width:100%;max-height:332px;height:100%;object-fit:cover;object-position:center 45%;pointer-events:none;
   mix-blend-mode:multiply}
@@ -309,7 +329,8 @@ body.dex-open #progress-card{display:none}
 .pk-cnt{position:absolute;top:5px;right:7px;background:var(--yellow);border:2px solid var(--ink);color:#3d2f00;border-radius:99px;font-weight:900;font-size:10px;padding:0 7px}
 .pk-rar{display:inline-block;font-size:9.5px;font-weight:900;line-height:1.5;border-radius:99px;padding:0 6px;margin:0 0 1px;
   border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px}
-.pk-rar.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+.pk-rar.rare{border-color:#8E9CB0;color:#38465A;background:linear-gradient(180deg,#FFFFFF,#DDE5F0 60%,#C2CDDD);
+  box-shadow:inset 0 1px 0 #fff}
 .pk-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
 .pk-card:hover{transform:translateY(-2px)}
 .pk-card:active{transform:translateY(0) scale(.985)}
@@ -320,11 +341,12 @@ body.dex-open #progress-card{display:none}
 .pc-card{position:relative;flex:0 0 auto;width:372px;height:516px;display:flex;flex-direction:column;gap:6px;padding:10px;
   border:4px solid var(--ink);border-radius:18px;overflow:hidden;
   box-shadow:0 13px 0 rgba(20,28,40,.30),0 0 0 4px rgba(255,255,255,.82),0 20px 38px rgba(20,28,40,.34)}
-/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 */
+/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 (넓은 안개 대신 얇은 광택 띠만 지나가게 해 글씨·배지를 가리지 않는다) */
 .pc-card.front{background:linear-gradient(158deg,var(--pc1) 0%,var(--pc2) 48%,#fff 100%)}
 .pc-card.front::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.62) 44%,rgba(255,255,255,0) 58%,rgba(255,255,255,.4) 72%,rgba(255,255,255,0) 86%);
-  background-size:280% 280%;animation:pcShine 7s linear infinite;mix-blend-mode:screen;opacity:.85}
+  background:linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.10) 44%,rgba(255,255,255,.52) 48%,rgba(255,255,255,.10) 52%,rgba(255,255,255,0) 56%,
+    rgba(255,255,255,0) 68%,rgba(255,255,255,.26) 71%,rgba(255,255,255,0) 74%);
+  background-size:240% 240%;animation:pcShine 6.5s linear infinite;mix-blend-mode:screen;opacity:.9}
 @keyframes pcShine{0%{background-position:135% -20%}100%{background-position:-35% 120%}}
 @media (prefers-reduced-motion:reduce){.pc-card.front::before{animation:none}}
 .pc-hd{position:relative;z-index:2;flex:0 0 auto;display:flex;flex-direction:column;gap:2px}
@@ -332,7 +354,12 @@ body.dex-open #progress-card{display:none}
 .pc-no{font-size:11.5px;font-weight:900;color:#3f4c5d;letter-spacing:.3px}
 .pc-rar{margin-left:auto;display:inline-block;font-size:10px;font-weight:900;line-height:1.6;border-radius:99px;
   padding:0 8px;border:2px solid #D9A21B;background:#FFF0BE;color:#8A5A00;letter-spacing:-.3px;white-space:nowrap}
-.pc-rar.rare{border-color:#7C9BD6;background:#E8F0FF;color:#2B4C9B}
+.pc-rar.rare{border-color:#6F8199;color:#2B394B;
+  background:linear-gradient(180deg,#FFFFFF 0%,#E6EDF6 52%,#BFCCDD 100%);
+  box-shadow:inset 0 1px 0 #fff,0 0 12px rgba(196,210,230,.95);text-shadow:0 1px 0 rgba(255,255,255,.9)}
+.pc-rar.legend{border-color:#A9760A;color:#4E3000;
+  background:linear-gradient(180deg,#FFF7C2 0%,#FFD54A 48%,#F2A81C 100%);
+  box-shadow:inset 0 1px 0 #fff,0 0 12px rgba(255,196,60,.95),0 0 20px rgba(255,120,215,.55);text-shadow:0 1px 0 rgba(255,255,255,.7)}
 .pc-rar.normal{border-color:#B7C2D0;background:#F2F5FA;color:#5A6879}
 .pc-hd2{display:flex;align-items:center;gap:8px}
 .pc-nm{font-size:27px;font-weight:900;letter-spacing:-1px;line-height:1.02;color:var(--ink);
@@ -387,6 +414,54 @@ body.dex-open #progress-card{display:none}
 .pc-x:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(20,28,40,.32)}
 @media (max-height:700px){.pc-card{width:340px;height:472px}}
 @media (max-width:480px){.pc-card{width:min(calc(100vw - 26px),372px);height:min(72vh,516px)}}
+
+/* ── ✨ 희귀 · 👑 환상·전설 카드는 한 단계 더 특별하게 ───────────────
+   · 일반  : 타입 색 카드 + 은은한 홀로그램 셔머(그대로)
+   · 희귀  : 은빛 메탈 테두리 + 반짝이는 은빛 ✦ + 은빛 배지
+   · 환상·전설: 금빛 + 무지개 프리미즘 테두리 + 무지개 홀로그램 스윕 + 별빛 ★✦ + 금빛 배지 */
+.pc-fx{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;border-radius:14px}
+.pc-fx i{position:absolute;font-style:normal;line-height:1;font-weight:900;opacity:0;font-size:15px;
+  animation:pcTwinkle 3.4s ease-in-out infinite}
+@keyframes pcTwinkle{0%,100%{opacity:0;transform:scale(.5) rotate(-8deg)}
+  22%{opacity:1;transform:scale(1.14) rotate(0deg)}42%{opacity:.2;transform:scale(.72) rotate(3deg)}
+  64%{opacity:.95;transform:scale(1.05) rotate(-3deg)}84%{opacity:.15;transform:scale(.8)}}
+.pc-fx i:nth-child(1){left:2.5%;top:11%;font-size:15px;animation-delay:0s}
+.pc-fx i:nth-child(2){right:2.5%;top:24%;font-size:11px;animation-delay:.45s}
+.pc-fx i:nth-child(3){left:2.5%;top:44%;font-size:10px;animation-delay:.9s}
+.pc-fx i:nth-child(4){right:2.5%;top:60%;font-size:14px;animation-delay:1.35s}
+.pc-fx i:nth-child(5){left:2.5%;top:78%;font-size:12px;animation-delay:1.8s}
+.pc-fx i:nth-child(6){right:4%;bottom:5%;font-size:13px;animation-delay:2.25s}
+.pc-fx.fx-rare i{color:#EAF1FA;
+  text-shadow:0 0 1px #5C6E86,0 1px 0 #6B7C93,0 0 8px #A9BCD4,0 0 14px #D6E4F5}
+.pc-fx.fx-legend i{color:#FFF6C4;text-shadow:0 0 1px #A9760A,0 1px 0 #B8860B,0 0 9px #FFC93C,0 0 16px #FF8BD8,0 0 22px #FFD54A}
+.pc-card.rc-rare{box-shadow:0 13px 0 rgba(20,28,40,.30),0 0 0 4px rgba(255,255,255,.95),
+  inset 0 0 0 4px #E3EAF4,inset 0 0 0 5px #9AAABB,
+  0 0 24px rgba(176,198,226,.9),0 20px 38px rgba(20,28,40,.34)}
+.pc-card.rc-rare::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:14px;padding:6px;
+  background:linear-gradient(150deg,#FFFFFF 0%,#C2D0E2 16%,#FFFFFF 32%,#93A6BC 46%,#F5F9FF 60%,#B0C0D4 74%,#FFFFFF 88%,#D6E0ED 100%);
+  background-size:220% 220%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;animation:rcMetal 7s linear infinite}
+@keyframes rcMetal{0%{background-position:0% 0%}100%{background-position:200% 200%}}
+@keyframes rcSilverBreathe{0%,100%{opacity:.85}50%{opacity:1}}
+.pc-card.rc-rare::before{background:linear-gradient(115deg,rgba(255,255,255,0) 38%,rgba(236,244,255,.18) 42%,
+  rgba(255,255,255,.62) 46%,rgba(214,230,250,.55) 49%,rgba(255,255,255,.14) 53%,rgba(255,255,255,0) 58%);
+  background-size:240% 240%;animation:pcShine 5.2s linear infinite;mix-blend-mode:screen;opacity:.95}
+.pc-card.rc-legend{box-shadow:0 13px 0 rgba(20,28,40,.32),0 0 0 4px rgba(255,255,255,.95),
+  inset 0 0 0 4px #FFE07A,inset 0 0 0 5px #D9A21B,
+  0 0 26px rgba(255,203,71,.95),0 0 46px rgba(255,140,215,.5),0 20px 40px rgba(20,28,40,.36)}
+.pc-card.rc-legend::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:14px;padding:6px;
+  background:conic-gradient(from 215deg,#FFE98C,#FFD54A 9%,#FF9C3D 19%,#FF5FA2 30%,#C05CFF 40%,#4FA8FF 50%,#48E0B0 60%,#FFE97A 70%,#FFC93C 80%,#FFB13C 90%,#FFE98C);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;animation:rcGoldGlow 4.6s ease-in-out infinite}
+@keyframes rcGoldGlow{0%,100%{opacity:.9;filter:brightness(1)}50%{opacity:1;filter:brightness(1.14) saturate(1.15)}}
+.pc-card.rc-legend::before{background:linear-gradient(115deg,rgba(255,255,255,0) 34%,rgba(255,226,140,.30) 39%,
+  rgba(140,238,255,.5) 43%,rgba(255,150,228,.5) 47%,rgba(158,255,198,.45) 51%,rgba(255,231,150,.4) 55%,rgba(255,255,255,0) 62%);
+  background-size:220% 220%;animation:pcShine 4.2s linear infinite;mix-blend-mode:screen;opacity:.95}
+@media (prefers-reduced-motion:reduce){.pc-fx i{animation:none;opacity:.9}
+  .pc-card.rc-rare::after,.pc-card.rc-legend::after{animation:none}}
 
 /* ── ⚔️ 히든 포켓몬 배틀 ───────────────── */
 #modal-battle{z-index:70;background:rgba(20,28,40,.62)}
@@ -652,7 +727,7 @@ body.eve #p-msg{color:#B4622A}
         </div>
       </div>
       <div class="exp-mini">
-        <img id="today-poke-img" src="" alt="오늘의 포켓몬">
+        <div id="today-poke-img" role="img" aria-label="오늘의 목표 포켓몬"><span class="td-ball" aria-hidden="true"></span></div>
         <div class="exp-info">
           <div id="today-poke-name">-</div>
           <div id="exp-text">0 / 100 EXP</div>
@@ -1441,13 +1516,32 @@ function nextTarget(){
   if(S.targetId!==p.id){S.targetId=p.id;save();}   /* 목표가 실제로 바뀔 때만 저장 */
   return p;
 }
+/* 오늘의 목표 모습 단계 — 보이는 이름·그림을 EXP에 맞춰 숨긴다.
+   1단계 0~50  : 몬스터볼 + '?'
+   2단계 51~89 : 검은 그림자 + '?'   (아이의 말로는 60~80)
+   3단계 90~100: 검은 그림자 + 진짜 이름 */
+function targetStage(pool){
+  if(pool>=90)return 3;
+  if(pool>50)return 2;
+  return 1;
+}
+const TARGET_HIDDEN='아직 모습을 알 수 없는 오늘의 목표';
 function renderExp(){
   const p=nextTarget(),pool=Math.max(0,poolExp());
-  document.getElementById('today-poke-img').src=`assets/pokemon/${p.id}.png`;
-  document.getElementById('today-poke-name').textContent='오늘 목표 · '+p.name;
+  const st=targetStage(pool);
+  const box=document.getElementById('today-poke-img');
+  const key=st+'|'+p.id;
+  if(box.dataset.key!==key){                    /* 단계나 목표가 바뀔 때만 그림을 다시 그린다 */
+    box.dataset.key=key;
+    box.classList.toggle('hint',st>1);
+    box.innerHTML=st===1?'<span class="td-ball" aria-hidden="true"></span>'
+      :`<img class="td-sil" src="assets/pokemon/${p.id}.png" alt="${st===3?p.name:TARGET_HIDDEN}">`;
+    box.setAttribute('aria-label',st===3?p.name:TARGET_HIDDEN);
+  }
+  document.getElementById('today-poke-name').textContent='오늘 목표 · '+(st===3?p.name:'?');
   document.getElementById('exp-text').textContent=`${pool} / ${EXP_PER_CATCH} EXP`;
   document.getElementById('exp-fill').style.width=Math.min(100,pool)+'%';
-  document.querySelectorAll('.poke-mini').forEach(i=>{i.src=`assets/pokemon/${p.id}.png`;i.alt=p.name;});
+  /* 할 일 카드의 미니 아이콘(.poke-mini)은 단계와 상관없이 항상 몬스터볼이다 — buildTasks()의 고정 그림 */
 }
 function checkCatch(){
   if(poolExp()>=EXP_PER_CATCH){
@@ -1465,7 +1559,7 @@ function showCatch(p){
   document.getElementById('modal-settings').classList.add('hidden');
   document.getElementById('catch-img').src=`assets/pokemon/${p.id}.png`;
   document.getElementById('catch-name').textContent=`No.${p.no} ${p.name}`;
-  document.getElementById('catch-sub').textContent=`${todayKey().replace(/-/g,'.')} 획득 · 다음 목표: ${nextTarget().name}`;
+  document.getElementById('catch-sub').textContent=`${todayKey().replace(/-/g,'.')} 획득 · 다음 목표는 새로 시작!`;
   document.getElementById('modal-catch').classList.remove('hidden');
   playChime();
   renderExp();renderPoke();
@@ -1489,7 +1583,7 @@ function buildTasks(){
     const total=t.secs||(t.timer?dayTotalSec(todayKey()):0);
     let inner=`<div class="num">${i+1}</div>
       <div class="active-bubble">같이 하자!</div>
-      <img class="poke-mini" src="" alt="오늘의 포켓몬">
+      <span class="poke-mini" aria-hidden="true"></span>
       <img class="task-img" src="assets/${t.img}.png" alt="${t.label}">
       ${t.timer?`<div class="timer" id="tm-${t.k}">
         <div class="t-time" id="tt-${t.k}">${fmtSec(total)}</div>
@@ -2915,7 +3009,10 @@ function pokeCardFront(p,got){
     <span class="bar"><i class="${cls}" style="width:${Math.max(6,Math.min(100,Math.round(v/160*100)))}%"></i></span>
     <span class="vl">${v}</span></div>`;
   const last=got.length?String(got[got.length-1]).replace(/-/g,'.'):'';
-  return `<div class="pc-hd">
+  const stars=p.r==='legend'?'★✦★✦★✦':(p.r==='rare'?'✦✦✦✦✦✦':'');
+  const fx=p.r==='normal'?'':`<div class="pc-fx fx-${p.r}" aria-hidden="true">${
+    stars.split('').map(c=>`<i>${c}</i>`).join('')}</div>`;
+  return `${fx}<div class="pc-hd">
       <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
       <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp}</b></span></div>
       <div class="pc-tps">${p.types.map(typeBadge).join('')}</div>
@@ -2940,7 +3037,7 @@ function openPokeCard(id){
   const got=caughtDates()[p.id]||[];
   const el=document.getElementById('pc-card');
   const g=TYPE_GRAD[p.types[0]]||TYPE_GRAD['노말'];
-  el.className='pc-card '+(got.length?'front':'back');
+  el.className='pc-card '+(got.length?'front':'back')+((got.length&&p.r!=='normal')?' rc-'+p.r:'');
   el.style.setProperty('--pc1',g[0]);el.style.setProperty('--pc2',g[1]);
   el.setAttribute('aria-label',got.length?`${p.name} 포켓몬 카드`:'아직 만나지 못한 포켓몬 카드 뒷면');
   el.innerHTML=got.length?pokeCardFront(p,got):pokeCardBack();
