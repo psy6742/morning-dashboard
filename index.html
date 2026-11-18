@@ -72,6 +72,7 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 #yt-wrap{position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.05;pointer-events:none;overflow:hidden;z-index:0}
 #yt-player,#yt-player iframe{width:2px;height:2px;border:0}
 #yt-timer,#yt-timer iframe{width:2px;height:2px;border:0}
+#yt-shower,#yt-shower iframe{width:2px;height:2px;border:0}
 #song-bar{position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:70}
 #btn-song-stop{font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:12px;padding:5px 13px;box-shadow:0 3px 0 rgba(34,43,56,.22);transition:.12s}
@@ -517,7 +518,7 @@ body.eve #p-fill{background:linear-gradient(180deg,#FFC46B,#F08A2C 60%,#D96A18)}
 body.eve #p-title b{color:#C2571B}
 body.eve #p-title b.late{color:#D63A3A;font-size:26px}
 body.eve #p-msg{color:#B4622A}
-#view-dash.eve{grid-template-columns:repeat(4,1fr)}
+#view-dash.eve{grid-template-columns:repeat(5,1fr)}   /* 저녁도 아침과 같은 5칸 */
 .task .t-label.eve{font-size:15.5px;line-height:1.2;letter-spacing:-.5px;padding:3px 0 1px;word-break:keep-all}
 .task[data-k="eve-shower"] .task-img{object-position:74% 42%}
 .task[data-k="eve-kbook"] .task-img{object-position:center 38%}
@@ -557,7 +558,7 @@ body.eve #p-msg{color:#B4622A}
 <div id="sky"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c4"></span></div>
 
 <!-- 유튜브 '우리는 모두 친구' 오디오: 1px 플레이어, 영상은 안 보이고 소리만 -->
-<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div></div>
+<div id="yt-wrap" aria-hidden="true"><div id="yt-player"></div><div id="yt-timer"></div><div id="yt-shower"></div></div>
 
 <div id="app">
   <header>
@@ -963,17 +964,19 @@ const RTASKS=[                                 /* 쉬는 날 5가지 (종료시�
   {k:'brush', label:'양치하기',           img:'task-5'}
 ];
 const NUM2KEY={1:'toilet',2:'bag',3:'eat',4:'study',5:'brush'};   /* 예전 숫자 기록 마이그레이션 */
-/* 🌙 저녁 루틴 4가지 (오후 4시 ~ 자정). 밥 먹기·샤워하기는 카드 안 타이머 */
+/* 🌙 저녁 루틴 5가지 (오후 4시 ~ 자정). 밥 먹기·샤워하기는 카드 안 타이머 */
 const EVETASKS=[
+  {k:'eve_bag',   label:'가방 정리',            img:'task-2'},
   {k:'eve_eat',   label:'밥 먹기',              img:'task-3',     timer:'eat',    secs:1800, bonus:true},
   {k:'eve_shower',label:'샤워하기',             img:'eve-shower', timer:'shower', secs:600},
   {k:'eve_kbook', label:'한글책 소리내어 읽기', img:'eve-kbook'},
   {k:'eve_ebook', label:'영어책 소리내어 읽기', img:'eve-ebook'}
 ];
-const EVE_KEYS={'eve_eat':true,'eve_shower':true,'eve_kbook':true,'eve_ebook':true};
+const EVE_KEYS={'eve_bag':true,'eve_eat':true,'eve_shower':true,'eve_kbook':true,'eve_ebook':true};
 const EVE_START_H=16;                      /* 저녁 루틴은 오후 4시부터 */
 const EVE_EAT_SEC=1800;                     /* 밥 먹기 30분 타이머 */
 const EVE_SHOWER_SEC=600;                   /* 샤워하기 10분 타이머 */
+const EVE_READ_H=19;                        /* 저녁 7시부터 소리내어 읽기 화면 유지 */
 const EVE_BONUS_LEFT=600;                   /* 남은 시간 600초(20분) 이상이면 20분 안에 끝낸 것 → +10 보너스 */
 const MOR_KEYS=['toilet','bag','eat','study','brush','milk'];
 const EXP_PER_TASK=10, EXP_PER_CATCH=100;
@@ -1509,6 +1512,17 @@ function timerAct(k,act){
   save();renderTimerKey(k);
   if(k==='eve_eat')renderEveBonus();
   else if(k==='eat')renderMorBonus();
+  /* 🎵 샤워 10분 타이머와 같은 지점에서 유튜브 음원 재생/정지 */
+  if(k==='eve_shower'){
+    if(act==='start'&&t.running){
+      /* 시작하면 4초부터 · 남은 시간이 10:00이면 elapsed=0 → 00:04 */
+      const elapsed=Math.max(0,EVE_SHOWER_SEC-liveLeft(t));
+      showerYtStart(Math.min(SHOWER_YT_END,SHOWER_YT_START+elapsed));
+    }else showerYtStop();              /* 일시정지·끝·초기화 → 소리 바로 끔 */
+  }
+  /* 화면 유지: 밥 먹기 ▶ 시작·정지 즉시 판정하고, ▶ 시작 터치 안에서 바로 잡는다 */
+  if(k==='eve_eat'&&act==='start'&&t.running)wakeOnGesture();
+  tickWake();
 }
 function tickOneTimer(k){
   const t=timerOf(k);
@@ -1524,12 +1538,14 @@ function tickOneTimer(k){
   t.left=left;t.since=Date.now();
   if(!t.cue11&&left<=11){
     t.cue11=true;
-    if(shown)buzzAtCue();     /* 남은 11초 → 10초 타이머+버저 1회 (아침과 같은 방식) */
+    /* 11초 버저는 식사(밥 먹기) 타이머에만 — 샤워 음원을 끊지 않도록 */
+    if(shown&&(k==='eat'||k==='eve_eat'))buzzAtCue();
   }
   save();renderTimerKey(k);
 }
 function tickTimer(){
   tickOneTimer('eat');tickOneTimer('eve_eat');tickOneTimer('eve_shower');
+  showerYtTick();            /* 10분 7초(607초) 또는 타이머 0 → 샤워 음원 정지 */
   if(isEveMode())renderEveBonus();
   else renderMorBonus();
 }
@@ -1547,6 +1563,7 @@ function applyMode(force){
   syncModeChrome();
   buildTasks();renderTasks();renderProgress();renderExp();
   updateModeChips();
+  tickWake();                     /* 16:00·19:00을 넘길 때 바로 화면 유지 조건을 다시 본다 */
   const sm=document.getElementById('modal-settings');
   if(sm&&!sm.classList.contains('hidden'))renderSettingsMissedTasks();
   return true;
@@ -1613,6 +1630,7 @@ function ytCreate(){
     });
   }catch(e){ytFailed=true;}
   yttCreate();                       /* 식사 타이머 버저 플레이어도 함께 준비 */
+  ytShowerCreate();                  /* 샤워 타이머 음원 플레이어도 함께 준비 */
 }
 /* 사용자 제스처(소리 켜기·화면 클릭) 때 플레이어를 미리 깨워 두기
    → 모바일·태블릿 Chrome에서도 출발 1분 전(기본 08:09)에 자동재생이 막히지 않음 */
@@ -1721,6 +1739,76 @@ function toggleBuzzPreview(){
   },300);
 }
 
+/* ── 🎵 샤워 타이머 음원 (유튜브 2zrWMRdMukE) ─────────────────────────
+   샤워하기 10분 타이머를 ▶ 시작할 때 **4초 지점부터** 함께 재생하고,
+   타이머가 0이 되거나 영상이 10분 7초(607초)에 닿으면 바로 멈춥니다.
+   출발 노래·식사 버저와는 별도의 2px 숨은 플레이어(#yt-shower)로 따로 관리합니다. */
+const YT_SHOWER_ID='2zrWMRdMukE';
+const SHOWER_YT_START=4;        /* 타이머 00:00과 맞추는 시작 지점(영상 4초) */
+const SHOWER_YT_END=607;        /* 영상 10분 7초에서 끝 */
+let YTS=null,ysReady=false,ysFailed=false,ysPrimed=false,ysWantPlay=false,ysPendingSec=null;
+function ytShowerCreate(){
+  if(YTS||ysReady)return;
+  try{
+    YTS=new YT.Player('yt-shower',{
+      videoId:YT_SHOWER_ID,
+      playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3},
+      events:{
+        onReady(){
+          ysReady=true;ysFailed=false;
+          try{YTS.setVolume(100);}catch(e){}
+          if(soundUnlocked||S.settings.sound)primeShowerYt();
+          /* 준비되기 전에 ▶ 시작을 눌렀면 그 지점에서 이어서 재생 */
+          if(ysPendingSec!=null){
+            const sec=ysPendingSec;ysPendingSec=null;
+            try{if(eveState(todayKey()).timers.shower.running)showerYtStart(sec);}catch(e){}
+          }
+        },
+        onStateChange(e){if(e.data===0)ysWantPlay=false;},   /* 영상이 끝나면 재생 상태 정리 */
+        onError(){ysFailed=true;ysWantPlay=false;}           /* 임베드 차단(101/150) 등 → 조용히 넘어감 */
+      }
+    });
+  }catch(e){ysFailed=true;}
+}
+/* 사용자 제스처 때 조용히 깨워 두기 — 타이머 ▶ 시작에서 바로 소리가 나도록 */
+function primeShowerYt(){
+  if(!ysReady||ysFailed||ysPrimed||!YTS)return;
+  if(ysWantPlay)return;
+  const ua=navigator.userActivation;
+  if(ua&&ua.isActive===false)return;
+  ysPrimed=true;
+  try{
+    YTS.mute();YTS.setVolume(0);YTS.playVideo();
+    setTimeout(()=>{
+      try{
+        if(!ysWantPlay){YTS.pauseVideo();YTS.seekTo(SHOWER_YT_START,true);}
+        setTimeout(()=>{try{if(!ysWantPlay){YTS.unMute();YTS.setVolume(100);}}catch(e){}},120);
+      }catch(e){}
+    },320);
+  }catch(e){ysPrimed=false;}
+}
+function showerYtStart(sec){
+  if(!ysReady||ysFailed||!YTS){ysPendingSec=(ysFailed?null:sec);return false;}
+  try{
+    ysWantPlay=true;ysPendingSec=null;
+    YTS.setVolume(100);YTS.unMute();YTS.seekTo(sec,true);YTS.playVideo();
+    return true;
+  }catch(e){ysWantPlay=false;return false;}
+}
+function showerYtStop(){
+  ysWantPlay=false;
+  try{if(YTS&&ysReady)YTS.pauseVideo();}catch(e){}
+}
+/* 타이머가 0이 되었거나 영상이 10분 7초에 닿았으면 정지 */
+function showerYtTick(){
+  if(!ysWantPlay)return;
+  try{
+    const cur=YTS?YTS.getCurrentTime():0;
+    const t=eveState(todayKey()).timers.shower;
+    if(cur>=SHOWER_YT_END||!t.running||liveLeft(t)<=0)showerYtStop();
+  }catch(e){showerYtStop();}
+}
+
 function watchStart(ms){
   ytClearFb();
   ytFbTimer=setTimeout(()=>{
@@ -1734,12 +1822,12 @@ function watchStart(ms){
   },ms);
 }
 (function loadYouTubeAPI(){
-  window.onYouTubeIframeAPIReady=function(){try{ytCreate();}catch(e){ytFailed=true;}};
+  window.onYouTubeIframeAPIReady=function(){try{ytCreate();ytShowerCreate();}catch(e){ytFailed=true;}};
   const s=document.createElement('script');
   s.src='https://www.youtube.com/iframe_api';s.async=true;
   s.onerror=function(){ytFailed=true;};                 /* 스크립트 로드 실패 → 폴백 */
   document.head.appendChild(s);
-  setTimeout(function(){if(!ytReady)ytFailed=true;if(!yttReady)yttFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
+  setTimeout(function(){if(!ytReady)ytFailed=true;if(!yttReady)yttFailed=true;if(!ysReady)ysFailed=true;},12000);  /* 12초 안에 준비 안 되면 폴백 */
 })();
 
 function unlockAudio(){
@@ -1747,7 +1835,7 @@ function unlockAudio(){
     if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended')AC.resume();
     soundUnlocked=true;S.settings.sound=true;save();updateSoundBtn();
-    primeYouTube();primeBuzz();
+    primeYouTube();primeBuzz();primeShowerYt();
     try{wakeOnGesture();}catch(e){}       /* 소리 켜는 터치도 제스처 → 화면 유지 재시도 */
     return true;
   }catch(e){return false;}
@@ -1791,6 +1879,105 @@ function playBeep(){
     });
   }catch(e){}
 }
+/* ================= ⚔️ 배틀 효과음 (Web Audio, 외부 파일 없음) =================
+   공격·방어·쓰러짐·등장·승리·패배마다 그 상황에 맞는 소리를 냅니다.
+   오디오는 배틀을 연 터치(제스처) 안에서 깨우므로 아이패드 Safari에서도 바로 들립니다. */
+let btNoiseBuf=null;
+function btAc(){
+  try{
+    if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    return AC;
+  }catch(e){return null;}
+}
+function btGainEnvelope(ac,t0,peak,dur){
+  const g=ac.createGain();
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.linearRampToValueAtTime(peak,t0+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0008,t0+dur);
+  g.connect(ac.destination);
+  return g;
+}
+/* 주파수를 f0 → f1로 미끄러뜨리는 한 음 */
+function btTone(ac,f0,f1,t0,dur,type,peak){
+  const o=ac.createOscillator(),g=btGainEnvelope(ac,t0,peak||0.14,dur);
+  o.type=type||'square';
+  o.frequency.setValueAtTime(Math.max(20,f0),t0);
+  if(f1&&Math.abs(f1-f0)>0.5)o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t0+dur);
+  o.connect(g);o.start(t0);o.stop(t0+dur+0.02);
+}
+/* 짧은 잡음(퍽·지직) */
+function btNoiseHit(ac,t0,dur,peak,hp){
+  if(!btNoiseBuf){
+    btNoiseBuf=ac.createBuffer(1,Math.floor(ac.sampleRate*0.4),ac.sampleRate);
+    const d=btNoiseBuf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  }
+  const s=ac.createBufferSource();s.buffer=btNoiseBuf;
+  const f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=hp||600;
+  const g=btGainEnvelope(ac,t0,peak||0.1,dur);
+  s.connect(f);f.connect(g);s.start(t0);s.stop(t0+dur+0.02);
+}
+/* 공격이 맞는 순간 — 내 공격은 높고 날카롭게, 상대 공격은 낮고 묵직하게 */
+function sfxHit(mine){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01, base=mine?330:235;
+  btNoiseHit(ac,t,0.10,0.12,900);
+  btTone(ac,base,base*0.28,t,0.14,'square',0.16);
+  btTone(ac,base*2.4,base*0.9,t,0.07,'sawtooth',0.06);
+}
+/* 효과가 굉장했다! / 크리티컬 — 밝은 두 번 종소리 */
+function sfxSuper(){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  [1046.5,1568].forEach((f,i)=>{
+    btTone(ac,f*1.02,f,t+i*0.09,0.26,'triangle',0.15);
+    btTone(ac,f*2,f*2,t+i*0.09,0.15,'sine',0.06);
+  });
+}
+/* 방어 — 유리·금속 방패 소리(내 방어는 맑게, 상대가 받아내면 둔탁하게) */
+function sfxShield(who){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  if(who==='foe'){
+    btNoiseHit(ac,t,0.09,0.09,280);
+    btTone(ac,620,520,t,0.20,'triangle',0.12);
+    btTone(ac,930,780,t,0.15,'sine',0.05);
+  }else{
+    btTone(ac,1320,1300,t,0.34,'triangle',0.14);
+    btTone(ac,1980,1960,t,0.26,'sine',0.09);
+    btTone(ac,2640,2620,t+0.02,0.18,'sine',0.045);
+    btNoiseHit(ac,t,0.05,0.04,3200);
+  }
+}
+/* 쓰러짐 — 짧게 내려가는 불립 */
+function sfxFaint(){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  btTone(ac,520,70,t,0.42,'square',0.13);
+  btNoiseHit(ac,t+0.06,0.26,0.05,200);
+}
+/* 다음 포켓몬 등장 — 올라가는 불립 */
+function sfxEnter(){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  btTone(ac,180,760,t,0.20,'square',0.12);
+  btTone(ac,780,1180,t+0.19,0.13,'triangle',0.09);
+}
+/* 승리 팡파레 — 밝은 5음 아르페지오 + 마지막 화음 */
+function sfxVictory(){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>btTone(ac,f,f,t+i*0.11,0.30,'square',0.12));
+  [523.25,659.25,783.99,1046.5].forEach(f=>btTone(ac,f,f,t+0.62,0.70,'triangle',0.08));
+}
+/* 패배 — 부드럽게 내려가는 3음(격려) */
+function sfxDefeat(){
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.01;
+  [392,329.63,261.63].forEach((f,i)=>btTone(ac,f,f*0.995,t+i*0.19,0.42,'triangle',0.11));
+}
+
 function updateSoundBtn(){
   document.getElementById('btn-sound').textContent=soundUnlocked?'🔊':'🔇';
   const b=document.getElementById('btn-unlock');
@@ -1886,7 +2073,7 @@ function wakeRange(){
   if(end<=start)end=new Date(end.getTime()+86400000);
   return {start,end};
 }
-function wakeNeeded(){
+function morningWakeNeeded(){
   const now=new Date();
   const start=dateWith(parseHM(S.settings.wake));
   if(now<start)return false;                         /* 06:45 이전 */
@@ -1898,6 +2085,26 @@ function wakeNeeded(){
   if(end<=start)end=new Date(end.getTime()+86400000);
   return now<end;                                    /* 08:10 정각에는 이미 해제 */
 }
+/* ── 🌙 저녁 화면 유지 ──────────────────────────────────────────────
+   A) 밥 먹기: ▶ 시작(또는 이미 시작한 적 있음)부터 '밥 먹기'를 완료할 때까지
+   B) 소리내어 읽기: 저녁 7시부터 한글책·영어책을 **둘 다** 끝낼 때까지
+   둘 다 아니면 저녁에는 화면 유지가 꺼집니다. */
+function eveModeNow(){return isEveMode()||autoMode()==='pm';}
+function eveWakeMeal(){
+  if(!eveModeNow())return false;
+  const ev=eveState(todayKey());
+  if(ev.tasks.eve_eat)return false;                  /* 밥 먹기 완료 → 해제 */
+  const t=ev.timers.eat;
+  return !!(t&&(t.running||t.ran));                  /* ▶ 시작(또는 시작했던 기록) 있음 */
+}
+function eveWakeRead(){
+  if(!eveModeNow())return false;
+  if(new Date().getHours()<EVE_READ_H)return false;  /* 저녁 7시부터 */
+  const ev=eveState(todayKey());
+  return !(ev.tasks.eve_kbook&&ev.tasks.eve_ebook);   /* 두 책 모두 완료 → 해제 */
+}
+function shouldWake(){return morningWakeNeeded()||eveWakeMeal()||eveWakeRead();}
+function wakeNeeded(){return shouldWake();}
 function wakeLockUsable(){
   try{return !!(navigator.wakeLock&&typeof navigator.wakeLock.request==='function');}catch(e){return false;}
 }
@@ -2853,6 +3060,7 @@ function btStart(){
   btEl('bt-round').textContent='3 : 3 한 판';
   btRenderSide('me');btRenderSide('foe');
   btLog(`⚔️ 배틀 시작! 상대는 ${BT.foeB[BT.fi].p.name}!`);
+  sfxEnter();                                  /* 상대 포켓몬 등장음 */
   btBtns(true);
   BT.busy=false;
 }
@@ -2874,6 +3082,7 @@ function btEnd(win){
       <button class="bt-btn bt-go" id="bt-close2" type="button">닫기</button>`;
   const c=btEl('bt-close2');
   if(c)c.addEventListener('click',closeBattle);
+  setTimeout(()=>{win?sfxVictory():sfxDefeat();},150);   /* 🏆 승리 팡파레 / 💪 격려 3음 */
 }
 async function btTurn(kind){
   if(BT.busy||BT.stage!=='fight')return;
@@ -2881,24 +3090,30 @@ async function btTurn(kind){
   const meB=BT.meB[BT.mi], foeB=BT.foeB[BT.fi];
   if(kind==='defend'&&meB.shield<=0){btLog('🛡️ 방어는 포켓몬마다 한 번만 쓸 수 있어요! 공격해 보자!');return;}
   BT.busy=true;btBtns(false);
+  btAc();                                        /* 터치 안에서 오디오 깨우기 */
   const atk=btDamage(meB,foeB,BT_SIDE_P);
-  if(kind==='defend'){meB.shield--;btShieldFx('me');atk.dmg=Math.max(2,Math.round(atk.dmg*0.4));}
+  if(kind==='defend'){meB.shield--;btShieldFx('me');sfxShield('me');atk.dmg=Math.max(2,Math.round(atk.dmg*0.4));}
   btAnim('me','atkL',460);
   await btSleep(220);if(token!==BT.token)return;
   foeB.hp-=atk.dmg;
   btAnim('foe','hit',430);
+  sfxHit(true);                                  /* 내 공격이 맞는 소리 */
   btPaintHP('foe',foeB);
   const eff=effectText(atk.mult);
+  if(atk.crit||atk.mult>=1.9)setTimeout(sfxSuper,110);          /* 크리티컬·효과가 굉장했다! */
+  else if(atk.mult<0.9)setTimeout(()=>sfxShield('foe'),90);      /* 상대가 받아내는 둔탁한 소리 */
   btPop('foe','-'+atk.dmg+(atk.crit?'!':''),atk.crit?'crit':(atk.mult>=1.9?'super':''));
   btLog(`${atk.crit?'⚡ 크리티컬! ':''}${meB.p.name}의 ${TYPE_EMOJI[atk.type]||''} ${atk.type} 공격! ${atk.dmg} 데미지!${eff}`);
   await btSleep(560);if(token!==BT.token)return;
   if(foeB.hp<=0){
     foeB.hp=0;btPaintHP('foe',foeB);btPaintBench('foe');
     btAnim('foe','faint',700);
+    sfxFaint();                                  /* 쓰러지는 내려가는 소리 */
     btLog(`상대 ${josa(foeB.p.name,'이','가')} 쓰러졌어요!`);
     await btSleep(780);if(token!==BT.token)return;
     if(BT.fi+1>=BT.foeB.length){btEnd(true);return;}
     BT.fi++;btRenderSide('foe');
+    sfxEnter();                                  /* 다음 상대 등장음 */
     btLog(`상대는 ${josa(BT.foeB[BT.fi].p.name,'을','를')} 꺼냈어요!`);
     await btSleep(430);if(token!==BT.token)return;
   }
@@ -2915,19 +3130,24 @@ async function btTurn(kind){
     btPaintHP('me',meB);
     btPop('me','🛡️ -'+ndmg,'heal');
     btLog(`🛡️ ${josa(meB.p.name,'이','가')} 방어했어요! ${ndmg} 데미지만 받고 +${Math.round(meB.hp-before)} 회복!`);
+    sfxShield('foe');                             /* 방패에 막힌 둔탁한 소리 */
   }else{
     btPaintHP('me',meB);
     btPop('me','-'+ndmg,natk.crit?'crit':(natk.mult>=1.9?'super':''));
     btLog(`${natk.crit?'⚡ 크리티컬! ':''}${BT.foeB[BT.fi].p.name}의 ${TYPE_EMOJI[natk.type]||''} ${natk.type} 공격! ${ndmg} 데미지!${effectText(natk.mult)}`);
+    sfxHit(false);                                /* 상대 공격이 맞는 낮은 소리 */
+    if(natk.crit||natk.mult>=1.9)setTimeout(sfxSuper,110);
   }
   await btSleep(560);if(token!==BT.token)return;
   if(meB.hp<=0){
     meB.hp=0;btPaintHP('me',meB);btPaintBench('me');
     btAnim('me','faint',700);
+    sfxFaint();
     btLog(`${josa(meB.p.name,'이','가')} 쓰러졌어요!`);
     await btSleep(780);if(token!==BT.token)return;
     if(BT.mi+1>=BT.meB.length){btEnd(false);return;}
     BT.mi++;btRenderSide('me');
+    sfxEnter();                                  /* 다음 내 포켓몬 등장음 */
     btLog(`가자, ${BT.meB[BT.mi].p.name}!`);
     await btSleep(380);if(token!==BT.token)return;
   }
@@ -2937,6 +3157,8 @@ async function btTurn(kind){
 
 /* ── 열기 / 닫기 ── */
 function openBattle(){
+  try{unlockAudio();}catch(e){}     /* 배틀을 연 터치에서 오디오를 깨워 바로 효과음이 나게 */
+  btAc();
   BT.token++;BT.stage='pick';BT.me=[];BT.meB=[];BT.foeB=[];BT.mi=0;BT.fi=0;BT.busy=false;
   btEl('bt-step-pick').classList.remove('hidden');
   btEl('bt-step-fight').classList.add('hidden');
@@ -3075,6 +3297,7 @@ function grantMissedTask(k){
   st.tasks[k]=true;st.inTime[k]=true;
   const d=day(todayKey());recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
+  tickWake();                       /* 저녁: 밥 먹기·책을 인정하면 화면 유지 조건이 바뀜 */
   if(!checkCatch())toast(`인정! ${t.label} +${EXP_PER_TASK} EXP`);   /* 포획되면 포획 연출이 먼저 */
 }
 function grantAllMissedChecked(){
@@ -3087,6 +3310,7 @@ function grantAllMissedChecked(){
   eT.forEach(t=>{ev.tasks[t.k]=true;ev.inTime[t.k]=true;});
   recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
+  tickWake();
   if(!checkCatch())toast(`${n}개 인정! +${n*EXP_PER_TASK} EXP`);
 }
 function grantEveBonus(){
@@ -3256,7 +3480,7 @@ document.getElementById('btn-song-play').addEventListener('click',()=>{
   if(wasLocked)playChime();                         /* 유튜브가 막히면 최소한 효과음은 */
   showSongPrompt('🎵 출발 노래 재생하기');
 });
-document.addEventListener('pointerdown',()=>{if(soundUnlocked){primeYouTube();primeBuzz();}tickWake();},{passive:true});
+document.addEventListener('pointerdown',()=>{if(soundUnlocked){primeYouTube();primeBuzz();primeShowerYt();}tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
   const d=day(todayKey()), st=curState(), list=dayTasks();
   list.forEach(t=>{if(!st.tasks[t.k]){st.tasks[t.k]=true;st.inTime[t.k]=true;}});
