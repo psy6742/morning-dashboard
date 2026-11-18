@@ -219,6 +219,14 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 /* 우유 마시기: 일러스트가 카드 정가운데에 오도록(그림 자체도 주제 중심으로 잘라 둠) */
 .task[data-k="milk"] .task-img{object-fit:cover;object-position:center center}
 .task .t-label{flex:0 0 auto;font-size:17px;font-weight:900;text-align:center;line-height:1.15;padding:4px 0 2px;letter-spacing:-.4px}
+/* 아침 공부 카드: 제목 아래에 그날의 공부 목록(요일별) */
+.task[data-k="study"]{padding-bottom:10px}
+.task[data-k="study"] .t-label{padding:2px 0 0}
+.study-list{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;
+  width:100%;padding:2px 0 0;min-height:0}
+.study-pill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:11px;font-weight:900;line-height:1.2;color:#1d5cad;background:#EAF4FF;
+  border:2px solid var(--ink);border-radius:99px;padding:0 5px;letter-spacing:-.2px}
 .task.active{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(250,204,21,.35),0 6px 0 rgba(34,43,56,.14),0 10px 22px rgba(34,43,56,.12)}
 .task.done{border-color:var(--green);background:var(--green-l)}
 .task .check{position:absolute;top:6px;right:8px;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;
@@ -318,6 +326,36 @@ body.dex-open #progress-card{display:none}
 .sb-close{background:var(--green);color:#fff}
 .btn-col{display:flex;flex-direction:column;gap:7px}
 .set-sub{font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35}
+/* ⚙️ 설정 안쪽 탭 (시간·포인트 / 공부 목록 / 시스템) — 탭·닫기 고정, 내용만 스크롤 */
+#modal-settings .modal{display:flex;flex-direction:column;max-height:88vh;overflow:hidden;padding:0;width:min(88vw,520px)}
+.set-head{flex:0 0 auto;padding:16px 22px 0;background:#fff;border-radius:20px 20px 0 0}
+.set-head h3{margin:0 0 8px}
+.set-tabs{display:flex;gap:6px;background:#fff;padding:0 0 10px}
+.set-tab{flex:1 1 0;min-width:0;font-family:inherit;font-weight:900;font-size:12.5px;letter-spacing:-.3px;
+  color:#5C6979;background:#F2F6FC;border:2.5px solid #C9D5E4;border-radius:12px;padding:7px 3px;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(34,43,56,.08);transition:.12s}
+.set-tab.on{background:var(--yellow-l);border-color:var(--ink);color:var(--ink);box-shadow:0 3px 0 rgba(34,43,56,.16)}
+.set-tab:active{transform:translateY(1px)}
+.set-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px 22px 8px}
+.set-body::-webkit-scrollbar{width:11px}
+.set-body::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
+.set-body::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px;border:3px solid #F2F6FC}
+.set-pane{padding-top:4px}
+.set-foot{flex:0 0 auto;display:flex;justify-content:flex-end;gap:8px;background:#fff;
+  padding:10px 22px 14px;border-top:2px solid #E8EDF5;border-radius:0 0 20px 20px}
+/* 요일별 공부 목록 편집 */
+.study-rows{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.study-row{display:flex;align-items:center;gap:7px}
+.study-day{flex:0 0 27px;width:27px;height:27px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13.5px;background:#EAF4FF;border:2.5px solid var(--ink);border-radius:99px;color:#1d5cad}
+.study-row.today .study-day{background:var(--yellow);color:#3d2f00}
+.study-input{flex:1 1 auto;min-width:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink);
+  border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px;background:#fff}
+.study-input::placeholder{color:#B3BDCA;font-weight:700}
+.study-input:focus{outline:3px solid rgba(250,204,21,.55);outline-offset:-1px}
+.study-today{flex:0 0 auto;font-size:10.5px;font-weight:900;color:#6b4f06;background:var(--yellow-l);
+  border:2px solid var(--ink);border-radius:99px;padding:0 6px;line-height:1.5}
+.study-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
 /* 🛡️ 깜빡한 할 일 포인트 인정 (보호자용) */
 .missed-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .missed-chip{font-family:inherit;font-weight:900;font-size:12.5px;border:2.5px dashed #C3CEDD;background:#F7FAFF;color:#41505F;
@@ -464,7 +502,17 @@ body.dex-open #progress-card{display:none}
 <!-- 설정 (보호자용) -->
 <div id="modal-settings" class="overlay hidden">
   <div class="modal" style="text-align:left;min-width:min(80vw,430px)">
+    <div class="set-head">
     <h3>⚙️ 보호자용 설정 · 테스트</h3>
+    <div class="set-tabs" role="tablist">
+      <button type="button" class="set-tab on" data-tab="time" role="tab">⏰ 시간·포인트</button>
+      <button type="button" class="set-tab" data-tab="study" role="tab">📚 공부 목록</button>
+      <button type="button" class="set-tab" data-tab="test" role="tab">⚙️ 시스템</button>
+    </div>
+    </div>
+    <div class="set-body">
+    <!-- 탭 1: 시간 · 포인트 -->
+    <div class="set-pane" data-pane="time">
     <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
     <div class="set-sub" id="set-depart-song" style="padding:0 0 6px"></div>
@@ -477,6 +525,40 @@ body.dex-open #progress-card{display:none}
         <button class="set-btn sb-grant" id="btn-grant-checked" type="button">✨ 완료 표시된 일 모두 인정</button>
         <span class="set-sub" id="missed-note"></span>
       </div>
+    </div>
+    </div>
+    <!-- 탭 2: 요일별 공부 목록 (월~일 각각 따로) -->
+    <div class="set-pane hidden" data-pane="study">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FAFF;border:2px solid #CFE3F7;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>📚 요일별 아침 공부 목록 <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
+      <span class="set-sub">그날 <b>아침 공부</b> 카드 제목 아래에 그대로 보여요. <b>/</b>로 나눠 적으면 항목마다 알약 모양으로 나뉘어 나와요. <b>예: 문어빵 / 키즈팩토 / ORT</b> — 요일마다 따로 저장되니 하나씩 고쳐 주세요.</span>
+      <div id="study-rows" class="study-rows"></div>
+      <div class="study-foot">
+        <button class="set-btn sb-backup" id="btn-study-reset" type="button">↺ 기본 목록으로 되돌리기</button>
+        <span class="set-sub" id="study-note"></span>
+      </div>
+    </div>
+    </div>
+    <!-- 탭 3: 시스템 (소리 · 날씨 · 휴일 · 백업 · 테스트) -->
+    <div class="set-pane hidden" data-pane="test">
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <span>소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
+      <div class="btn-col" style="margin-top:6px">
+        <span style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
+          <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
+        </span>
+        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기 / 정지</button>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch">
+      <span>네이버 날씨 중계 주소 (Cloudflare Worker)</span>
+      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 기본으로 서연 님 워커 주소가 들어 있어 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비우고 저장하면 Open-Meteo·met.no만 씁니다.</span>
+      <div class="vac-row" style="margin-top:6px">
+        <input type="url" id="set-proxy" class="set-date" style="flex:1;min-width:200px" placeholder="https://naver-weather.계정.workers.dev" inputmode="url" autocomplete="off" spellcheck="false">
+        <button class="set-btn sb-backup" id="btn-proxy-save" type="button">저장 및 새로고침</button>
+      </div>
+      <div id="set-proxy-state" class="set-sub" style="margin-top:2px"></div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
@@ -495,25 +577,6 @@ body.dex-open #progress-card{display:none}
       </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <span>네이버 날씨 중계 주소 (Cloudflare Worker)</span>
-      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 기본으로 서연 님 워커 주소가 들어 있어 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비우고 저장하면 Open-Meteo·met.no만 씁니다.</span>
-      <div class="vac-row" style="margin-top:6px">
-        <input type="url" id="set-proxy" class="set-date" style="flex:1;min-width:200px" placeholder="https://naver-weather.계정.workers.dev" inputmode="url" autocomplete="off" spellcheck="false">
-        <button class="set-btn sb-backup" id="btn-proxy-save" type="button">저장 및 새로고침</button>
-      </div>
-      <div id="set-proxy-state" class="set-sub" style="margin-top:2px"></div>
-    </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <span>소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
-      <div class="btn-col" style="margin-top:6px">
-        <span style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
-          <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
-        </span>
-        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기 / 정지</button>
-      </div>
-    </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
         <span class="set-sub">도감·기록 백업 (.json 파일) · 잡은 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요</span>
         <button class="set-btn sb-backup" id="btn-backup-save">💾 백업 파일 저장 (.json)</button>
@@ -526,9 +589,11 @@ body.dex-open #progress-card{display:none}
         <button class="set-btn sb-test" id="btn-exp">🎯 포획 연출 바로 보기 (+50 EXP)</button>
         <button class="set-btn sb-reset" id="btn-reset-day">🧹 오늘 기록 초기화</button>
         <button class="set-btn sb-reset" id="btn-reset-dex">📚 도감 전체 초기화</button>
-        <button class="set-btn sb-close" id="btn-close-settings">닫기</button>
       </div>
     </div>
+    </div>
+    </div>
+    <div class="set-foot"><button class="set-btn sb-close" id="btn-close-settings">닫기</button></div>
     <input type="file" id="backup-file" accept="application/json,.json" class="hidden">
   </div>
 </div>
@@ -559,14 +624,14 @@ const POKEMON=[
   [906,'나오하'], [912,'꾸왁스'], [1007,'코라이돈'], [1008,'미라이돈']
 ].map(([id,name])=>({id,no:String(id).padStart(3,'0'),name}));
 const TASKS=[                                  /* 등원 날 5가지 */
-  {k:'toilet',label:'아침 할 일(화장실)',img:'task-1'},
+  {k:'toilet',label:'화장실',            img:'task-1'},
   {k:'bag',   label:'가방 준비',         img:'task-2'},
   {k:'eat',   label:'밥 먹기',           img:'task-3',timer:true},
   {k:'study', label:'아침 공부',         img:'task-4'},
   {k:'brush', label:'양치하고 옷 입기',   img:'task-5'}
 ];
 const RTASKS=[                                 /* 쉬는 날 5가지 (종료시간 없음, 밥 먹기 30분 타이머) */
-  {k:'toilet',label:'아침 할 일(화장실)',img:'task-1'},
+  {k:'toilet',label:'화장실',            img:'task-1'},
   {k:'eat',   label:'밥 먹기',           img:'task-3',timer:true},
   {k:'study', label:'아침 공부',         img:'task-4'},
   {k:'milk',  label:'우유 마시기',       img:'task-milk'},
@@ -578,6 +643,16 @@ const EAT_SCHOOL=1200, EAT_REST=1800;      /* 밥 먹기 기본: 등원 날 20�
 const SKEY='morningDashboard.v1';
 const LAT=37.5712, LON=127.0545; // 서울 동대문구 답십리1동
 const DEFAULT_WEATHER_PROXY='https://twilight-salad-4306.psy6742.workers.dev';  /* 네이버 날씨 중계(Cloudflare Worker) 기본 주소 */
+/* 요일별 아침 공부 목록 (0=일, 1=월 … 6=토) — 보호자용 설정에서 요일마다 따로 고친다 */
+const STUDY_DEFAULT={
+  0:'문어빵 / 원리셈 / 키즈팩토 / ORT / 영어 씨앗',
+  1:'문어빵 / 키즈팩토 / 책 발자국 / ORT / 영어 씨앗',
+  2:'문어빵 / 원리셈 / 책 발자국 / ORT / 영어 씨앗',
+  3:'문어빵 / 키즈팩토 / 책 발자국 / ORT / 영어 씨앗',
+  4:'문어빵 / 원리셈 / 책 발자국 / ORT / 영어 씨앗',
+  5:'문어빵 / 책 발자국 / ORT / 영어 씨앗 / 우봉고',
+  6:'책 발자국(그림) / ORT'
+};
 
 function todayKey(d=new Date()){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -600,6 +675,18 @@ if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
   S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
   save();
 }
+/* 요일별 공부 목록: 이 필드가 없는 옛 기록은 요일마다 기본값으로 채운다 */
+(function normalizeStudy(){
+  const cur=(S.settings.study&&typeof S.settings.study==='object'&&!Array.isArray(S.settings.study))?S.settings.study:null;
+  let changed=!cur;
+  const out={};
+  for(let d=0;d<7;d++){
+    const v=cur?cur[d]:undefined;
+    if(typeof v==='string')out[d]=v;
+    else{out[d]=STUDY_DEFAULT[d];changed=true;}
+  }
+  if(changed){S.settings.study=out;save();}
+})();
 /* 예전 버전의 숫자 키(1~5) 기록을 루틴 키로 옮긴다 */
 (function migrateTaskKeys(){
   try{
@@ -617,6 +704,21 @@ if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
   }catch(e){}
 })();
 function dayTasks(){return restInfo().rest?RTASKS:TASKS;}
+/* ── 요일별 공부 목록 ── */
+function defaultStudy(){return Object.assign({},STUDY_DEFAULT);}
+function studyFor(dow){
+  const p=(S.settings&&S.settings.study&&typeof S.settings.study==='object')?S.settings.study:null;
+  const v=p?p[String(dow)]:undefined;
+  return (typeof v==='string')?v:STUDY_DEFAULT[dow];
+}
+function studyItems(dow){return studyFor(dow).split('/').map(s=>s.trim()).filter(Boolean);}
+function todayDow(){return new Date(todayKey()+'T00:00:00').getDay();}
+function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderStudyList(){
+  const box=document.getElementById('study-list');
+  if(!box)return;
+  box.innerHTML=studyItems(todayDow()).map(x=>`<span class="study-pill">${escHtml(x)}</span>`).join('');
+}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
   if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false}};
@@ -802,6 +904,7 @@ function buildTasks(){
         </div>
       </div>`:''}
       <div class="t-label">${t.label}</div>
+      ${t.k==='study'?'<div class="study-list" id="study-list"></div>':''}
       <div class="check">✔</div><div class="done-badge">완료!</div>`;
     el.innerHTML=inner;
     el.addEventListener('click',()=>toggleTask(t.k));
@@ -810,6 +913,7 @@ function buildTasks(){
   document.getElementById('t-start').addEventListener('click',e=>{e.stopPropagation();timerToggle();});
   document.getElementById('t-reset').addEventListener('click',e=>{e.stopPropagation();timerReset();});
   document.getElementById('t-end').addEventListener('click',e=>{e.stopPropagation();timerEnd();});
+  renderStudyList();
 }
 function isBeforeDepart(){
   const now=new Date(),dep=dateWith(parseHM(S.settings.depart));
@@ -850,6 +954,7 @@ function renderTasks(){
     el.classList.toggle('active',act);
   });
   renderTimer();
+  renderStudyList();
 }
 /* 밥 먹기 타이머 — 등원 날 20분 · 쉬는 날 30분 */
 function fmtSec(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
@@ -1825,7 +1930,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy()};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -1912,6 +2017,10 @@ function parseBackup(raw){
   settings.proxyCustom=rs.proxyCustom===true;
   if(!settings.weatherProxy&&!settings.proxyCustom)settings.weatherProxy=DEFAULT_WEATHER_PROXY;
   settings.sound=rs.sound===true;
+  /* 요일별 공부 목록 (0=일 … 6=토) — 옛 백업에 없으면 기본값 */
+  const st=(rs.study&&typeof rs.study==='object'&&!Array.isArray(rs.study))?rs.study:{};
+  settings.study={};
+  for(let d=0;d<7;d++)settings.study[d]=(typeof st[d]==='string')?st[d]:STUDY_DEFAULT[d];
   if(Array.isArray(rs.vacations)){
     settings.vacations=rs.vacations.filter(v=>v&&typeof v.s==='string'&&DATE_RE.test(v.s))
       .map(v=>({s:v.s,e:(typeof v.e==='string'&&DATE_RE.test(v.e))?v.e:v.s}));
@@ -1932,6 +2041,8 @@ function applyBackup(r){
   recalcExp(day(todayKey()));
   save();
   renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();
+  const sm=document.getElementById('modal-settings');            /* 설정을 열어 둔 채 복원해도 칸이 바로 맞춰지게 */
+  if(sm&&!sm.classList.contains('hidden')){renderSettingsMissedTasks();buildStudyRows();}
   if(S.settings.sound)unlockAudio();
 }
 function loadBackupText(text){
@@ -2043,7 +2154,58 @@ document.getElementById('btn-settings').addEventListener('click',()=>{
   setProxyState(S.settings.weatherProxy?'지금은 이 주소로 네이버 날씨를 받아와요.':'지금은 Open-Meteo·met.no로 받아와요.');
   renderRestSettings();
   renderSettingsMissedTasks();
+  buildStudyRows();
+  switchSetTab('time');
   setModal.classList.remove('hidden');
+  const body=document.querySelector('#modal-settings .set-body');
+  if(body)body.scrollTop=0;
+});
+
+/* ── ⚙️ 설정 안쪽 탭 ── */
+function switchSetTab(name){
+  document.querySelectorAll('#modal-settings .set-tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  document.querySelectorAll('#modal-settings .set-pane').forEach(p=>p.classList.toggle('hidden',p.dataset.pane!==name));
+  const body=document.querySelector('#modal-settings .set-body');
+  if(body)body.scrollTop=0;
+}
+document.querySelectorAll('#modal-settings .set-tab').forEach(b=>b.addEventListener('click',()=>switchSetTab(b.dataset.tab)));
+
+/* ── 📚 요일별 공부 목록 편집 (월→일 순서, 요일마다 독립된 칸) ── */
+const STUDY_DAY_LABELS=[['월',1],['화',2],['수',3],['목',4],['금',5],['토',6],['일',0]];
+function buildStudyRows(){
+  const box=document.getElementById('study-rows');
+  if(!box)return;
+  const dow=todayDow();
+  box.innerHTML=STUDY_DAY_LABELS.map(([lb,d])=>`
+    <div class="study-row${d===dow?' today':''}">
+      <span class="study-day">${lb}</span>
+      <input type="text" class="study-input" data-day="${d}" autocomplete="off" spellcheck="false" placeholder="예: 문어빵 / 키즈팩토 / ORT">
+      ${d===dow?'<span class="study-today">오늘</span>':''}
+    </div>`).join('');
+  box.querySelectorAll('input[data-day]').forEach(inp=>{
+    const d=inp.dataset.day;
+    inp.value=studyFor(Number(d));
+    inp.addEventListener('input',()=>{
+      if(!S.settings.study||typeof S.settings.study!=='object')S.settings.study=defaultStudy();
+      S.settings.study[d]=inp.value;
+      save();
+      renderStudyList();          /* 메인 아침 공부 카드를 바로 고친다 */
+      updateStudyNote();
+    });
+  });
+  updateStudyNote();
+}
+function updateStudyNote(){
+  const el=document.getElementById('study-note');
+  if(!el)return;
+  const n=studyItems(todayDow()).length;
+  el.textContent=`오늘(${WEEK[todayDow()]})은 ${n?n+'개 항목':'목록 없음'}이 아침 공부 카드에 보여요.`;
+}
+document.getElementById('btn-study-reset').addEventListener('click',()=>{
+  if(!confirm('요일별 아침 공부 목록 7개를 모두 처음 기본값으로 되돌릴까요?\n(지금 고쳐 둔 목록은 사라져요)'))return;
+  S.settings.study=defaultStudy();save();
+  buildStudyRows();renderStudyList();
+  toast('요일별 공부 목록을 기본값으로 되돌렸어요');
 });
 function renderDepartSongHint(){
   const el=document.getElementById('set-depart-song');
