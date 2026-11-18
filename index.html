@@ -818,6 +818,15 @@ body.eve #p-msg{color:#B4622A}
 .pct-chore.done .rw{color:#fff;background:#35A45B;border-color:#227A3F;padding:1px 10px}
 .pct-chore.water{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(34,43,56,.14)}
 .pct-chore.water.done{box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(46,158,79,.2)}
+/* 물주기: 1일·15일이 아니면 보이긴 하지만 지금은 잠겨 있다 (누를 수 없음) */
+.pct-chore.locked{background:#F3F6FA;border-color:#BCC8D7;cursor:default;opacity:1;box-shadow:0 3px 0 rgba(34,43,56,.07)}
+.pct-chore.locked:hover{background:#F3F6FA}
+.pct-chore.locked:active{transform:none;box-shadow:0 3px 0 rgba(34,43,56,.07)}
+.pct-chore.locked .ic{background:#EDF1F6;border-color:#C4CDDA;filter:grayscale(.92);opacity:.85}
+.pct-chore.locked .nm{color:#5C6979}
+.pct-chore.locked .sb{color:#8E99A8}
+.pct-chore.locked .rw{color:#6B7480;background:#E7ECF3;border-color:#B7C3D2}
+.pct-chore:disabled{pointer-events:none}
 .water-badge{display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:900;color:#fff;background:#3B82F6;
   border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap;animation:waterPulse 1.5s ease-in-out infinite}
 @keyframes waterPulse{50%{transform:scale(1.07)}}
@@ -3421,21 +3430,28 @@ function renderCenter(pop){
   const list=chores(),done=choresDoneToday(),wd=isWaterDay();
   if(box){
     box.innerHTML=list.map(c=>{
-      const ok=done[c.id]===true,wet=!!c.water&&wd;
-      return `<button type="button" class="pct-chore${ok?' done':''}${wet?' water':''}" data-chore="${escHtml(c.id)}">`+
+      const ok=done[c.id]===true;
+      const wet=!!c.water&&wd;                 /* 물 주는 날(1일·15일) */
+      const locked=!!c.water&&!wd;             /* 물주기는 그 외 날에는 보이기만 하고 눌리지 않는다 */
+      return `<button type="button" class="pct-chore${ok?' done':''}${wet?' water':''}${locked?' locked':''}"`+
+        ` data-chore="${escHtml(c.id)}"${locked?' disabled aria-disabled="true"':''}>`+
         `<span class="ic" aria-hidden="true">${choreIcon(c)}</span>`+
         `<span class="tx"><span class="nm"><span class="t">${escHtml(c.name)}</span>`+
         (wet?'<span class="water-badge">💧 오늘 물 주는 날!</span>':'')+`</span>`+
-        `<span class="sb">${ok?'오늘 도와줬어요! 내일 또 도와줘요 😊':'완료하면 🍬 사탕 1개'}</span></span>`+
-        `<span class="rw">${ok?'✅ 오늘 완료! (+🍬 1)':'🍬 +1'}</span></button>`;
+        `<span class="sb">${locked?'매달 1일·15일에 열려요':(ok?'오늘 도와줬어요! 내일 또 도와줘요 😊':'완료하면 🍬 사탕 1개')}</span></span>`+
+        `<span class="rw">${locked?'🔒 잠김':(ok?'✅ 오늘 완료! (+🍬 1)':'🍬 +1')}</span></button>`;
     }).join('');
-    box.querySelectorAll('[data-chore]').forEach(b=>b.addEventListener('click',()=>doChore(b.dataset.chore)));
+    /* 잠긴(disabled) 버튼에는 클릭이 가지 않으니, 열린 집안일만 리스너를 붙인다 */
+    box.querySelectorAll('[data-chore]:not(:disabled)').forEach(b=>b.addEventListener('click',()=>doChore(b.dataset.chore)));
     const tip=document.getElementById('pct-tip');
     if(tip){
+      const active=list.filter(c=>!(c.water&&!wd)).length;
       const cnt=list.filter(c=>done[c.id]===true).length;
-      tip.textContent=cnt>=list.length&&list.length
-        ? `오늘 집안일을 모두 도왔어요! 🎉 내일 또 도와줘요 (${cnt} / ${list.length})`
-        : `오늘 도운 집안일 ${cnt} / ${list.length} · 모은 사탕은 오른쪽에서 내 포켓몬을 키우는 데 써요!`;
+      const hasWater=list.some(c=>c.water);
+      tip.textContent=(active&&cnt>=active)
+        ? `오늘 할 수 있는 집안일은 모두 도왔어요! 🎉 내일 또 도와줘요 (${cnt} / ${active})`
+        : `오늘 도운 집안일 ${cnt} / ${active} · 모은 사탕은 오른쪽에서 내 포켓몬을 키우는 데 써요!`+
+          (hasWater&&!wd?' (물주기는 1일·15일에 열려요)':'');
     }
   }
   /* ── 오른쪽: 포켓몬 강화소 ── */
@@ -3498,6 +3514,8 @@ function renderCenter(pop){
 function doChore(id){
   const c=chores().find(x=>x.id===String(id));
   if(!c)return;
+  /* 물주기는 1일·15일에만 — 그 외 날에는 보이기만 하고 사탕을 주지 않는다 */
+  if(c.water&&!isWaterDay()){toast('💧 물주기는 매달 1일·15일에 열려요!');return;}
   const done=choresDoneToday();
   if(done[c.id]===true){toast('오늘은 이미 도왔어요! 내일 또 도와줘요 😊');return;}
   done[c.id]=true;
