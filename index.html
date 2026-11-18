@@ -741,7 +741,7 @@ if(!Array.isArray(S.caught))S.caught=[];
 S.targetId=(S.targetId!=null&&POKEMON.some(p=>p.id===Number(S.targetId)))?Number(S.targetId):null;
 if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
 /* 🌙 취침 시각: 없는 옛 기록은 20:10로 */
-if(typeof S.settings.bedtime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(S.settings.bedtime))S.settings.bedtime='20:10';
+if(typeof S.settings.bedtime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(S.settings.bedtime)){S.settings.bedtime='20:10';save();}
 /* 예전 버전은 중계 주소 기본값이 빈 문자열이었다 → 사용자가 직접 비운 기록(proxyCustom)이 없으면 기본 워커 주소를 넣는다 */
 if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
   S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
