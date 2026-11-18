@@ -90,16 +90,16 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 @keyframes promptBg{50%{background:#FFF6D8}}
 #btn-song-play:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 
-.exp-mini{display:flex;align-items:center;gap:8px;background:#fff;border:var(--bw) solid var(--ink);
-  border-radius:16px;padding:6px 10px;box-shadow:0 4px 0 rgba(34,43,56,.18)}
+.exp-mini{display:flex;align-items:center;gap:10px;background:#fff;border:var(--bw) solid var(--ink);
+  border-radius:18px;padding:9px 11px;box-shadow:0 4px 0 rgba(34,43,56,.18)}
 /* 오늘의 목표 칸 — 3단계로 모습을 바꿔 보여 준다(0~50 몬스터볼+?, 51~89 그림자+?, 90~100 그림자+이름) */
-#today-poke-img{position:relative;width:42px;height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.td-ball{position:relative;width:34px;height:34px;border-radius:50%;border:3px solid var(--ink);
+#today-poke-img{position:relative;width:50px;height:50px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.td-ball{position:relative;width:42px;height:42px;border-radius:50%;border:3px solid var(--ink);
   background:linear-gradient(180deg,var(--red) 0 44%,var(--ink) 44% 56%,#fff 56% 100%);
   box-shadow:0 2px 0 rgba(34,43,56,.20),inset -3px -4px 0 rgba(0,0,0,.10),inset 2px 2px 0 rgba(255,255,255,.30)}
-.td-ball::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;transform:translate(-50%,-50%);
+.td-ball::after{content:"";position:absolute;left:50%;top:50%;width:15px;height:15px;transform:translate(-50%,-50%);
   border-radius:50%;background:#fff;border:2.5px solid var(--ink)}
-.td-sil{width:40px;height:40px;object-fit:contain;position:relative;z-index:1;
+.td-sil{width:48px;height:48px;object-fit:contain;position:relative;z-index:1;
   filter:brightness(0) drop-shadow(0 2px 2px rgba(34,43,56,.22));opacity:.88}
 /* 목표가 아직 모습을 감추고 있을 때의 은은한 안개빛 */
 #today-poke-img.hint::before{content:"";position:absolute;inset:-4px;border-radius:50%;z-index:0;
@@ -107,8 +107,16 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   animation:tdMist 3.2s ease-in-out infinite}
 @keyframes tdMist{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}
 .exp-info{flex:1;min-width:0}
-#today-poke-name{font-size:13px;font-weight:900;line-height:1.1}
-#exp-text{font-size:10px;font-weight:800;color:var(--ink-soft);margin:1px 0 3px}
+#today-poke-name{font-size:13px;font-weight:900;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* EXP 숫자 — 아이가 한눈에 읽도록 크게(숫자 40px·굵게·진한 남색) */
+#exp-text{display:flex;align-items:baseline;gap:4px;margin:2px 0 5px;white-space:nowrap;line-height:1;
+  font-variant-numeric:tabular-nums;overflow:visible}
+#exp-num{display:inline-block;font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;font-weight:900;
+  font-size:40px;line-height:.86;letter-spacing:-2.5px;color:#121A26}
+.exp-goal{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;font-weight:900;font-size:24px;
+  line-height:1;letter-spacing:-1.2px;color:#3A4759}
+.exp-unit{font-weight:900;font-size:13px;line-height:1;letter-spacing:.4px;color:#5A6B7E}
+.exp-mini .bar{height:14px;background:#EDEBE3;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
 .bar{height:10px;background:#EDEBE3;border:2px solid var(--ink);border-radius:99px;overflow:hidden}
 .bar>div{height:100%;width:0%;background:linear-gradient(180deg,#FFD34D,#F0A81E);border-radius:99px;transition:width .5s}
 
@@ -754,7 +762,7 @@ body.eve #p-msg{color:#B4622A}
         <div id="today-poke-img" role="img" aria-label="오늘의 목표 포켓몬"><span class="td-ball" aria-hidden="true"></span></div>
         <div class="exp-info">
           <div id="today-poke-name">-</div>
-          <div id="exp-text">0 / 100 EXP</div>
+          <div id="exp-text" aria-label="0 / 100 EXP"><b id="exp-num">0</b><span class="exp-goal">/ 100</span><span class="exp-unit">EXP</span></div>
           <div class="bar"><div id="exp-fill"></div></div>
         </div>
       </div>
@@ -1574,7 +1582,8 @@ function renderExp(){
     box.setAttribute('aria-label',st===3?p.name:TARGET_HIDDEN);
   }
   document.getElementById('today-poke-name').textContent='오늘 목표 · '+(st===3?p.name:'?');
-  document.getElementById('exp-text').textContent=`${pool} / ${EXP_PER_CATCH} EXP`;
+  document.getElementById('exp-num').textContent=pool;
+  document.getElementById('exp-text').setAttribute('aria-label',`${pool} / ${EXP_PER_CATCH} EXP`);
   document.getElementById('exp-fill').style.width=Math.min(100,pool)+'%';
   /* 할 일 카드의 미니 아이콘(.poke-mini)은 단계와 상관없이 항상 몬스터볼이다 — buildTasks()의 고정 그림 */
 }
