@@ -251,18 +251,18 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   background:var(--yellow-l);border:2.5px solid var(--ink);border-radius:13px;padding:4px 6px 5px;width:96%;cursor:default;
   box-shadow:0 3px 0 rgba(34,43,56,.15)}
 .timer.on{background:#DDF6E4}
-#t-time{font-size:27px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.5px;color:#6b4f06;line-height:1.02}
-.timer.on #t-time{color:var(--green-d)}
-#t-time.ended{color:#d33;animation:blink 1s infinite}
+.t-time{font-size:27px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.5px;color:#6b4f06;line-height:1.02}
+.timer.on .t-time{color:var(--green-d)}
+.t-time.ended{color:#d33;animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.35}}
 .t-btns{display:flex;gap:4px;justify-content:center;align-items:center}
 .t-btns button{font-family:inherit;font-weight:900;font-size:12px;border:2.5px solid var(--ink);border-radius:9px;
   padding:2px 8px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 rgba(34,43,56,.2);transition:.1s}
 .t-btns button:active{transform:translateY(2px);box-shadow:none}
-#t-start{background:var(--green);color:#fff}
-#t-start.paused{background:var(--orange);color:#fff}
-#t-reset{background:#fff;color:var(--ink);font-size:17px;font-weight:900;line-height:1;padding:2px 11px;letter-spacing:0}
-#t-end{background:#FFE2D6;color:#A63D12}
+.t-btns .t-start{background:var(--green);color:#fff}
+.t-btns .t-start.paused{background:var(--orange);color:#fff}
+.t-btns .t-reset{background:#fff;color:var(--ink);font-size:17px;font-weight:900;line-height:1;padding:2px 11px;letter-spacing:0}
+.t-btns .t-end{background:#FFE2D6;color:#A63D12}
 
 /* ── 도감 ──────────────────────────────── */
 #view-poke{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#fff;border:var(--bw) solid var(--ink);
@@ -379,6 +379,42 @@ body.dex-open #progress-card{display:none}
 .sb-grant{background:#E8F8EC;color:#1C7A3A}
 .sb-grant:disabled{background:#F0F2F5;color:#A9B2BE;border-color:#CBD3DD;box-shadow:none;cursor:default}
 
+/* ── 🌙 저녁 루틴 ───────────────────────── */
+/* 해 질 무렵 하늘: 위는 남보라, 가운데 주황 노을, 아래는 따뜻한 크림 */
+body.eve{background:linear-gradient(180deg,#2E2A55 0%,#413569 8%,#63407A 15%,#96557E 22%,#CB7480 28%,#EE9C7F 34%,#FFC79C 40%,#FFE7CB 47%,#FDF4E8 54%,#FBF3E6 100%)}
+body.eve .cloud{background:#FFE3CF;opacity:.5}
+body.eve .cloud::before,body.eve .cloud::after{background:#FFE3CF}
+body.eve #p-fill{background:linear-gradient(180deg,#FFC46B,#F08A2C 60%,#D96A18)}
+body.eve #p-title b{color:#C2571B}
+body.eve #p-title b.late{color:#D63A3A;font-size:26px}
+body.eve #p-msg{color:#B4622A}
+#view-dash.eve{grid-template-columns:repeat(4,1fr)}
+.task .t-label.eve{font-size:15.5px;line-height:1.2;letter-spacing:-.5px;padding:3px 0 1px;word-break:keep-all}
+.task[data-k="eve-shower"] .task-img{object-position:74% 42%}
+.task[data-k="eve-kbook"] .task-img{object-position:center 38%}
+.task[data-k="eve-ebook"] .task-img{object-position:center 34%}
+/* 보너스 배지는 카드 맨 아래에 고정 — 사진·글씨를 밀어내지 않는다 */
+.task[data-k="eve_eat"]{padding-bottom:30px}
+.eve-bonus{position:absolute;left:7px;right:7px;bottom:4px;display:block;font-size:11.5px;font-weight:900;color:#7a4a00;
+  background:#FFF3C4;border:2px solid var(--ink);border-radius:99px;padding:1px 6px;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;text-align:center;z-index:3}
+.eve-bonus.on{background:#FFD84D;box-shadow:0 0 0 3px rgba(250,204,21,.4)}
+.eve-bonus.won{background:#DCF7E2;color:#1C7A3A;border-color:#2E9E4F}
+.eve-bonus.over{background:#F0F2F5;color:#87919E;border-color:#CBD3DD}
+/* 미리 보기 표시 */
+#p-preview{display:inline-block;font-size:10.5px;font-weight:900;color:#8a3b00;background:#FFE0B8;
+  border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.55;margin-top:3px}
+/* 설정: 화면 전환 버튼 */
+.mode-row{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.mode-chip{flex:1 1 0;min-width:0;font-family:inherit;font-weight:900;font-size:12px;letter-spacing:-.3px;
+  color:#5C6979;background:#F7FAFF;border:2.5px solid #C9D5E4;border-radius:11px;padding:7px 4px;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(34,43,56,.08);transition:.12s}
+.mode-chip.on{background:var(--yellow-l);border-color:var(--ink);color:var(--ink);box-shadow:0 3px 0 rgba(34,43,56,.16)}
+.mode-chip:active{transform:translateY(1px)}
+/* 설정: 아침/저녁 인정 칩 묶음 */
+.missed-group{margin-top:7px}
+.missed-title{font-size:11.5px;font-weight:900;color:#41505F;margin:0 0 2px}
+
 /* ── 알림 토스트 ───────────────────────── */
 #toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);background:#fff;color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:14px;padding:9px 18px;font-weight:900;font-size:14.5px;
@@ -455,6 +491,7 @@ body.dex-open #progress-card{display:none}
     <div id="p-left">
       <div id="p-title"></div>
       <div id="p-sub"></div>
+      <div id="p-preview" class="hidden"></div>
     </div>
     <div id="p-bar-wrap">
       <div id="p-bubble">같이 준비하자!</div>
@@ -524,12 +561,25 @@ body.dex-open #progress-card{display:none}
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
     <div class="set-sub" id="set-depart-song" style="padding:0 0 6px"></div>
     <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7EC;border:2px solid #F0D6B4;border-radius:12px;padding:8px 10px;margin:6px 0 4px">
+      <span>🌙 저녁 루틴 · 취침 시간</span>
+      <span class="set-sub">오후 <b>4:00~자정</b>에는 🌙 저녁 루틴 화면이 자동으로 떠요(나머지 시간은 아침 루틴). 진행 바 100%는 아래 <b>취침 시간</b>이에요. 지금 화면을 직접 바꿔 볼 떈 아래 버튼을 누르세요.</span>
+      <div class="vac-row" style="margin-top:6px"><span style="font-weight:900;font-size:12.5px">🌙 취침 시간 (진행 바 100%)</span><input type="time" id="set-bedtime" class="set-date"></div>
+      <div class="mode-row" role="group" aria-label="화면 모드 전환">
+        <button type="button" class="mode-chip on" data-mode="auto">🕒 자동 (시간 기준)</button>
+        <button type="button" class="mode-chip" data-mode="am">☀️ 아침 루틴</button>
+        <button type="button" class="mode-chip" data-mode="pm">🌙 취침 루틴</button>
+      </div>
+      <span class="set-sub" id="mode-note" style="margin-top:5px"></span>
+    </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FCF7;border:2px solid #CBEBD5;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
       <span>🛡️ 깜빡한 할 일 포인트 인정 <b style="font-size:12px;color:#1C7A3A">· 보호자용</b></span>
-      <span class="set-sub">아이가 제때 끝냈는데 화면 터치를 깜빡했을 때 여기서 눌러 주세요. 누른 할 일은 완료로 바뀌고 <b>+10 EXP</b>가 돼요. 진행 바와 출발 시각은 그대로예요. <b>✅</b>는 이미 인정된 할 일이고, 잘못 인정했으면 닫은 뒤 메인 화면에서 그 카드를 한 번 더 눌러 취소할 수 있어요.</span>
-      <div id="missed-chips" class="missed-chips"></div>
+      <span class="set-sub">아이가 제때 끝냈는데 화면 터치를 깜빡했을 때 여기서 눌러 주세요. 누른 할 일은 완료로 바뀌고 <b>+10 EXP</b>가 돼요. 진행 바와 마감 시각은 그대로예요. <b>✅</b>는 이미 인정된 할 일이고, 잘못 인정했으면 닫은 뒤 메인 화면에서 그 카드를 한 번 더 눌러 취소할 수 있어요.</span>
+      <div class="missed-group"><div class="missed-title">🎒 아침 루틴</div><div id="missed-chips" class="missed-chips"></div></div>
+      <div class="missed-group"><div class="missed-title">🌙 저녁 루틴</div><div id="missed-chips-eve" class="missed-chips"></div></div>
       <div class="missed-foot">
         <button class="set-btn sb-grant" id="btn-grant-checked" type="button">✨ 완료 표시된 일 모두 인정</button>
+        <button class="set-btn sb-grant" id="btn-bonus-eve" type="button">⚡ 밥 먹기 20분 보너스 +10</button>
         <span class="set-sub" id="missed-note"></span>
       </div>
     </div>
@@ -645,6 +695,19 @@ const RTASKS=[                                 /* 쉬는 날 5가지 (종료시�
   {k:'brush', label:'양치하기',           img:'task-5'}
 ];
 const NUM2KEY={1:'toilet',2:'bag',3:'eat',4:'study',5:'brush'};   /* 예전 숫자 기록 마이그레이션 */
+/* 🌙 저녁 루틴 4가지 (오후 4시 ~ 자정). 밥 먹기·샤워하기는 카드 안 타이머 */
+const EVETASKS=[
+  {k:'eve_eat',   label:'밥 먹기',              img:'task-3',     timer:'eat',    secs:1800, bonus:true},
+  {k:'eve_shower',label:'샤워하기',             img:'eve-shower', timer:'shower', secs:600},
+  {k:'eve_kbook', label:'한글책 소리내어 읽기', img:'eve-kbook'},
+  {k:'eve_ebook', label:'영어책 소리내어 읽기', img:'eve-ebook'}
+];
+const EVE_KEYS={'eve_eat':true,'eve_shower':true,'eve_kbook':true,'eve_ebook':true};
+const EVE_START_H=16;                      /* 저녁 루틴은 오후 4시부터 */
+const EVE_EAT_SEC=1800;                     /* 밥 먹기 30분 타이머 */
+const EVE_SHOWER_SEC=600;                   /* 샤워하기 10분 타이머 */
+const EVE_BONUS_LEFT=600;                   /* 남은 시간 600초(20분) 이상이면 20분 안에 끝낸 것 → +10 보너스 */
+const MOR_KEYS=['toilet','bag','eat','study','brush','milk'];
 const EXP_PER_TASK=10, EXP_PER_CATCH=100;
 const EAT_SCHOOL=1200, EAT_REST=1800;      /* 밥 먹기 기본: 등원 날 20분 · 쉬는 날 30분 */
 const SKEY='morningDashboard.v1';
@@ -677,6 +740,8 @@ if(!Array.isArray(S.caught))S.caught=[];
    없거나 도감에 없는 id면 null로 두고, 다음 목표 계산 때 새로 골라 저장한다. */
 S.targetId=(S.targetId!=null&&POKEMON.some(p=>p.id===Number(S.targetId)))?Number(S.targetId):null;
 if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
+/* 🌙 취침 시각: 없는 옛 기록은 20:10로 */
+if(typeof S.settings.bedtime!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(S.settings.bedtime))S.settings.bedtime='20:10';
 /* 예전 버전은 중계 주소 기본값이 빈 문자열이었다 → 사용자가 직접 비운 기록(proxyCustom)이 없으면 기본 워커 주소를 넣는다 */
 if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
   S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
@@ -710,7 +775,8 @@ if(!S.settings.weatherProxy&&S.settings.proxyCustom!==true){
     });
   }catch(e){}
 })();
-function dayTasks(){return restInfo().rest?RTASKS:TASKS;}
+function dayTasks(){return isEveMode()?EVETASKS:(restInfo().rest?RTASKS:TASKS);}
+function morningTasks(k){return restInfo(k).rest?RTASKS:TASKS;}
 /* ── 요일별 공부 목록 ── */
 function defaultStudy(){return Object.assign({},STUDY_DEFAULT);}
 function studyFor(dow){
@@ -730,6 +796,61 @@ function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function day(k){
   if(!S.days[k])S.days[k]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(k),running:false,since:null,ended:false,cue11:false}};
   return S.days[k];
+}
+
+/* ================= 화면 모드 (☀️ 아침 / 🌙 저녁) =================
+   기본은 시계를 따라간다: 00:00~15:59 아침 루틴 · 16:00~23:59 저녁 루틴.
+   보호자가 ⚙️ 설정에서 잠시 다른 화면을 보려고 고른 값(previewMode)은 저장하지 않고,
+   새로고침하면 다시 '자동'으로 돌아간다. */
+let previewMode='auto';        /* 'auto' | 'am' | 'pm' — 저장 안 함 */
+let curMode='am';              /* 지금 화면에 그려진 모드 */
+function autoMode(){return new Date().getHours()>=EVE_START_H?'pm':'am';}
+function modeNow(){return previewMode==='am'?'am':(previewMode==='pm'?'pm':autoMode());}
+function isEveMode(){return curMode==='pm';}
+function bedtimeHM(){return (S.settings&&S.settings.bedtime)||'20:10';}
+function bedtimeDate(d){return dateWith(parseHM(bedtimeHM()),d||new Date());}
+function beforeBedtime(){
+  const now=new Date();
+  let bd=bedtimeDate(now);
+  const start=dateWith({h:EVE_START_H,m:0});
+  if(bd<=start)bd=new Date(bd.getTime()+86400000);   /* 자정 너머 취침 시각도 대비 */
+  return now<bd;
+}
+/* 저녁 타이머 기본값 */
+function eveTimerBlank(total){return {left:total,running:false,since:null,ended:false,cue11:false,ran:false};}
+/* S.days[날짜].eve = {tasks, inTime, bonus, timers:{eat, shower}} — 없는 날은 만들어 준다 */
+function eveState(k){
+  k=k||todayKey();
+  const d=day(k);
+  let ev=d.eve;
+  if(!ev||typeof ev!=='object'||Array.isArray(ev))ev=d.eve={};
+  if(!ev.tasks||typeof ev.tasks!=='object')ev.tasks={};
+  if(!ev.inTime||typeof ev.inTime!=='object')ev.inTime={};
+  if(!ev.bonus||typeof ev.bonus!=='object')ev.bonus={};
+  if(!ev.timers||typeof ev.timers!=='object')ev.timers={};
+  [['eat',EVE_EAT_SEC],['shower',EVE_SHOWER_SEC]].forEach(([nm,total])=>{
+    let t=ev.timers[nm];
+    if(!t||typeof t!=='object')t=ev.timers[nm]={};
+    let left=Number(t.left);
+    if(!Number.isFinite(left)||left<0)left=total;
+    t.left=Math.min(left,total);
+    const since=Number(t.since);
+    t.running=!!t.running&&Number.isFinite(since)&&since>0;
+    t.since=t.running?since:null;
+    t.ended=t.left<=0;
+    t.cue11=!!t.cue11;
+    t.ran=!!t.ran||t.running||t.left<total;
+  });
+  return ev;
+}
+/* 지금 화면의 할 일 저장소 (아침 = 그날 기록 / 저녁 = 그날 .eve) */
+function curState(){
+  if(isEveMode()){const ev=eveState(todayKey());return {tasks:ev.tasks,inTime:ev.inTime,bonus:ev.bonus};}
+  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:null};
+}
+function stateFor(k){
+  if(String(k).indexOf('eve_')===0){const ev=eveState(todayKey());return {tasks:ev.tasks,inTime:ev.inTime,bonus:ev.bonus};}
+  const d=day(todayKey());return {tasks:d.tasks,inTime:d.inTime,bonus:null};
 }
 
 /* ================= 쉬는 날 (주말 · 법정공휴일 · 방학 · 개인 결석) =================
@@ -791,15 +912,54 @@ function renderClock(){
     `<span class="ap">${c.ap}</span><span class="d" data-t="${c.h12}">${c.h12}</span><span class="colon" data-t=":">:</span><span class="d" data-t="${String(c.m).padStart(2,'0')}">${String(c.m).padStart(2,'0')}</span>`;
 }
 function renderRestBits(){
+  const eve=isEveMode();
   const rest=isRestDay();
   const btn=document.getElementById('btn-rest');
-  if(btn){btn.textContent=rest?'🎒 오늘은 등원 날':'⛱️ 오늘은 쉬는 날';btn.title=rest?'오늘을 등원 날로 바꾸기':'오늘을 쉬는 날로 바꾸기';btn.classList.toggle('on',rest);}
+  if(btn){
+    btn.textContent=rest?'🎒 오늘은 등원 날':'⛱️ 오늘은 쉬는 날';
+    btn.title=rest?'오늘을 등원 날로 바꾸기':'오늘을 쉬는 날로 바꾸기';
+    btn.classList.toggle('on',rest);
+    btn.classList.toggle('hidden',eve);          /* 저녁 루틴은 쉬는 날 구분 없이 매일 */
+  }
   const sc=document.getElementById('p-school');
-  if(sc)sc.textContent=rest?'🎈':'🏫';
+  if(sc)sc.textContent=eve?'🌙':(rest?'🎈':'🏫');
+  const pv=document.getElementById('p-preview');
+  if(pv){
+    const manual=previewMode!=='auto';
+    pv.classList.toggle('hidden',!manual);
+    if(manual)pv.textContent=(previewMode==='pm'?'🌙 저녁':'☀️ 아침')+' 미리 보기 중 · 설정에서 자동으로';
+  }
 }
 function renderProgress(){
   renderRestBits();
   const now=new Date();
+  if(isEveMode()){                     /* 🌙 저녁 루틴: 오후 4시 ~ 취침(기본 20:10) */
+    const start=dateWith({h:EVE_START_H,m:0});
+    let bd=bedtimeDate(now);
+    if(bd<=start)bd=new Date(bd.getTime()+86400000);
+    let pct,title,msg;
+    const lbl='<span class="lbl">🌙 취침까지</span>';
+    if(now<start){
+      pct=0;title=lbl+'<b class="rest">저녁 4:00에 시작해요</b>';
+      msg='저녁 루틴을 미리 보고 있어요';
+    }else if(now<bd){
+      pct=(now-start)/(bd-start)*100;
+      const leftMin=Math.max(0,Math.ceil((bd-now)/60000));
+      title=lbl+`<b>${leftMin}분 남았어요</b>`;
+      msg=pct<25?'저녁 준비, 천천히 시작해 볼까요?':pct<50?'좋아요, 잘하고 있어요!':pct<75?'조금만 더 힘내요!':'곧 잘 시간이에요, 서둘러 주세요!';
+    }else{
+      pct=100;title=lbl+'<b class="late">취침 시간이 지났어요!</b>';msg='잘 자요, 오늘도 수고했어요!';
+    }
+    document.getElementById('p-title').innerHTML=title;
+    document.getElementById('p-msg').textContent=msg;
+    document.getElementById('p-wake-label').textContent='시작 16:00';
+    document.getElementById('p-depart-label').textContent='취침 '+bedtimeHM();
+    document.getElementById('p-sub').textContent='취침 '+fmtK(bedtimeHM());
+    document.getElementById('p-fill').style.width=pct+'%';
+    const ball=document.getElementById('p-ball');
+    if(ball)ball.style.setProperty('--p',(pct/100).toFixed(4));
+    return;
+  }
   if(isRestDay()){                     /* 쉬는 날: 출발 카운트다운 대신 5가지 루틴 진행률 */
     const d=day(todayKey());
     const list=dayTasks();
@@ -892,34 +1052,40 @@ document.getElementById('catch-close').addEventListener('click',()=>{
 });
 
 /* ================= 할 일 ================= */
+const TIMER_TASKS_EVE=['eve_eat','eve_shower'];
 function buildTasks(){
   const main=document.getElementById('view-dash');
   main.innerHTML='';
+  const eve=isEveMode();
+  main.classList.toggle('eve',eve);
   dayTasks().forEach((t,i)=>{
     const el=document.createElement('div');
-    el.className='task';el.id=`task-${i+1}`;el.dataset.k=t.k;
+    el.className='task'+(eve?' eve-task':'');
+    el.id=`task-${i+1}`;el.dataset.k=t.k;
+    const total=t.secs||(t.timer?dayTotalSec(todayKey()):0);
     let inner=`<div class="num">${i+1}</div>
       <div class="active-bubble">같이 하자!</div>
       <img class="poke-mini" src="" alt="오늘의 포켓몬">
       <img class="task-img" src="assets/${t.img}.png" alt="${t.label}">
-      ${t.timer?`<div class="timer" id="eat-timer">
-        <div id="t-time">${fmtSec(dayTotalSec(todayKey()))}</div>
+      ${t.timer?`<div class="timer" id="tm-${t.k}">
+        <div class="t-time" id="tt-${t.k}">${fmtSec(total)}</div>
         <div class="t-btns">
-          <button id="t-start">▶ 시작</button>
-          <button id="t-reset">⟳</button>
-          <button id="t-end">⏹ 끝</button>
+          <button type="button" class="t-start" data-tk="${t.k}" data-act="start" id="ts-${t.k}">▶ 시작</button>
+          <button type="button" class="t-reset" data-tk="${t.k}" data-act="reset" id="tr-${t.k}">⟳</button>
+          <button type="button" class="t-end" data-tk="${t.k}" data-act="end" id="te-${t.k}">⏹ 끝</button>
         </div>
       </div>`:''}
-      <div class="t-label">${t.label}</div>
+      <div class="t-label${eve?' eve':''}">${t.label}</div>
       ${t.k==='study'?'<div class="study-list" id="study-list"></div>':''}
+      ${t.k==='eve_eat'?'<div class="eve-bonus" id="bonus-eve_eat">⚡ 20분 이내 +10 보너스</div>':''}
       <div class="check">✔</div><div class="done-badge">완료!</div>`;
     el.innerHTML=inner;
     el.addEventListener('click',()=>toggleTask(t.k));
     main.appendChild(el);
   });
-  document.getElementById('t-start').addEventListener('click',e=>{e.stopPropagation();timerToggle();});
-  document.getElementById('t-reset').addEventListener('click',e=>{e.stopPropagation();timerReset();});
-  document.getElementById('t-end').addEventListener('click',e=>{e.stopPropagation();timerEnd();});
+  main.querySelectorAll('.t-btns button[data-act]').forEach(b=>{
+    b.addEventListener('click',e=>{e.stopPropagation();timerAct(b.dataset.tk,b.dataset.act);});
+  });
   renderStudyList();
 }
 function isBeforeDepart(){
@@ -928,33 +1094,44 @@ function isBeforeDepart(){
 }
 function recalcExp(d){
   let e=0;
-  dayTasks().forEach(t=>{if(d.tasks[t.k]&&d.inTime[t.k])e+=EXP_PER_TASK;});   /* 쉬는 날 5개 = +50 */
+  MOR_KEYS.forEach(k=>{if(d.tasks[k]&&d.inTime&&d.inTime[k])e+=EXP_PER_TASK;});      /* 아침·쉬는 날 */
+  const ev=d.eve;
+  if(ev&&ev.tasks&&ev.inTime){
+    EVETASKS.forEach(t=>{
+      if(ev.tasks[t.k]&&ev.inTime[t.k]){
+        e+=EXP_PER_TASK;
+        if(t.k==='eve_eat'&&ev.bonus&&ev.bonus[t.k])e+=EXP_PER_TASK;    /* 🌙 20분 이내 +10 보너스 */
+      }
+    });
+  }
   d.exp=Math.max(0,e);
 }
-function toggleTask(k,forceInTime){
-  const d=day(todayKey());
-  const rest=isRestDay();
+function toggleTask(k){
   if(!dayTasks().some(t=>t.k===k))return;
-  if(!d.tasks[k]){
-    d.tasks[k]=true;
-    d.inTime[k]=rest?true:((typeof forceInTime==='boolean')?forceInTime:isBeforeDepart());
+  const d=day(todayKey());
+  const st=curState();
+  if(!st.tasks[k]){
+    st.tasks[k]=true;
+    st.inTime[k]=isEveMode()?beforeBedtime():(isRestDay()?true:isBeforeDepart());
+    if(isEveMode()&&k==='eve_eat'&&eatBonusNow())st.bonus[k]=true;    /* 30분 타이머의 20분 안에 끝냈으면 보너스 */
   }else{
-    delete d.tasks[k];delete d.inTime[k];
+    delete st.tasks[k];delete st.inTime[k];
+    if(st.bonus)delete st.bonus[k];
   }
-  if(d.tasks[k])playDoneSound();      /* 완료로 바뀔 때만 피카츄 효과음 */
+  if(st.tasks[k])playDoneSound();      /* 완료로 바뀔 때만 피카츄 효과음 */
   recalcExp(d);
   save();renderTasks();renderExp();renderProgress();
   tickWake();                                  /* 쉬는 날: 양치(5번) 체크하면 화면 유지 해제 */
   checkCatch();
 }
 function renderTasks(){
-  const d=day(todayKey());
+  const st=curState();
   const list=dayTasks();
   let taken=false;
   list.forEach((t,i)=>{
     const el=document.getElementById(`task-${i+1}`);
     if(!el)return;
-    const done=!!d.tasks[t.k];
+    const done=!!st.tasks[t.k];
     el.classList.toggle('done',done);
     const act=!done&&!taken;
     if(act)taken=true;
@@ -962,54 +1139,116 @@ function renderTasks(){
   });
   renderTimer();
   renderStudyList();
+  if(isEveMode())renderEveBonus();
 }
-/* 밥 먹기 타이머 — 등원 날 20분 · 쉬는 날 30분 */
+/* 타이머 — 아침 밥 먹기(20분/쉬는 날 30분), 저녁 밥 먹기 30분 · 샤워하기 10분 */
 function fmtSec(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function timerTotalOf(k){
+  if(k==='eve_eat')return EVE_EAT_SEC;
+  if(k==='eve_shower')return EVE_SHOWER_SEC;
+  return dayTotalSec(todayKey());
+}
+function timerOf(k){
+  if(k==='eve_eat')return eveState().timers.eat;
+  if(k==='eve_shower')return eveState().timers.shower;
+  return day(todayKey()).timer;
+}
+function liveLeft(t){let l=t.left;if(t.running&&t.since)l-=(Date.now()-t.since)/1000;return Math.max(0,l);}
+function renderTimerKey(k){
+  const el=document.getElementById('tm-'+k);
+  if(!el)return;
+  const t=timerOf(k),left=liveLeft(t);
+  el.classList.toggle('on',!!t.running);
+  const tEl=document.getElementById('tt-'+k);
+  if(tEl){tEl.textContent=fmtSec(left);tEl.classList.toggle('ended',left<=0);}
+  const s=document.getElementById('ts-'+k);
+  if(s){s.textContent=t.running?'⏸ 일시정지':'▶ 시작';s.classList.toggle('paused',!!t.running);}
+}
 function renderTimer(){
-  const d=day(todayKey()).timer,left=Math.max(0,Math.ceil(d.left));
-  const el=document.getElementById('eat-timer');if(!el)return;
-  el.classList.toggle('on',!!d.running);
-  const tEl=document.getElementById('t-time');
-  tEl.textContent=fmtSec(left);
-  tEl.classList.toggle('ended',d.left<=0);
-  const s=document.getElementById('t-start');
-  s.textContent=d.running?'⏸ 일시정지':'▶ 시작';
-  s.classList.toggle('paused',!!d.running);
+  (isEveMode()?TIMER_TASKS_EVE:['eat']).forEach(renderTimerKey);
 }
-function timerToggle(){
-  const t=day(todayKey()).timer;
-  if(t.left<=0){t.left=dayTotalSec(todayKey());t.ended=false;t.cue11=false;buzzOk=false;stopBuzz();}
-  if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);t.running=false;t.since=null;}
-  else{t.running=true;t.since=Date.now();primeBuzz();}   /* 시작 버튼(사용자 제스처)에서 버저 플레이어 준비 */
-  save();renderTimer();
+/* 20분(1200초) 안에 밥을 다 먹었는지: 타이머를 시작했고 남은 시간이 600초 이상 */
+function eatBonusNow(){
+  const t=eveState().timers.eat;
+  return !!t.ran&&liveLeft(t)>=EVE_BONUS_LEFT;
 }
-function timerReset(){
-  const d=day(todayKey());
-  d.timer={left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false};
-  buzzOk=false;stopBuzz();
-  save();renderTimer();
+function renderEveBonus(){
+  const el=document.getElementById('bonus-eve_eat');
+  if(!el)return;
+  const ev=eveState();
+  const done=!!ev.tasks.eve_eat,won=done&&!!(ev.bonus&&ev.bonus.eve_eat);
+  const left=liveLeft(ev.timers.eat),ran=!!ev.timers.eat.ran;
+  const onTrack=!done&&ran&&left>=EVE_BONUS_LEFT;
+  el.classList.toggle('won',!!won);
+  el.classList.toggle('on',onTrack);
+  el.classList.toggle('over',!won&&!onTrack&&(done||(ran&&left<EVE_BONUS_LEFT)));
+  el.textContent=won?'⚡ +10 보너스 받았어요!'
+    :done?'⚡ 20분 보너스 없음'
+    :onTrack?'⚡ 지금 끝내면 +10 보너스!'
+    :(ran&&left<EVE_BONUS_LEFT)?'⚡ 20분이 넘었어요'
+    :'⚡ 20분 이내 +10 보너스';
 }
-function timerEnd(){
-  const t=day(todayKey()).timer;
-  if(t.running){t.left=Math.max(0,t.left-(Date.now()-t.since)/1000);}
-  t.running=false;t.since=null;t.cue11=false;
-  buzzOk=false;stopBuzz();
-  save();renderTimer();
+function timerAct(k,act){
+  const t=timerOf(k),total=timerTotalOf(k);
+  if(act==='start'){
+    if(t.left<=0){t.left=total;t.ended=false;t.cue11=false;t.ran=false;}
+    if(t.running){
+      t.left=liveLeft(t);t.running=false;t.since=null;
+    }else{
+      t.running=true;t.since=Date.now();t.ran=true;buzzOk=false;stopBuzz();primeBuzz();
+    }
+  }else if(act==='reset'){
+    t.left=total;t.running=false;t.since=null;t.ended=false;t.cue11=false;t.ran=false;
+    buzzOk=false;stopBuzz();
+  }else{
+    if(t.running)t.left=liveLeft(t);
+    t.running=false;t.since=null;t.cue11=false;buzzOk=false;stopBuzz();
+  }
+  save();renderTimerKey(k);
+  if(k==='eve_eat')renderEveBonus();
+}
+function tickOneTimer(k){
+  const t=timerOf(k);
+  if(!t||!t.running)return;
+  const left=t.left-(Date.now()-t.since)/1000;
+  const shown=!!document.getElementById('tm-'+k);     /* 화면에 떠 있는 타이머만 소리를 낸다 */
+  if(left<=0){
+    t.left=0;t.running=false;t.since=null;t.ended=true;t.cue11=false;
+    save();renderTimerKey(k);
+    if(shown){stopBuzz();if(!buzzOk)playBeep();}       /* 유튜브 버저가 울리지 못한 환경에서만 00:00 효과음 */
+    return;
+  }
+  t.left=left;t.since=Date.now();
+  if(!t.cue11&&left<=11){
+    t.cue11=true;
+    if(shown)buzzAtCue();     /* 남은 11초 → 10초 타이머+버저 1회 (아침과 같은 방식) */
+  }
+  save();renderTimerKey(k);
 }
 function tickTimer(){
-  const t=day(todayKey()).timer;
-  if(t.running){
-    const left=t.left-(Date.now()-t.since)/1000;
-    if(left<=0){
-      day(todayKey()).timer={left:0,running:false,since:null,ended:true};
-      stopBuzz();
-      save();renderTimer();
-      if(!buzzOk)playBeep();          /* 유튜브 버저가 울리지 못한 환경에서만 00:00 효과음 */
-    }else{
-      t.left=left;t.since=Date.now();
-      if(!t.cue11&&left<=11){t.cue11=true;buzzAtCue();}   /* 남은 11초 → 10초 타이머+버저 1회 */
-      save();renderTimer();
-    }
+  tickOneTimer('eat');tickOneTimer('eve_eat');tickOneTimer('eve_shower');
+  if(isEveMode())renderEveBonus();
+}
+
+/* ================= 화면 모드 전환 ================= */
+function applyMode(force){
+  const m=modeNow();
+  if(m===curMode&&!force)return false;
+  curMode=m;
+  document.body.classList.toggle('eve',m==='pm');
+  buildTasks();renderTasks();renderProgress();renderExp();
+  updateModeChips();
+  const sm=document.getElementById('modal-settings');
+  if(sm&&!sm.classList.contains('hidden'))renderSettingsMissedTasks();
+  return true;
+}
+function updateModeChips(){
+  document.querySelectorAll('.mode-chip').forEach(b=>b.classList.toggle('on',b.dataset.mode===previewMode));
+  const note=document.getElementById('mode-note');
+  if(note){
+    note.textContent=previewMode==='auto'
+      ? `지금은 시계에 따라 자동으로 바뀌어요 · 지금은 ${autoMode()==='pm'?'🌙 저녁':'☀️ 아침'} 루틴`
+      : `지금은 ${previewMode==='pm'?'🌙 저녁':'☀️ 아침'} 루틴을 띄워 두고 있어요 · '자동'을 누르거나 새로고침하면 원래대로 돌아가요`;
   }
 }
 
@@ -1937,7 +2176,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy()};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy()};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -2015,11 +2254,33 @@ function parseBackup(raw){
       chime:o.chime===true,
       restOverride:(typeof o.restOverride==='boolean')?o.restOverride:undefined,
       timer:{left,running,since:running?since:null,ended:left<=0,cue11:tm.cue11===true}};
+    /* 🌙 저녁 루틴 기록 (없는 옛 백업은 빈 상태로) */
+    const se=(o.eve&&typeof o.eve==='object'&&!Array.isArray(o.eve))?o.eve:{};
+    const eTasks={},eIn={},eBonus={};
+    Object.keys(se.tasks||{}).forEach(key=>{
+      if(!EVE_KEYS[key]||se.tasks[key]!==true)return;
+      eTasks[key]=true;
+      if(se.inTime&&se.inTime[key]===true)eIn[key]=true;
+      if(key==='eve_eat'&&eIn[key]&&se.bonus&&se.bonus[key]===true)eBonus[key]=true;
+    });
+    const eTimers={};
+    [['eat',EVE_EAT_SEC],['shower',EVE_SHOWER_SEC]].forEach(([nm,total])=>{
+      const st2=(se.timers&&typeof se.timers[nm]==='object')?se.timers[nm]:{};
+      let l=Number(st2.left);
+      if(!Number.isFinite(l)||l<0)l=total;
+      l=Math.min(l,total);
+      const sn=Number(st2.since);
+      const rn=!!st2.running&&Number.isFinite(sn)&&sn>0;
+      eTimers[nm]={left:l,running:rn,since:rn?sn:null,ended:l<=0,cue11:st2.cue11===true,
+        ran:st2.ran===true||rn||l<total};
+    });
+    days[k].eve={tasks:eTasks,inTime:eIn,bonus:eBonus,timers:eTimers};
   });
   const rs=(raw.settings&&typeof raw.settings==='object')?raw.settings:{};
   const settings=defaultSettings();
   if(typeof rs.wake==='string'&&HM_RE.test(rs.wake))settings.wake=rs.wake;
   if(typeof rs.depart==='string'&&HM_RE.test(rs.depart))settings.depart=rs.depart;
+  if(typeof rs.bedtime==='string'&&HM_RE.test(rs.bedtime))settings.bedtime=rs.bedtime;
   if(typeof rs.weatherProxy==='string')settings.weatherProxy=proxyUrl(rs.weatherProxy);
   settings.proxyCustom=rs.proxyCustom===true;
   if(!settings.weatherProxy&&!settings.proxyCustom)settings.weatherProxy=DEFAULT_WEATHER_PROXY;
@@ -2047,6 +2308,7 @@ function applyBackup(r){
   day(todayKey());
   recalcExp(day(todayKey()));
   save();
+  applyMode(true);                                       /* 복원한 설정의 취침 시각까지 반영해 화면 다시 그림 */
   renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();
   const sm=document.getElementById('modal-settings');            /* 설정을 열어 둔 채 복원해도 칸이 바로 맞춰지게 */
   if(sm&&!sm.classList.contains('hidden')){renderSettingsMissedTasks();buildStudyRows();}
@@ -2103,59 +2365,94 @@ document.getElementById('backup-file').addEventListener('change',e=>{
 /* ================= 🛡️ 깜빡한 할 일 포인트 인정 (보호자용) =================
    아이가 제때 끝냈는데 화면 터치를 깜빡한 경우, ⚙️ 설정에서 그 할 일을 눌러
    완료(+10 EXP)로 인정한다. 메인 화면의 '출발 시각 이후 = 0 EXP' 규칙은 그대로 둔다. */
+function missedChip(t,st,isEve){
+  const granted=!!(st.tasks[t.k]&&st.inTime[t.k]);
+  const checked=!!st.tasks[t.k];
+  const bonus=!!(isEve&&t.k==='eve_eat'&&st.bonus&&st.bonus[t.k]&&granted);
+  const exp=granted?(bonus?EXP_PER_TASK*2:EXP_PER_TASK):0;
+  const cls=granted?'missed-chip granted':(checked?'missed-chip late':'missed-chip');
+  const mark=granted?'✅':(checked?'⏰':'○');
+  const tip=granted?('이미 인정했어요'+(bonus?' (20분 보너스 포함)':'')):(checked?`${isEve?'취침':'출발'} 시각이 지나 0 EXP로 체크돼 있어요. 누르면 +10 EXP로 인정해요.`
+    :'아직 체크하지 않았어요. 누르면 완료로 인정하고 +10 EXP를 줘요.');
+  return `<button type="button" class="${cls}" data-missed="${t.k}" title="${tip}"${granted?' data-granted="1"':''}>${mark} ${t.label}<b>${exp?'+'+exp:'+0'}</b></button>`;
+}
 function renderSettingsMissedTasks(){
-  const box=document.getElementById('missed-chips');
-  if(!box)return;
-  const d=day(todayKey()), list=dayTasks();
-  box.innerHTML=list.map(t=>{
-    const granted=!!(d.tasks[t.k]&&d.inTime[t.k]);
-    const checked=!!d.tasks[t.k];
-    const cls=granted?'missed-chip granted':(checked?'missed-chip late':'missed-chip');
-    const mark=granted?'✅':(checked?'⏰':'○');
-    const tip=granted?'이미 인정했어요'
-      :(checked?'출발 시각이 지나 0 EXP로 체크돼 있어요. 누르면 +10 EXP로 인정해요.'
-                :'아직 체크하지 않았어요. 누르면 완료로 인정하고 +10 EXP를 줘요.');
-    return `<button type="button" class="${cls}" data-missed="${t.k}" title="${tip}"${granted?' data-granted="1"':''}>${mark} ${t.label}<b>${granted?'+10':'+0'}</b></button>`;
-  }).join('');
-  box.querySelectorAll('button[data-missed]').forEach(b=>b.addEventListener('click',()=>grantMissedTask(b.dataset.missed)));
-  const pending=list.filter(t=>d.tasks[t.k]&&!d.inTime[t.k]);
+  const d=day(todayKey()), ev=eveState(todayKey());
+  const mList=morningTasks(todayKey()), eList=EVETASKS;
+  const mBox=document.getElementById('missed-chips'), eBox=document.getElementById('missed-chips-eve');
+  if(mBox)mBox.innerHTML=mList.map(t=>missedChip(t,d,false)).join('');
+  if(eBox)eBox.innerHTML=eList.map(t=>missedChip(t,ev,true)).join('');
+  document.querySelectorAll('#missed-chips button[data-missed],#missed-chips-eve button[data-missed]')
+    .forEach(b=>b.addEventListener('click',()=>grantMissedTask(b.dataset.missed)));
+  const pending=mList.filter(t=>d.tasks[t.k]&&!d.inTime[t.k]).length+
+                eList.filter(t=>ev.tasks[t.k]&&!ev.inTime[t.k]).length;
   const btn=document.getElementById('btn-grant-checked');
   if(btn){
-    btn.disabled=!pending.length;
-    btn.textContent=pending.length?`✨ 완료 표시된 ${pending.length}개 모두 인정 (+${pending.length*EXP_PER_TASK})`:'✨ 완료 표시된 일이 없어요';
+    btn.disabled=!pending;
+    btn.textContent=pending?`✨ 완료 표시된 ${pending}개 모두 인정 (+${pending*EXP_PER_TASK})`:'✨ 완료 표시된 일이 없어요';
+  }
+  const bb=document.getElementById('btn-bonus-eve');
+  if(bb){
+    const ok=!!(ev.tasks.eve_eat&&ev.inTime.eve_eat);
+    const has=!!(ok&&ev.bonus&&ev.bonus.eve_eat);
+    bb.disabled=!ok||has;
+    bb.textContent=has?'⚡ 밥 먹기 20분 보너스 인정됨':'⚡ 밥 먹기 20분 보너스 +10';
+    bb.title=ok?'밥 먹기를 인정한 상태라 20분 이내 보너스 +10을 더 줄 수 있어요':'먼저 아래 저녁 목록에서 밥 먹기를 인정해 주세요';
   }
   const note=document.getElementById('missed-note');
   if(note){
-    const ok=list.filter(t=>d.tasks[t.k]&&d.inTime[t.k]).length;
-    note.textContent=`오늘 ${ok}/${list.length}개 인정`;
+    const mOk=mList.filter(t=>d.tasks[t.k]&&d.inTime[t.k]).length;
+    const eOk=eList.filter(t=>ev.tasks[t.k]&&ev.inTime[t.k]).length;
+    const bOk=(ev.bonus&&ev.bonus.eve_eat&&ev.tasks.eve_eat&&ev.inTime.eve_eat)?1:0;
+    note.textContent=`아침 ${mOk}/${mList.length} · 저녁 ${eOk}/${eList.length} 인정${bOk?' · 보너스 +10':''}`;
   }
 }
 function grantMissedTask(k){
-  const d=day(todayKey());
-  const t=dayTasks().find(x=>x.k===k);
+  const isEve=String(k).indexOf('eve_')===0;
+  const st=isEve?eveState(todayKey()):day(todayKey());
+  const list=isEve?EVETASKS:morningTasks(todayKey());
+  const t=list.find(x=>x.k===k);
   if(!t)return;
-  if(d.tasks[k]&&d.inTime[k]){toast(`이미 인정했어요 · ${t.label}`);return;}   /* 이미 인정된 할 일은 그대로 */
-  d.tasks[k]=true;d.inTime[k]=true;
-  recalcExp(d);save();
+  if(st.tasks[k]&&st.inTime[k]){toast(`이미 인정했어요 · ${t.label}`);return;}   /* 이미 인정된 할 일은 그대로 */
+  st.tasks[k]=true;st.inTime[k]=true;
+  const d=day(todayKey());recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
   if(!checkCatch())toast(`인정! ${t.label} +${EXP_PER_TASK} EXP`);   /* 포획되면 포획 연출이 먼저 */
 }
 function grantAllMissedChecked(){
-  const d=day(todayKey());
-  const targets=dayTasks().filter(t=>d.tasks[t.k]&&!d.inTime[t.k]);
-  if(!targets.length){renderSettingsMissedTasks();return;}
-  targets.forEach(t=>{d.tasks[t.k]=true;d.inTime[t.k]=true;});
+  const d=day(todayKey()), ev=eveState(todayKey());
+  const mT=morningTasks(todayKey()).filter(t=>d.tasks[t.k]&&!d.inTime[t.k]);
+  const eT=EVETASKS.filter(t=>ev.tasks[t.k]&&!ev.inTime[t.k]);
+  const n=mT.length+eT.length;
+  if(!n){renderSettingsMissedTasks();return;}
+  mT.forEach(t=>{d.tasks[t.k]=true;d.inTime[t.k]=true;});
+  eT.forEach(t=>{ev.tasks[t.k]=true;ev.inTime[t.k]=true;});
   recalcExp(d);save();
   renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
-  if(!checkCatch())toast(`${targets.length}개 인정! +${targets.length*EXP_PER_TASK} EXP`);
+  if(!checkCatch())toast(`${n}개 인정! +${n*EXP_PER_TASK} EXP`);
+}
+function grantEveBonus(){
+  const ev=eveState(todayKey());
+  if(!(ev.tasks.eve_eat&&ev.inTime.eve_eat)){toast('먼저 저녁 목록에서 밥 먹기를 인정해 주세요');return;}
+  if(ev.bonus.eve_eat){toast('이미 20분 보너스를 인정했어요');return;}
+  ev.bonus.eve_eat=true;
+  const d=day(todayKey());recalcExp(d);save();
+  renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
+  if(!checkCatch())toast('⚡ 밥 먹기 20분 보너스 +10 EXP 인정!');
 }
 document.getElementById('btn-grant-checked').addEventListener('click',grantAllMissedChecked);
+document.getElementById('btn-bonus-eve').addEventListener('click',grantEveBonus);
 
 const setModal=document.getElementById('modal-settings');
 document.getElementById('btn-settings').addEventListener('click',()=>{
   document.getElementById('set-wake').value=S.settings.wake;
   document.getElementById('set-depart').value=S.settings.depart;
+  const bt=document.getElementById('set-bedtime');
+  if(bt)bt.value=bedtimeHM();
   renderDepartSongHint();
+  updateModeChips();
+  const tb=document.getElementById('btn-test');
+  if(tb)tb.textContent=`⏱ 시간 내 완료 테스트 (지금 화면 ${dayTasks().length}개 +${dayTasks().length*EXP_PER_TASK} EXP)`;
   const px=document.getElementById('set-proxy');
   if(px)px.value=S.settings.weatherProxy||'';
   setProxyState(S.settings.weatherProxy?'지금은 이 주소로 네이버 날씨를 받아와요.':'지금은 Open-Meteo·met.no로 받아와요.');
@@ -2239,6 +2536,21 @@ document.getElementById('btn-proxy-save').addEventListener('click',()=>{
   refreshWeatherForce();
 });
 document.getElementById('set-wake').addEventListener('change',e=>{if(e.target.value){S.settings.wake=e.target.value;save();renderProgress();tickWake();}});
+document.getElementById('set-bedtime').addEventListener('change',e=>{
+  if(!e.target.value)return;
+  S.settings.bedtime=e.target.value;save();
+  renderProgress();renderTasks();
+  toast('취침 시간을 '+fmtK(e.target.value)+'으로 바꿨어요');
+});
+/* 🕒 자동 / ☀️ 아침 루틴 / 🌙 취침 루틴 — 누르면 메인 화면이 즉시 바뀝니다 */
+document.querySelectorAll('.mode-chip').forEach(b=>b.addEventListener('click',()=>{
+  const m=b.dataset.mode;
+  if(m===previewMode){updateModeChips();return;}
+  previewMode=m;
+  applyMode(true);
+  updateModeChips();
+  toast(m==='auto'?'시계에 맞춰 자동으로 바뀌게 했어요':(m==='am'?'☀️ 아침 루틴 화면으로 바꿨어요':'🌙 취침 루틴 화면으로 바꿨어요'));
+}));
 document.getElementById('set-depart').addEventListener('change',e=>{
   if(!e.target.value)return;
   S.settings.depart=e.target.value;save();
@@ -2275,18 +2587,20 @@ document.getElementById('btn-song-play').addEventListener('click',()=>{
 });
 document.addEventListener('pointerdown',()=>{if(soundUnlocked){primeYouTube();primeBuzz();}tickWake();},{passive:true});
 document.getElementById('btn-test').addEventListener('click',()=>{
-  const d=day(todayKey());
-  TASKS.forEach(t=>{if(!d.tasks[t.k]){d.tasks[t.k]=true;d.inTime[t.k]=true;d.exp=(d.exp||0)+EXP_PER_TASK;}});
-  save();renderTasks();renderExp();
-  if(!checkCatch())alert('할 일 5개 완료! +50 EXP');
+  const d=day(todayKey()), st=curState(), list=dayTasks();
+  list.forEach(t=>{if(!st.tasks[t.k]){st.tasks[t.k]=true;st.inTime[t.k]=true;}});
+  recalcExp(d);save();renderTasks();renderExp();renderSettingsMissedTasks();
+  if(!checkCatch())alert(`${isEveMode()?'🌙 저녁':'☀️ 아침'} 루틴 ${list.length}개 완료! +${list.length*EXP_PER_TASK} EXP`);
 });
 document.getElementById('btn-exp').addEventListener('click',()=>{
   const d=day(todayKey());d.exp=(d.exp||0)+50;save();renderTasks();renderExp();
   if(!checkCatch())alert('+50 EXP! (100이 되면 포획 연출이 나와요)');
 });
 document.getElementById('btn-reset-day').addEventListener('click',()=>{
-  if(confirm('오늘 기록(할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
-    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false}};
+  if(confirm('오늘 기록(아침·저녁 할 일·EXP·타이머·출발 알림)을 초기화할까요?')){
+    S.days[todayKey()]={tasks:{},inTime:{},exp:0,chime:false,
+      timer:{left:dayTotalSec(todayKey()),running:false,since:null,ended:false,cue11:false},
+      eve:{tasks:{},inTime:{},bonus:{},timers:{eat:eveTimerBlank(EVE_EAT_SEC),shower:eveTimerBlank(EVE_SHOWER_SEC)}}};
     stopSong();
     save();renderTasks();renderExp();renderProgress();renderSettingsMissedTasks();
     setModal.classList.add('hidden');
@@ -2381,8 +2695,11 @@ document.getElementById('hol-add').addEventListener('click',()=>{
 });
 
 /* ================= 시작 ================= */
+curMode=modeNow();                                   /* 지금 시각에 맞는 화면(☀️ 아침 / 🌙 저녁) */
+document.body.classList.toggle('eve',curMode==='pm');
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
+updateModeChips();
 doneAudio();   /* 할 일 완료 효과음 미리 받아 두기(터치 순간 바로 울리도록) */
 initWeather();
 setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
@@ -2390,7 +2707,11 @@ if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
 tickWake();                          /* 기상~출발 사이에만 화면 켜짐 유지 */
 setInterval(renderClock,1000);
 setInterval(tickTimer,500);
-setInterval(()=>{renderProgress();checkDepartEvent();tickWake();},5000);
+/* 16:00·00:00을 화면을 켜 둔 채 넘겨도 5초 안에 알아서 화면이 바뀐다 */
+setInterval(()=>{
+  if(applyMode(false))return;      /* 모드가 바뀌었으면 applyMode가 다시 그린다 */
+  renderProgress();checkDepartEvent();tickWake();
+},5000);
 checkDepartEvent();
 scheduleSongTick();
 </script>
