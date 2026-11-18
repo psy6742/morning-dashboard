@@ -927,7 +927,7 @@ function renderRestBits(){
   if(pv){
     const manual=previewMode!=='auto';
     pv.classList.toggle('hidden',!manual);
-    if(manual)pv.textContent=(previewMode==='pm'?'🌙 저녁':'☀️ 아침')+' 미리 보기 중 · 설정에서 자동으로';
+    if(manual)pv.textContent=(previewMode==='pm'?'🌙 저녁':'☀️ 아침')+' 미리 보기 중 · ⚙️ 자동으로';
   }
 }
 function renderProgress(){
@@ -1231,11 +1231,16 @@ function tickTimer(){
 }
 
 /* ================= 화면 모드 전환 ================= */
+function syncModeChrome(){
+  document.body.classList.toggle('eve',curMode==='pm');
+  const back=document.getElementById('tab-dash');
+  if(back)back.textContent=curMode==='pm'?'← 저녁 루틴으로 돌아가기':'← 등원 준비로 돌아가기';
+}
 function applyMode(force){
   const m=modeNow();
   if(m===curMode&&!force)return false;
   curMode=m;
-  document.body.classList.toggle('eve',m==='pm');
+  syncModeChrome();
   buildTasks();renderTasks();renderProgress();renderExp();
   updateModeChips();
   const sm=document.getElementById('modal-settings');
@@ -2696,7 +2701,7 @@ document.getElementById('hol-add').addEventListener('click',()=>{
 
 /* ================= 시작 ================= */
 curMode=modeNow();                                   /* 지금 시각에 맞는 화면(☀️ 아침 / 🌙 저녁) */
-document.body.classList.toggle('eve',curMode==='pm');
+syncModeChrome();
 buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
 updateModeChips();
