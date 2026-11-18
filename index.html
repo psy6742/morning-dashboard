@@ -2713,11 +2713,18 @@ function checkDepartEvent(){
 let wlSentinel=null;      /* Screen Wake Lock 센티넬 */
 let wlVideo=null;         /* 폴백용 무음 반복 <video> */
 let wlVideoOn=false;      /* 폴백 비디오가 실제 재생 중인지 */
-let wlPending=false;      /* wake lock이 거부됨 → 다음 터치를 기다리는 중 */
-let wlBusy=false;         /* 요청 중복 방지 */
-let wlGestureFail=0;      /* 터치로도 실패한 횟수 */
-let wlLastTry=0;          /* 자동 재시도 간격 조절 */
+let wlPending=false;      /* 다음 터치를 기다리는 중 */
+let wlBusy=false;         /* wake lock 요청 중복 방지 */
+let wlGestureFail=0;      /* 터치로도 영상 재생이 실패한 횟수 */
+let wlLastTry=0;          /* 폴백 비디오 자동 재시도 간격 */
+let wlLastLockTry=0;      /* 센티넬 자동 재시도 간격 */
 let wlHang=null,wlHang2=null;   /* wake lock 요청이 응답 없이 멈출 때를 대비한 타이머 */
+/* iOS/iPadOS 여부, 홈 화면 앱(standalone) 여부.
+   iPadOS는 이 둘에서 '센티넬을 정상적으로 돌려주고도 2분 뒤 화면을 끄는' 경우가 있어
+   센티넬 수신만으로는 화면 유지가 된 것으로 보지 않습니다(영상 재생까지 확인). */
+const IS_IOS=(function(){try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}catch(e){return false;}})();
+const IS_STANDALONE=(function(){try{return !!((window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches))||navigator.standalone===true;}catch(e){return false;}})();
+const IOS_PWA=(IS_IOS||IS_STANDALONE);
 function wakeRange(){
   const start=dateWith(parseHM(S.settings.wake));
   let end=dateWith(parseHM(S.settings.depart));      /* 출발 시각 정각까지 (기본 08:10) */
@@ -2759,7 +2766,10 @@ function wakeNeeded(){return shouldWake();}
 function wakeLockUsable(){
   try{return !!(navigator.wakeLock&&typeof navigator.wakeLock.request==='function');}catch(e){return false;}
 }
-function wakeActive(){return !!wlSentinel||wlVideoOn;}
+function wakeActive(){
+  if(IOS_PWA)return wlVideoOn;      /* iPadOS 홈 화면 앱: 센티넬만으로는 2분 뒤 꺼짐 → 실제 재생 중인 영상만 인정 */
+  return !!wlSentinel||wlVideoOn;
+}
 function setWakeUI(state){
   const mini=document.getElementById('wl-mini'),row=document.getElementById('set-wl');
   if(mini){
@@ -2775,7 +2785,8 @@ function setWakeUI(state){
 function updateWakeUI(){
   if(wakeActive()){setWakeUI('on');return;}
   if(!wakeNeeded()){setWakeUI('off');return;}
-  if(wlGestureFail>=2){setWakeUI('blocked');return;}
+  if(IOS_PWA&&!wlVideoOn)wlPending=true;      /* 아이패드: 영상이 돌기 전까지는 늘 '터치 대기' */
+  if(!IOS_PWA&&wlGestureFail>=2){setWakeUI('blocked');return;}
   setWakeUI(wlPending?'pending':'off');
 }
 /* 폴백: 무음 오디오 트랙이 든 1×1px 반복 영상(NoSleep.js MIT 자산).
@@ -2789,27 +2800,40 @@ function ensureWlVideo(){
   v.id='wl-video';
   v.setAttribute('playsinline','');
   v.setAttribute('webkit-playsinline','');
-  v.loop=true;v.preload='auto';v.muted=false;
-  /* 화면 '안쪽'에 2×2px로 두고 opacity만 낮춥니다(아이패드는 화면 밖·안 보이는 영상을 안 쳐 줌) */
-  v.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:.001;pointer-events:none;z-index:0;background:#000';
-  const s1=document.createElement('source');s1.src=WL_WEBM;s1.type='video/webm';v.appendChild(s1);
-  const s2=document.createElement('source');s2.src=WL_MP4;s2.type='video/mp4';v.appendChild(s2);
+  v.setAttribute('aria-hidden','true');
+  v.loop=true;v.preload='auto';
+  /* muted=true면 iPadOS가 '재생 중'으로 쳐 주지 않고 화면을 꺼버립니다.
+     WL_MP4에는 무음 오디오 트랙이 들어 있어 소리는 안 나면서 재생 중으로 인식됩니다. */
+  v.muted=false;
+  /* 화면 '안쪽' 8×8px, z-index 최상단 → 다른 요소에 가려지지 않고 WebKit의 '보이는 영상' 검사도 통과.
+     opacity 1%라 눈에는 보이지 않습니다(화면 밖·display:none·가려진 영상은 iPadOS가 안 쳐 줌). */
+  v.style.cssText='position:fixed;left:0;top:0;width:8px;height:8px;opacity:0.01;pointer-events:none;z-index:9999;background:#000';
+  /* iPadOS 사파리는 MP4/AAC를 원래 재생하므로 MP4를 먼저, 지원 안 되는 브라우저는 WebM으로 폴백 */
+  const s1=document.createElement('source');s1.src=WL_MP4;s1.type='video/mp4';v.appendChild(s1);
+  const s2=document.createElement('source');s2.src=WL_WEBM;s2.type='video/webm';v.appendChild(s2);
   v.addEventListener('playing',()=>{wlVideoOn=true;wlPending=false;wlGestureFail=0;updateWakeUI();});
   v.addEventListener('pause',()=>{wlVideoOn=false;updateWakeUI();});
+  v.addEventListener('ended',()=>{wlVideoOn=false;updateWakeUI();});
   document.body.appendChild(v);
   wlVideo=v;
   return v;
 }
-function startWlVideo(){
-  if(!wakeNeeded())return;
+function startWlVideo(gesture){
+  if(!wakeNeeded()||document.visibilityState!=='visible')return;
   const v=ensureWlVideo();
   if(!v.paused&&!v.ended){wlVideoOn=true;updateWakeUI();return;}
   let pr;
-  try{pr=v.play();}catch(e){if(wakeNeeded())wlGestureFail++;updateWakeUI();return;}
+  try{pr=v.play();}catch(e){wlVideoFail(gesture);return;}
   if(pr&&typeof pr.then==='function'){
     pr.then(()=>{wlVideoOn=true;wlPending=false;wlGestureFail=0;updateWakeUI();})
-      .catch(()=>{wlVideoOn=false;if(wakeNeeded())wlGestureFail++;updateWakeUI();});
-  }
+      .catch(()=>{wlVideoFail(gesture);});
+  }else{wlVideoOn=true;wlPending=false;updateWakeUI();}
+}
+function wlVideoFail(gesture){
+  wlVideoOn=false;
+  if(wakeNeeded())wlPending=true;                 /* 다음 터치에 다시 시도 */
+  if(gesture&&wakeNeeded())wlGestureFail++;
+  updateWakeUI();
 }
 function stopWlVideo(){
   if(!wlVideo)return;
@@ -2817,38 +2841,51 @@ function stopWlVideo(){
   wlVideoOn=false;
 }
 function acquireWake(gesture){
-  if(wakeActive()){updateWakeUI();return;}
   if(!wakeNeeded()||document.visibilityState!=='visible'){updateWakeUI();return;}
-  if(!wakeLockUsable()){                       /* API 자체가 없는 브라우저 → 폴백 비디오 */
-    wlPending=true;
-    if(gesture)startWlVideo();
+  if(IOS_PWA){
+    /* iPadOS/iOS(특히 홈 화면 앱)는 센티넬을 받고도 2분 뒤 화면을 꺼버립니다.
+       → 센티넬은 '보조'로만 시도하고, 무음 영상은 반드시 함께 돌립니다. */
+    if(!wlVideoOn)startWlVideo(gesture);
+    requestWakeLock(gesture);
     updateWakeUI();
     return;
   }
-  if(wlBusy)return;
+  if(wakeActive()){updateWakeUI();return;}
+  if(!wakeLockUsable()){                       /* API 자체가 없는 브라우저 → 폴백 비디오 */
+    wlPending=true;
+    if(gesture)startWlVideo(gesture);
+    updateWakeUI();
+    return;
+  }
+  requestWakeLock(gesture);
+  updateWakeUI();
+}
+function requestWakeLock(gesture){
+  if(!wakeLockUsable()||wlSentinel||wlBusy)return;
   wlBusy=true;
   let settled=false,req=null;
+  const stopTimers=()=>{if(wlHang){clearTimeout(wlHang);wlHang=null;}if(wlHang2){clearTimeout(wlHang2);wlHang2=null;}};
   const fail=()=>{
     if(settled)return;
     settled=true;
-    if(wlHang){clearTimeout(wlHang);wlHang=null;}
-    if(wlHang2){clearTimeout(wlHang2);wlHang2=null;}
-    wlBusy=false;wlSentinel=null;wlPending=true;   /* 제스처 없이 부른 요청은 거부될 수 있음 */
-    if(gesture)startWlVideo();                     /* 같은 터치 안이면 여기서 폴백이 바로 재생됨 */
+    stopTimers();
+    wlBusy=false;wlPending=true;                   /* 제스처 없이 부른 요청은 거부될 수 있음 */
+    if(gesture)startWlVideo(true);                 /* 같은 터치 안이면 여기서 폴백이 바로 재생됨 */
     updateWakeUI();
   };
   try{req=navigator.wakeLock.request('screen');}catch(e){req=null;}
   if(!req||typeof req.then!=='function'){fail();return;}
   /* 아이패드 홈 화면 웹앱처럼 요청이 응답도 오류도 없이 멈춰 버리는 경우까지 대비:
      0.9초 안에 안 되면 폴백 비디오를 먼저 깨우고, 3초가 지나도 응답이 없으면 실패로 봅니다. */
-  wlHang=setTimeout(()=>{if(!settled&&gesture&&!wakeActive())startWlVideo();},900);
+  wlHang=setTimeout(()=>{if(!settled&&gesture&&!wakeActive())startWlVideo(true);},900);
   wlHang2=setTimeout(()=>{if(!settled)fail();},3000);
   req.then(s=>{
-    if(!wakeNeeded()){try{s.release();}catch(e){}return;}   /* 08:10을 넘겨 늦게 잡힌 것은 바로 돌려줌 */
-    if(wlSentinel){try{s.release();}catch(e){}return;}   /* 이미 잡힌 게 있으면 늦게 온 것은 돌려줌 */
+    /* 돌려줄 센티넬은 잡지 않고 바로 반납하되, 요청 중복 잠금은 반드시 풉니다 */
+    const bail=()=>{settled=true;stopTimers();wlBusy=false;updateWakeUI();};
+    if(!wakeNeeded()){try{s.release();}catch(e){}bail();return;}   /* 08:10을 넘겨 늦게 잡힌 것은 바로 돌려줌 */
+    if(wlSentinel){try{s.release();}catch(e){}bail();return;}      /* 이미 잡힌 게 있으면 늦게 온 것은 돌려줌 */
     settled=true;
-    if(wlHang){clearTimeout(wlHang);wlHang=null;}
-    if(wlHang2){clearTimeout(wlHang2);wlHang2=null;}
+    stopTimers();
     wlBusy=false;
     wlSentinel=s;
     wlPending=false;wlGestureFail=0;
@@ -2857,6 +2894,7 @@ function acquireWake(gesture){
       if(wakeNeeded()&&document.visibilityState==='visible')wlPending=true;   /* 다음 터치에 다시 */
       updateWakeUI();
     });
+    if(IOS_PWA&&!wlVideoOn)wlPending=true;   /* 센티넬이 와도 영상이 없으면 iPadOS는 화면을 끕니다 */
     updateWakeUI();
   }).catch(fail);
 }
@@ -2865,20 +2903,28 @@ function releaseWake(){
   if(wlHang){clearTimeout(wlHang);wlHang=null;}
   if(wlHang2){clearTimeout(wlHang2);wlHang2=null;}
   stopWlVideo();
-  wlPending=false;wlBusy=false;wlGestureFail=0;
+  wlPending=false;wlBusy=false;wlGestureFail=0;wlLastTry=0;wlLastLockTry=0;
   setWakeUI('off');
 }
 function tickWake(){
   try{
     if(!wakeNeeded()){
-      /* 08:10(또는 쉬는 날 양치 완료) → wake lock·폴백 비디오 모두 즉시 해제 */
-      if(wakeActive()||wlPending)releaseWake();
+      /* 08:10(또는 쉬는 날 양치 완료·저녁 루틴 완료) → wake lock·폴백 비디오 모두 즉시 해제 */
+      if(wakeActive()||wlSentinel||wlPending)releaseWake();
       else setWakeUI('off');
       return;
     }
-    if(wakeActive()){updateWakeUI();return;}
     if(document.visibilityState!=='visible'){updateWakeUI();return;}
     const now=Date.now();
+    if(IOS_PWA){
+      /* 영상이 꺼져 있으면(오토플레이 차단·잠김·앱 전환) 10초마다 다시 시도 */
+      if(!wlVideoOn&&now-wlLastTry>=10000){wlLastTry=now;startWlVideo(false);}
+      if(now-wlLastLockTry>=20000){wlLastLockTry=now;requestWakeLock(false);}   /* 보조 센티넬 */
+      if(!wlVideoOn)wlPending=true;
+      updateWakeUI();
+      return;
+    }
+    if(wakeActive()){updateWakeUI();return;}
     if(now-wlLastTry>=20000){wlLastTry=now;acquireWake(false);}   /* 자동 재시도는 20초에 한 번만 */
     else updateWakeUI();
   }catch(e){}
@@ -2887,16 +2933,24 @@ function tickWake(){
    '화면 유지' 버튼을 찾아 누를 필요가 없습니다. */
 function wakeOnGesture(){
   try{
-    if(!wakeNeeded()||document.visibilityState!=='visible'||wakeActive())return;
-    if(wlBusy){startWlVideo();return;}    /* 이미 요청이 진행 중이면 그 사이 폴백부터 깨웁니다 */
+    if(!wakeNeeded()||document.visibilityState!=='visible')return;
+    if(IOS_PWA){
+      if(!wlVideoOn)startWlVideo(true);   /* 터치 안이므로 소리 트랙이 있어도 재생 허용 */
+      requestWakeLock(true);              /* 센티넬은 보조 */
+      updateWakeUI();
+      return;
+    }
+    if(wakeActive())return;
+    if(wlBusy){startWlVideo(true);return;}    /* 이미 요청이 진행 중이면 그 사이 폴백부터 깨웁니다 */
     acquireWake(true);
   }catch(e){}
 }
 document.addEventListener('pointerdown',wakeOnGesture,{passive:true});
 document.addEventListener('touchstart',wakeOnGesture,{passive:true});
+document.addEventListener('click',wakeOnGesture,{passive:true});
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState!=='visible')return;
-  wlLastTry=0;                                          /* 앱으로 돌아오면 재시도 간격 없이 바로 */
+  wlLastTry=0;wlLastLockTry=0;                          /* 앱으로 돌아오면 재시도 간격 없이 바로 */
   tickWake();
 });
 
