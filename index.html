@@ -341,12 +341,11 @@ body.dex-open #progress-card{display:none}
 .pc-card{position:relative;flex:0 0 auto;width:372px;height:516px;display:flex;flex-direction:column;gap:6px;padding:10px;
   border:4px solid var(--ink);border-radius:18px;overflow:hidden;
   box-shadow:0 13px 0 rgba(20,28,40,.30),0 0 0 4px rgba(255,255,255,.82),0 20px 38px rgba(20,28,40,.34)}
-/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 (넓은 안개 대신 얇은 광택 띠만 지나가게 해 글씨·배지를 가리지 않는다) */
+/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 (셔머는 글자·배지 아래층, 그림 창 위에는 그림 전용 광택을 따로 둔다) */
 .pc-card.front{background:linear-gradient(158deg,var(--pc1) 0%,var(--pc2) 48%,#fff 100%)}
-.pc-card.front::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.10) 44%,rgba(255,255,255,.52) 48%,rgba(255,255,255,.10) 52%,rgba(255,255,255,0) 56%,
-    rgba(255,255,255,0) 68%,rgba(255,255,255,.26) 71%,rgba(255,255,255,0) 74%);
-  background-size:240% 240%;animation:pcShine 6.5s linear infinite;mix-blend-mode:screen;opacity:.9}
+.pc-card.front::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,255,255,.30) 42%,rgba(255,255,255,0) 56%,rgba(255,255,255,.20) 70%,rgba(255,255,255,0) 84%);
+  background-size:280% 280%;animation:pcShine 7s linear infinite;mix-blend-mode:screen;opacity:.6}
 @keyframes pcShine{0%{background-position:135% -20%}100%{background-position:-35% 120%}}
 @media (prefers-reduced-motion:reduce){.pc-card.front::before{animation:none}}
 .pc-hd{position:relative;z-index:2;flex:0 0 auto;display:flex;flex-direction:column;gap:2px}
@@ -374,6 +373,16 @@ body.dex-open #progress-card{display:none}
   background:radial-gradient(circle at 50% 32%,#fff 0%,var(--pc2) 58%,var(--pc1) 100%);
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.88)}
 .pc-art img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 6px 7px rgba(20,28,40,.20))}
+/* 그림 창 전용 홀로그램 광택 — 카드에서 글자가 없는 곳이라 셔머가 지나가도 글씨가 상하지 않는다 */
+.pc-art::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.50) 46%,rgba(255,255,255,.16) 52%,rgba(255,255,255,0) 58%);
+  background-size:260% 260%;animation:pcShine 6.5s linear infinite;mix-blend-mode:screen;opacity:.85}
+.pc-card.rc-rare .pc-art::after{background:linear-gradient(115deg,rgba(255,255,255,0) 34%,rgba(222,235,252,.55) 42%,
+  rgba(255,255,255,.72) 47%,rgba(198,218,242,.45) 52%,rgba(255,255,255,0) 62%);
+  background-size:240% 240%;animation-duration:5.2s;opacity:.95}
+.pc-card.rc-legend .pc-art::after{background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(255,226,140,.5) 37%,
+  rgba(140,238,255,.55) 42%,rgba(255,150,228,.5) 47%,rgba(158,255,198,.5) 52%,rgba(255,231,150,.42) 57%,rgba(255,255,255,0) 66%);
+  background-size:220% 220%;animation-duration:4.2s;opacity:.95}
 .pc-evo{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;gap:6px;min-height:31px;
   background:rgba(255,255,255,.94);border:2.5px solid var(--ink);border-radius:10px;padding:3px 8px}
 .pc-evo .lb{flex:0 0 auto;font-size:10px;font-weight:900;color:#63718a}
@@ -425,12 +434,12 @@ body.dex-open #progress-card{display:none}
 @keyframes pcTwinkle{0%,100%{opacity:0;transform:scale(.5) rotate(-8deg)}
   22%{opacity:1;transform:scale(1.14) rotate(0deg)}42%{opacity:.2;transform:scale(.72) rotate(3deg)}
   64%{opacity:.95;transform:scale(1.05) rotate(-3deg)}84%{opacity:.15;transform:scale(.8)}}
-.pc-fx i:nth-child(1){left:2.5%;top:11%;font-size:15px;animation-delay:0s}
-.pc-fx i:nth-child(2){right:2.5%;top:24%;font-size:11px;animation-delay:.45s}
-.pc-fx i:nth-child(3){left:2.5%;top:44%;font-size:10px;animation-delay:.9s}
-.pc-fx i:nth-child(4){right:2.5%;top:60%;font-size:14px;animation-delay:1.35s}
-.pc-fx i:nth-child(5){left:2.5%;top:78%;font-size:12px;animation-delay:1.8s}
-.pc-fx i:nth-child(6){right:4%;bottom:5%;font-size:13px;animation-delay:2.25s}
+.pc-fx i:nth-child(1){left:7%;top:18%;font-size:17px;animation-delay:0s}
+.pc-fx i:nth-child(2){right:7%;top:27%;font-size:12px;animation-delay:.45s}
+.pc-fx i:nth-child(3){left:7%;top:46%;font-size:11px;animation-delay:.9s}
+.pc-fx i:nth-child(4){right:7%;top:58%;font-size:16px;animation-delay:1.35s}
+.pc-fx i:nth-child(5){left:7%;top:70%;font-size:14px;animation-delay:1.8s}
+.pc-fx i:nth-child(6){right:9%;bottom:9%;font-size:15px;animation-delay:2.25s}
 .pc-fx.fx-rare i{color:#EAF1FA;
   text-shadow:0 0 1px #5C6E86,0 1px 0 #6B7C93,0 0 8px #A9BCD4,0 0 14px #D6E4F5}
 .pc-fx.fx-legend i{color:#FFF6C4;text-shadow:0 0 1px #A9760A,0 1px 0 #B8860B,0 0 9px #FFC93C,0 0 16px #FF8BD8,0 0 22px #FFD54A}
@@ -445,9 +454,9 @@ body.dex-open #progress-card{display:none}
   -webkit-mask-composite:xor;mask-composite:exclude;animation:rcMetal 7s linear infinite}
 @keyframes rcMetal{0%{background-position:0% 0%}100%{background-position:200% 200%}}
 @keyframes rcSilverBreathe{0%,100%{opacity:.85}50%{opacity:1}}
-.pc-card.rc-rare::before{background:linear-gradient(115deg,rgba(255,255,255,0) 38%,rgba(236,244,255,.18) 42%,
-  rgba(255,255,255,.62) 46%,rgba(214,230,250,.55) 49%,rgba(255,255,255,.14) 53%,rgba(255,255,255,0) 58%);
-  background-size:240% 240%;animation:pcShine 5.2s linear infinite;mix-blend-mode:screen;opacity:.95}
+.pc-card.rc-rare::before{background:linear-gradient(115deg,rgba(255,255,255,0) 24%,rgba(226,238,253,.32) 36%,
+  rgba(255,255,255,.42) 44%,rgba(205,223,245,.28) 52%,rgba(255,255,255,0) 68%);
+  background-size:260% 260%;animation:pcShine 5.2s linear infinite;mix-blend-mode:screen;opacity:.7}
 .pc-card.rc-legend{box-shadow:0 13px 0 rgba(20,28,40,.32),0 0 0 4px rgba(255,255,255,.95),
   inset 0 0 0 4px #FFE07A,inset 0 0 0 5px #D9A21B,
   0 0 26px rgba(255,203,71,.95),0 0 46px rgba(255,140,215,.5),0 20px 40px rgba(20,28,40,.36)}
@@ -457,10 +466,11 @@ body.dex-open #progress-card{display:none}
   mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;animation:rcGoldGlow 4.6s ease-in-out infinite}
 @keyframes rcGoldGlow{0%,100%{opacity:.9;filter:brightness(1)}50%{opacity:1;filter:brightness(1.14) saturate(1.15)}}
-.pc-card.rc-legend::before{background:linear-gradient(115deg,rgba(255,255,255,0) 34%,rgba(255,226,140,.30) 39%,
-  rgba(140,238,255,.5) 43%,rgba(255,150,228,.5) 47%,rgba(158,255,198,.45) 51%,rgba(255,231,150,.4) 55%,rgba(255,255,255,0) 62%);
-  background-size:220% 220%;animation:pcShine 4.2s linear infinite;mix-blend-mode:screen;opacity:.95}
+.pc-card.rc-legend::before{background:linear-gradient(115deg,rgba(255,255,255,0) 20%,rgba(255,226,140,.26) 30%,
+  rgba(140,238,255,.28) 40%,rgba(255,150,228,.26) 50%,rgba(158,255,198,.26) 60%,rgba(255,255,255,0) 74%);
+  background-size:240% 240%;animation:pcShine 4.2s linear infinite;mix-blend-mode:screen;opacity:.55}
 @media (prefers-reduced-motion:reduce){.pc-fx i{animation:none;opacity:.9}
+  .pc-card.front::before,.pc-art::after{animation:none}
   .pc-card.rc-rare::after,.pc-card.rc-legend::after{animation:none}}
 
 /* ── ⚔️ 히든 포켓몬 배틀 ───────────────── */
