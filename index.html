@@ -1594,7 +1594,7 @@ function buildTasks(){
     let inner=`<div class="num">${i+1}</div>
       <div class="active-bubble">같이 하자!</div>
       <span class="poke-mini" aria-hidden="true"></span>
-      <img class="task-img" src="assets/${t.img}.png" alt="${t.label}">
+      <img class="task-img" src="assets/${t.img}.png?v=20" alt="${t.label}">
       ${t.timer?`<div class="timer" id="tm-${t.k}">
         <div class="t-time" id="tt-${t.k}">${fmtSec(total)}</div>
         <div class="t-btns">
