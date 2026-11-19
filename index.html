@@ -175,10 +175,10 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
   50%{box-shadow:0 4px 0 rgba(34,43,56,.30),0 0 0 11px rgba(255,229,138,.12)}}
 
 /* 우: 날씨 박스 — 1)지역·링크·미세 2)현재 3)시간대 4)팁 */
-#weather-card{width:508px;flex:0 0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:18px}
+#weather-card{width:calc((100% - 36px)/5*2 + 9px);flex:0 0 auto;display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:6px 8px;border-radius:18px}
 /* v25: 헤더 왼쪽에 포켓몬 센터 버튼이 늘어난 만큼, 좁은 화면(1024)에서는 날씨 카드를 살짝 줄이고 시계도 함께 줄인다 */
 @media (max-width:1120px){
-  #weather-card{width:420px}
+  /* v41: 날씨 카드 폭은 위 calc 규칙이 두 화면 폭 모두에서 2칸 폭으로 맞춘다 */
   #clock .d{font-size:60px}
   #clock .colon{font-size:51px}
   #clock .ap{font-size:18px;margin-bottom:10px}
@@ -1018,6 +1018,45 @@ body.eve #p-msg{color:#B4622A}
   .af-text.af-long{font-size:18px;letter-spacing:-.6px}
   .af-icon{font-size:28px}
 }
+
+/* ══════════════ v41: 내 파트너 포켓몬 (시안 A — 시계 옆, 이름표 없음) ══════════════ */
+#hc-main{display:flex;align-items:flex-end;justify-content:center;gap:12px;min-width:0}
+#hc-clock{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+#partner-a{display:none;flex:0 0 auto;align-items:flex-end;justify-content:center;position:relative}
+#partner-a.on{display:flex}
+#partner-a img{width:96px;height:96px;object-fit:contain;display:block;
+  filter:drop-shadow(0 7px 7px rgba(18,26,38,.32));animation:pbFloat 3.4s ease-in-out infinite}
+@keyframes pbFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-1.2deg)}}
+/* ── 도감 카드의 파트너 버튼 ── */
+.pc-actions{display:flex;flex-direction:column;align-items:center;gap:7px}
+.pc-partner{font-family:inherit;font-weight:900;font-size:13.5px;color:#5A2A00;cursor:pointer;
+  background:linear-gradient(180deg,#FFE58A,#FFC53D);border:3px solid var(--ink);border-radius:12px;
+  padding:6px 16px;box-shadow:0 4px 0 rgba(34,43,56,.28);letter-spacing:-.4px}
+.pc-partner:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(34,43,56,.28)}
+.pc-partner.on{background:linear-gradient(180deg,#FFD3E6,#FF84B4);color:#4A0A24}
+.pc-partner.hidden{display:none}
+.pc-foot .pcm{flex:0 0 auto;font-size:9.5px;font-weight:900;color:#9B2B58;
+  background:#FFE4F0;border:2px solid #D9598C;border-radius:99px;padding:0 6px;line-height:1.6}
+.pk-mine{position:absolute;top:4px;left:5px;background:linear-gradient(180deg,#FFD3E6,#FF84B4);
+  border:2px solid var(--ink);color:#4A0A24;border-radius:99px;font-weight:900;font-size:10px;
+  padding:0 6px;line-height:1.6}
+/* ── 좁아진 날씨 카드 안쪽을 넘침 없이 맞춘다 (v41)
+   최고·최저 숫자는 크게(20px) 그대로 두고, 🔄 실시간 버튼을 그 아래로 내려 한 줄 폭을 비운다.
+   줄 높이는 #w-now 의 min-height(52px) 안에 들어간다(22+2+17=41px). */
+#w-now{gap:6px}
+#w-side{flex-direction:column;align-items:flex-end;gap:2px}
+@media (max-width:1120px){
+  #partner-a img{width:86px;height:86px}
+  #hc-main{gap:9px}
+  /* 1024 폭: 지역 이름·링크·미세 배지까지 한 줄에 들어가도록 조인다 */
+  #w-top{gap:2px}
+  #w-dust-chips{gap:3px}
+  .w-link{font-size:10px;padding:0 4px}
+  .dust-pill{font-size:9.5px;padding:0 4px}
+  #w-now{gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  #partner-a img{animation:none}}
 </style>
 </head>
 <body>
@@ -1056,8 +1095,14 @@ body.eve #p-msg{color:#B4622A}
     <div id="hc">
       <div id="song-bar" class="hidden"><button id="btn-song-stop" type="button" title="재생 중인 노래 멈추기">🎵 노래 정지</button></div>
       <div id="song-prompt" class="hidden"><button id="btn-song-play" type="button">🎵 출발 노래 재생하기</button></div>
-      <div id="date-line"></div>
-      <div id="clock"></div>
+      <!-- v41 시안 A: 왼쪽에 날짜·시계, 오른쪽에 내 파트너가 나란히 선다 (이름표 없음) -->
+      <div id="hc-main">
+        <div id="hc-clock">
+          <div id="date-line"></div>
+          <div id="clock"></div>
+        </div>
+        <div id="partner-a" aria-hidden="true"></div>
+      </div>
       <button id="wl-mini" type="button" class="hidden" aria-live="polite">💡 화면 유지 중</button>
     </div>
 
@@ -1168,7 +1213,10 @@ body.eve #p-msg{color:#B4622A}
 <div id="modal-card" class="overlay hidden">
   <div class="pc-shell">
     <div class="pc-card" id="pc-card" role="dialog" aria-label="포켓몬 카드"></div>
-    <button type="button" class="pc-x" id="pc-card-close" aria-label="카드 닫기">✕ 닫기</button>
+    <div class="pc-actions">
+      <button type="button" class="pc-partner hidden" id="pc-partner" data-id="">⭐ 파트너로 정하기</button>
+      <button type="button" class="pc-x" id="pc-card-close" aria-label="카드 닫기">✕ 닫기</button>
+    </div>
   </div>
 </div>
 
@@ -1633,6 +1681,11 @@ S.targetId=(S.targetId!=null&&POKEMON.some(p=>p.id===Number(S.targetId)))?Number
 if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
 /* ★ 오늘의 긍정 확언: 보호자가 직접 넣은 문장(없으면 빈 문자열 → 매일 바뀌는 100개 문구) */
 if(typeof S.settings.customAffirmation!=='string')S.settings.customAffirmation='';
+/* ═══ v41: 내 파트너 포켓몬 ═══
+   도감에서 잡은 포켓몬 하나를 골라 두면 루틴 화면 시계 옆에 그 포켓몬이 선다.
+   잡은 적 없는 포켓몬 id가 남아 있으면(옛 기록·지워진 도감) null로 정리한다. */
+S.partnerId=(S.partnerId!=null&&POKEMON.some(p=>p.id===Number(S.partnerId))
+  &&S.caught.some(c=>Number(c.id)===Number(S.partnerId)))?Number(S.partnerId):null;
 /* 🔒 도감 앞 몬스터볼 잠금: 이 값이 없는 옛 기록은 잠금(false) — 새로고침해도 아이가 열 수 없다 */
 function battleAllowed(){return !!(S.settings&&S.settings.battleEnabled===true);}
 if(typeof S.settings.battleEnabled!=='boolean')S.settings.battleEnabled=false;
@@ -3847,6 +3900,7 @@ function renderPoke(){
     card.dataset.id=p.id;
     card.title=got.length?`${p.name} 카드 보기`:'아직 만나지 못한 포켓몬 — 카드 뒷면';
     card.innerHTML=`<div class="pk-no">No.${p.no}</div>
+      ${isPartner(p.id)?'<div class="pk-mine">💖 파트너</div>':''}
       ${(!got.length&&p.id===next.id)?'<div class="pk-next">다음 목표</div>':''}
       <img src="assets/pokemon/${p.id}.png" alt="${p.name}" loading="lazy" decoding="async">
       <div class="pk-name">${got.length?p.name:'???'}</div>
@@ -3900,7 +3954,7 @@ function pokeCardFront(p,got){
     <div class="pc-art"><img src="assets/pokemon/${p.id}.png" alt="${p.name}"></div>
     <div class="pc-evo"><span class="lb">진화 단계</span><span class="st">${p.stage}</span>${p.line?`<span class="ln">${p.line}</span>`:''}</div>
     <div class="pc-stats">${bar('HP',p.hp,'hp')}${bar('공격',p.atk,'atk')}${bar('방어',p.def,'def')}</div>
-    <div class="pc-foot"><span class="pcf-l">${got.length>1?`🏅 ${got.length}마리 포획 · 최근 ${last}`:`🏅 포획 완료!${last?' · '+last:''}`}</span><span class="pcf-up${maxLv?' max':''}">${maxLv?'👑 MAX':'🍬 강화 가능'}</span></div>`;
+    <div class="pc-foot">${isPartner(p.id)?'<span class="pcm">💖 내 파트너</span>':''}<span class="pcf-l">${got.length>1?`🏅 ${got.length}마리 포획 · 최근 ${last}`:`🏅 포획 완료!${last?' · '+last:''}`}</span><span class="pcf-up${maxLv?' max':''}">${maxLv?'👑 MAX':'🍬 강화 가능'}</span></div>`;
 }
 function pokeCardBack(){
   return `<div class="pcb-frame">
@@ -3910,6 +3964,32 @@ function pokeCardBack(){
       <div class="pcb-t2">"EXP를 모아 포획하면 앞면을 볼 수 있어요!"</div>
       <div class="pcb-no">No.???</div>
     </div>`;
+}
+/* ══════════════ v41: 내 파트너 포켓몬 ══════════════ */
+function partnerInfo(){
+  if(S.partnerId==null)return null;
+  return POKEMON.find(x=>x.id===Number(S.partnerId))||null;
+}
+function isPartner(id){return S.partnerId!=null&&Number(S.partnerId)===Number(id);}
+let lastPartnerKey='';
+function renderPartner(force){
+  const p=partnerInfo();
+  const key=p?String(p.id):'-';
+  if(!force&&key===lastPartnerKey)return;
+  lastPartnerKey=key;
+  const a=document.getElementById('partner-a');
+  if(!a)return;
+  if(!p){a.innerHTML='';a.classList.remove('on');return;}
+  a.innerHTML=`<img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}">`;
+  a.classList.add('on');
+}
+/* 파트너 정하기 / 해제 — 도감 카드의 버튼에서 부른다. 다른 포켓몬으로 바로 바꿀 수 있다. */
+function togglePartner(id){
+  const p=POKEMON.find(x=>x.id===Number(id));
+  if(!p)return;
+  if(!(caughtDates()[p.id]||[]).length)return;      /* 잡은 포켓몬만 파트너가 될 수 있다 */
+  S.partnerId=isPartner(p.id)?null:p.id;
+  save();renderPartner(true);renderPoke();openPokeCard(p.id);
 }
 function openPokeCard(id){
   const p=POKEMON.find(x=>x.id===Number(id));
@@ -3921,6 +4001,16 @@ function openPokeCard(id){
   el.style.setProperty('--pc1',g[0]);el.style.setProperty('--pc2',g[1]);
   el.setAttribute('aria-label',got.length?`${p.name} 포켓몬 카드`:'아직 만나지 못한 포켓몬 카드 뒷면');
   el.innerHTML=got.length?pokeCardFront(p,got):pokeCardBack();
+  const pb=document.getElementById('pc-partner');
+  if(pb){
+    const can=got.length>0;                       /* 잡은 포켓몬만 파트너로 정할 수 있다 */
+    const on=can&&isPartner(p.id);
+    pb.dataset.id=p.id;
+    pb.classList.toggle('hidden',!can);
+    pb.classList.toggle('on',on);
+    pb.textContent=on?'💖 파트너 중!':'⭐ 파트너로 정하기';
+    pb.title=on?'누르면 파트너를 해제해요':'이 포켓몬을 루틴 화면 시계 옆에 세워요';
+  }
   document.getElementById('modal-card').classList.remove('hidden');
 }
 function closePokeCard(){document.getElementById('modal-card').classList.add('hidden');}
@@ -3930,6 +4020,10 @@ document.getElementById('pk-grid').addEventListener('click',e=>{
   if(c&&c.dataset.id)openPokeCard(c.dataset.id);
 });
 document.getElementById('pc-card-close').addEventListener('click',closePokeCard);
+document.getElementById('pc-partner').addEventListener('click',e=>{
+  const id=Number(e.currentTarget.dataset.id);
+  if(id)togglePartner(id);
+});
 document.getElementById('modal-card').addEventListener('click',e=>{
   if(e.target&&e.target.id==='modal-card')closePokeCard();     /* 바깥을 눌러도 닫힘 */
 });
@@ -4178,6 +4272,7 @@ function buildBackup(){
     dexTotal:POKEMON.length,
     caught:S.caught.map(c=>({id:c.id, date:c.date})),
     targetId:S.targetId,
+    partnerId:S.partnerId,        /* 💖 내 파트너(v41) */
     today:todaySnapshot(),
     settings:Object.assign(defaultSettings(),S.settings),
     /* 🏥 포켓몬 센터 — 모은 사탕·오늘 도운 집안일·포켓몬 레벨도 함께 담는다 */
@@ -4325,12 +4420,16 @@ function parseBackup(raw){
   let targetId=null;
   const tid=Number(raw.targetId);
   if(raw.targetId!=null&&ids.has(tid)&&!caught.some(c=>c.id===tid))targetId=tid;
-  return {v:1,days,caught,targetId,settings,candy,choresDone,pokeLv,skipped};
+  /* 💖 내 파트너 — 잡은 포켓몬 id만 되살린다 */
+  const pid=Number(raw.partnerId);
+  const partnerId=(raw.partnerId!=null&&ids.has(pid)&&caught.some(c=>c.id===pid))?pid:null;
+  return {v:1,days,caught,targetId,partnerId,settings,candy,choresDone,pokeLv,skipped};
 }
 function applyBackup(r){
   try{localStorage.setItem(PRE_RESTORE_KEY,JSON.stringify(S));}catch(e){}   /* 되돌릴 수 있게 복원 전 상태 보관 */
   S={v:1,days:r.days,caught:r.caught,targetId:(r.targetId!=null)?r.targetId:null,settings:r.settings,
-     candy:(r.candy>0)?Math.floor(r.candy):0,choresDone:r.choresDone||{},pokeLv:r.pokeLv||{}};
+     candy:(r.candy>0)?Math.floor(r.candy):0,choresDone:r.choresDone||{},pokeLv:r.pokeLv||{},
+     partnerId:(r.partnerId!=null)?r.partnerId:null};
   day(todayKey());
   recalcExp(day(todayKey()));
   save();
@@ -4338,6 +4437,7 @@ function applyBackup(r){
   renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();renderTimer();renderRestSettings();tickWake();applyBallLock();applyCenterVisible();
   renderCandyBadge();renderCenter();buildChoreRows();          /* 🏥 포켓몬 센터(사탕·집안일·레벨)도 바로 맞춘다 */
   renderAffirm();                                                /* ★ 오늘의 긍정 확언도 복원한 설정대로 */
+  renderPartner(true);                                           /* 💖 내 파트너도 복원한 내용대로 */
   const sm=document.getElementById('modal-settings');            /* 설정을 열어 둔 채 복원해도 칸이 바로 맞춰지게 */
   if(sm&&!sm.classList.contains('hidden')){renderSettingsMissedTasks();buildStudyRows();syncAffirmSetting();}
   if(S.settings.sound)unlockAudio();
@@ -5142,7 +5242,7 @@ document.getElementById('btn-reset-day').addEventListener('click',()=>{
 });
 document.getElementById('btn-reset-dex').addEventListener('click',()=>{
   if(confirm('잡은 포켓몬 도감을 모두 지울까요?')){
-    S.caught=[];save();renderPoke();renderExp();
+    S.caught=[];S.partnerId=null;save();renderPoke();renderExp();renderPartner(true);
   }
 });
 document.getElementById('btn-close-settings').addEventListener('click',()=>setModal.classList.add('hidden'));
@@ -5362,6 +5462,7 @@ function renderAffirm(){
     void el.offsetWidth;
     el.classList.add('af-pop');
   }
+  renderPartner();                              /* 아침↔저녁 전환 때도 파트너를 다시 확인 */
 }
 
 /* ── ⚙️ 보호자용 설정 · ★ 오늘의 긍정 확언 ── */
@@ -5410,6 +5511,7 @@ buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
 renderCandyBadge();      /* 🍬 모은 사탕 배지(헤더 포켓몬 센터 버튼) */
 renderAffirm();          /* ✨ 오늘의 긍정 확언(v40) */
+renderPartner(true);     /* 💖 내 파트너 포켓몬(v41) */
 updateModeChips();
 loadDoneBuffer();   /* v38: 할 일 완료 효과음을 미리 디코드해 두기(터치 순간 바로 울리도록) */
 initWeather();
