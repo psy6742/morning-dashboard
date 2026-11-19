@@ -425,8 +425,10 @@ body.dex-open #affirm-card{display:none}
 .pc-card{position:relative;flex:0 0 auto;width:372px;height:516px;display:flex;flex-direction:column;gap:6px;padding:10px;
   border:4px solid var(--ink);border-radius:18px;overflow:hidden;
   box-shadow:0 13px 0 rgba(20,28,40,.30),0 0 0 4px rgba(255,255,255,.82),0 20px 38px rgba(20,28,40,.34)}
-/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 (셔머는 글자·배지 아래층, 그림 창 위에는 그림 전용 광택을 따로 둔다) */
-.pc-card.front{background:linear-gradient(158deg,var(--pc1) 0%,var(--pc2) 48%,#fff 100%)}
+/* 앞면 — 타입 색 그라데이션 + 홀로그램 셔머 (셔머는 글자·배지 아래층, 그림 창 위에는 그림 전용 광택을 따로 둔다)
+   v42.1: 앞면 카드도 뒷면 카드(372×516)와 같은 가로·세로 크기이며, 안쪽 여백을 줄여 그림 창이
+   카드 테두리 가까이까지 차도록 맞췄다(뒷면 그림과 같은 시원한 느낌). */
+.pc-card.front{background:linear-gradient(158deg,var(--pc1) 0%,var(--pc2) 48%,#fff 100%);padding:8px;gap:5px}
 .pc-card.front::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(115deg,rgba(255,255,255,0) 28%,rgba(255,255,255,.30) 42%,rgba(255,255,255,0) 56%,rgba(255,255,255,.20) 70%,rgba(255,255,255,0) 84%);
   background-size:280% 280%;animation:pcShine 7s linear infinite;mix-blend-mode:screen;opacity:.6}
@@ -461,7 +463,7 @@ body.dex-open #affirm-card{display:none}
   display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 32%,#fff 0%,var(--pc2) 58%,var(--pc1) 100%);
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.88)}
-.pc-art img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 6px 7px rgba(20,28,40,.20))}
+.pc-art img{width:90%;height:90%;object-fit:contain;filter:drop-shadow(0 6px 7px rgba(20,28,40,.20))}
 /* 그림 창 전용 홀로그램 광택 — 카드에서 글자가 없는 곳이라 셔머가 지나가도 글씨가 상하지 않는다 */
 .pc-art::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
   background:linear-gradient(115deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.50) 46%,rgba(255,255,255,.16) 52%,rgba(255,255,255,0) 58%);
@@ -3999,7 +4001,7 @@ function openPokeCard(id){
     pb.dataset.id=p.id;
     pb.classList.toggle('hidden',!can);
     pb.classList.toggle('on',on);
-    pb.textContent=on?'💖 파트너 중!':'⭐ 파트너로 정하기';
+    pb.textContent=on?'💖 너로 정했다!':'⭐ 파트너로 정하기';
     pb.title=on?'누르면 파트너를 해제해요':'이 포켓몬을 루틴 화면 시계 옆에 세워요';
   }
   document.getElementById('modal-card').classList.remove('hidden');
