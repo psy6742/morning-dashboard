@@ -2557,6 +2557,7 @@ function unlockAudio(){
     if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended')AC.resume();
     soundUnlocked=true;S.settings.sound=true;save();updateSoundBtn();
+    if(!doneBuf)loadDoneBuffer();        /* v38: 이 터치에서 피카츄 효과음 버퍼도 준비 */
     primeYouTube();primeBuzz();primeShowerYt();
     try{wakeOnGesture();}catch(e){}       /* 소리 켜는 터치도 제스처 → 화면 유지 재시도 */
     return true;
@@ -2732,21 +2733,103 @@ function updateSoundBtn(){
 /* ── 할 일 완료 효과음 (assets/task-done.mp3) ─────────────────
    할 일이 '완료'로 바뀔 때만 1회 재생합니다(완료 해제는 무음).
    소리가 아직 안 깨어 있는 상태에서 바로 눌러도 들리도록, 같은 터치(사용자 제스처) 안에서
-   오디오를 깨운 뒤 재생합니다. 연속 터치 시에는 처음으로 되감아 다시 재생합니다. */
+   오디오를 깨운 뒤 재생합니다. 연속 터치 시에는 앞소리를 아주 짧게 줄여 끊고 다시 재생합니다.
+
+   v38: <audio> 대신 **미리 디코드해 둔 Web Audio 버퍼**로 재생합니다.
+   아이패드 사파리에서는 <audio>가 화면 유지용 무음 영상(wlVideo)·유튜브와 같은
+   HTMLMediaElement 오디오 통로를 다투기 때문에, 다른 소리가 나는 순간이나 첫 디코드 때
+   앞뒤가 잘려 '짧게 끊기는' 일이 있었습니다. Web Audio는 그 영상/유튜브와 따로 섞여
+   재생되므로 다른 소리가 돌고 있어도 끝까지 깨끗하게 들립니다.
+   버퍼가 아직 준비되지 않았거나 Web Audio를 못 쓰는 환경(file:// 등)에서만
+   예전 <audio> 폴백을 씁니다. */
 const DONE_SOUND_SRC='assets/task-done.mp3';
-let doneSnd=null;
+let doneSnd=null;                 /* 폴백 전용 <audio> */
+let doneBuf=null;                 /* 디코드해 둔 피카츄 효과음 AudioBuffer */
+let doneBufReq=null;              /* 디코드 진행 중인 Promise */
+let doneSrc=null,doneGain=null;   /* 지금 울리는 소리(연속 터치 때 부드럽게 끊고 새로 재생) */
 function doneAudio(){
   if(!doneSnd){
     try{doneSnd=new Audio(DONE_SOUND_SRC);doneSnd.preload='auto';doneSnd.volume=1;}catch(e){doneSnd=null;}
   }
   return doneSnd;
 }
+/* AudioContext는 페이지 로드 때 한 번만 만들고, 터치(제스처)에서 resume 합니다 */
+function doneAC(){
+  try{
+    if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  }catch(e){AC=null;}
+  return AC;
+}
+function decodeDoneData(ac,ab){
+  return new Promise((resolve,reject)=>{
+    let settled=false;
+    const ok=b=>{if(!settled){settled=true;resolve(b);}};
+    const ng=e=>{if(!settled){settled=true;reject(e||new Error('decode failed'));}};
+    try{
+      const p=ac.decodeAudioData(ab,ok,ng);
+      if(p&&p.then)p.then(ok,ng);      /* 최신 사파리는 Promise도 돌려준다 */
+    }catch(e){ng(e);}
+  });
+}
+/* 같은 출처의 mp3를 받아 한 번만 디코드해 둡니다(이후 재생은 메모리에서 바로). */
+function loadDoneBuffer(){
+  if(doneBuf)return Promise.resolve(doneBuf);
+  if(doneBufReq)return doneBufReq;
+  const ac=doneAC();
+  if(!ac||!ac.decodeAudioData||typeof fetch!=='function'){doneAudio();return Promise.resolve(null);}
+  let req;
+  try{req=fetch(DONE_SOUND_SRC,{cache:'force-cache'});}catch(e){req=Promise.reject(e);}
+  doneBufReq=req
+    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();})
+    .then(ab=>decodeDoneData(ac,ab))
+    .then(buf=>{
+      if(!buf||!buf.length||!isFinite(buf.duration)||buf.duration<=0)throw new Error('empty buffer');
+      doneBuf=buf;doneBufReq=null;
+      return buf;
+    })
+    .catch(err=>{doneBufReq=null;doneAudio();   /* 실패하면 예전 <audio>를 미리 데워 둔다 */
+      try{console.warn('task-done.mp3 Web Audio 버퍼 준비 실패 → <audio> 폴백',err);}catch(e){};
+      return null;});
+  return doneBufReq;
+}
+/* 버퍼 재생: 터치마다 새 소스를 만들어 바로 시작(앞소리와 겹치지 않게 짧게 페이드아웃) */
+function playDoneBuffer(ac){
+  const t=ac.currentTime||0;
+  const prevSrc=doneSrc,prevGain=doneGain;
+  const g=ac.createGain();
+  try{g.gain.setValueAtTime(1,t);}catch(e){}
+  g.connect(ac.destination);
+  const s=ac.createBufferSource();
+  s.buffer=doneBuf;
+  s.connect(g);
+  s.onended=()=>{
+    try{s.disconnect();g.disconnect();}catch(e){}
+    if(doneSrc===s){doneSrc=null;doneGain=null;}
+  };
+  try{s.start(t);}catch(e){try{g.disconnect();}catch(e2){};return false;}
+  doneSrc=s;doneGain=g;
+  if(prevSrc){                             /* 연속 터치: 딸깍 소리 없이 40ms 만에 줄여 끊는다 */
+    try{
+      prevGain.gain.cancelScheduledValues(t);
+      prevGain.gain.setValueAtTime(prevGain.gain.value||1,t);
+      prevGain.gain.linearRampToValueAtTime(0.0001,t+0.04);
+    }catch(e){}
+    try{prevSrc.stop(t+0.05);}catch(e){}
+  }
+  return true;
+}
 function playDoneSound(){
-  const a=doneAudio();
-  if(!a)return;
   if(!soundUnlocked){                       /* 명시적 음소거 상태는 없음 → 이 터치로 소리를 켠다 */
     if(!unlockAudio())return;               /* 브라우저가 막으면 조용히 넘어간다 */
   }
+  const ac=doneAC();
+  if(ac){
+    try{if(ac.state!=='running')ac.resume();}catch(e){}
+    if(doneBuf){if(playDoneBuffer(ac))return;}   /* 준비됐으면 다른 영상·유튜브와 섞여 재생 */
+    else loadDoneBuffer();                           /* 아직이면 이 터치에 디코드를 걸어 두고 */
+  }
+  const a=doneAudio();                      /* 이번 한 번만 예전 <audio>로 폴백 */
+  if(!a)return;
   try{a.pause();a.currentTime=0;}catch(e){}
   try{const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
 }
@@ -4941,7 +5024,7 @@ buildTasks();
 renderClock();renderProgress();renderTasks();renderExp();renderPoke();updateSoundBtn();
 renderCandyBadge();      /* 🍬 모은 사탕 배지(헤더 포켓몬 센터 버튼) */
 updateModeChips();
-doneAudio();   /* 할 일 완료 효과음 미리 받아 두기(터치 순간 바로 울리도록) */
+loadDoneBuffer();   /* v38: 할 일 완료 효과음을 미리 디코드해 두기(터치 순간 바로 울리도록) */
 initWeather();
 setInterval(refreshWeather,10*60*1000); /* 10분마다 자동 갱신 */
 if(S.settings.sound)unlockAudio(); /* 이전에 소리를 켰던 기기 */
