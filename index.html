@@ -842,7 +842,7 @@ body.eve #p-msg{color:#B4622A}
   border-bottom:2.5px solid var(--ink);font-weight:900;font-size:15px;letter-spacing:-.4px}
 .pct-sec-h .ic{flex:0 0 auto;display:grid;place-items:center;width:20px;height:20px;font-size:15px;line-height:1}
 .pct-sec-h .pct-note{margin-left:auto;font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;white-space:nowrap}
-.pct-sec-h .pct-note.pill{background:#FFE9A8;border:2px solid var(--ink);border-radius:99px;padding:0 8px;line-height:1.6;color:#7A3E00}
+/* v45: 강화소 제목 옆 '⭐ Lv.3 → Lv.4 · 🍬2' 알약은 뺐다 — 바로 아래 참조표가 같은 것을 알려 준다 */
 /* 집안일은 5개가 왼쪽 칸을 나눠 채운다 — 칸이 남으면 조금씩 늘고 모자라면 줄어서 스크롤이 안 생긴다 */
 .pct-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:7px 8px 5px}
 .pct-list::-webkit-scrollbar{width:10px}
@@ -884,8 +884,8 @@ body.eve #p-msg{color:#B4622A}
 .water-badge{display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:900;color:#fff;background:#3B82F6;
   border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap;animation:waterPulse 1.5s ease-in-out infinite}
 @keyframes waterPulse{50%{transform:scale(1.07)}}
-.pct-tip{flex:0 0 auto;margin:0 8px 8px;padding:5px 9px;font-size:11.5px;font-weight:900;color:#7A5A12;
-  background:#FFF9E4;border:2.5px dashed #E3C87A;border-radius:12px;line-height:1.4;letter-spacing:-.3px;text-align:center}
+/* v45: 왼쪽 칸 아래 노란 점선 안내 상자(오늘 도운 집안일 … / 물 주기 1·15일)는 걷어냈다 —
+   완료한 집안일은 카드 자체가 초록으로 바뀌어 몇 개 했는지 그대로 보인다. */
 /* 오른쪽: 포켓몬 강화소 — 대기 포켓몬은 크게(60px) 잡아 누르기 쉽게 */
 .pct-strip{flex:0 0 auto;display:flex;align-items:center;gap:7px;overflow-x:auto;overflow-y:hidden;padding:6px 9px 7px}
 .pct-strip::-webkit-scrollbar{height:8px}
@@ -1107,12 +1107,15 @@ body.eve #p-msg{color:#B4622A}
 .pct-side{display:flex;flex-direction:column;min-height:0;min-width:0;
   background:#FFFCF3;border:2.5px solid #E5DCC4;border-radius:14px;overflow:hidden}
 .pct-side-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:4px 8px 5px;
-  font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;border-bottom:2px dashed #E5DCC4}
-.pct-side-h b{margin-left:auto;font-size:11px;color:#C2571B;letter-spacing:-.3px}
+  font-size:12px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;border-bottom:2px dashed #E5DCC4}
+.pct-side-h b{margin-left:auto;font-size:12px;color:#C2571B;letter-spacing:-.3px}
+/* v45: 머리글 '🐾 모은 친구' → 또렷한 몬스터볼 SVG + '내 포켓몬' */
+.pct-side-h .pkball{flex:0 0 auto;display:block;width:18px;height:18px}
 #pct-side-more{font-size:9.5px;font-weight:900;color:#7A6A48;background:#FFF3C4;border:2px solid #D8C08C;
   border-radius:99px;padding:0 5px;line-height:1.6;white-space:nowrap}
-/* 모은 친구 4열 격자 — 16마리(4×4)가 스크롤 없이 다 보이고, 넘칠 때만 이 안에서 세로로 넘긴다 */
-.pct-gridwrap{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px 8px 4px}
+/* 내 포켓몬 4열 격자 — 16마리(4×4)가 스크롤 없이 다 보이고, 넘칠 때만 이 안에서 세로로 넘긴다.
+   v45: 마릿수가 적어도 늘 왼쪽 위에서부터 채운다(가운데 정렬 아님). */
+.pct-gridwrap{flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 8px 4px}
 .pct-strip{flex:0 1 auto;min-height:0;max-height:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
   gap:7px 6px;padding:2px 6px 3px 2px;overflow-x:hidden;overflow-y:auto;align-content:start}
 .pct-strip::-webkit-scrollbar{width:8px}
@@ -1120,8 +1123,7 @@ body.eve #p-msg{color:#B4622A}
 .pct-strip::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px}
 .pct-thumb{width:100%;height:auto;max-width:72px;aspect-ratio:1;justify-self:center;border-radius:13px}
 .pct-thumb .lv{right:-4px;bottom:-5px;font-size:9px;padding:0 3.5px;border-width:1.8px}
-.pct-grid-f{flex:0 0 auto;margin:0 8px 8px;padding:4px 6px;font-size:10px;font-weight:900;color:#7A6A48;
-  background:#FFF9E4;border:2px dashed #E3C87A;border-radius:10px;line-height:1.4;letter-spacing:-.3px;text-align:center}
+/* v45: 격자 아래 노란 점선 안내 상자('👆 눌러서 오른쪽에서 키워요')는 걷어냈다 */
 
 /* 고른 포켓몬 — 1/3 폭에서 위아래로: 그림·이름·Lv·타입 위, HP·공격·방어 막대 아래(폭 전체) */
 .pct-detail{display:flex;flex-direction:column;min-height:0;min-width:0}
@@ -1131,11 +1133,11 @@ body.eve #p-msg{color:#B4622A}
 .pct-card .art{width:clamp(88px,38%,132px);border-radius:12px}
 .pct-card .info{flex:1 1 0;width:auto;min-width:0;gap:3px}
 .pct-card .nm{font-size:17px;line-height:1.35}
-.pct-card .pct-lvpill{font-size:10px;padding:0 6px}
+.pct-card .pct-lvpill{font-size:11.5px;padding:0 7px}
 .pct-card .tps{gap:3px}
-.pct-card .up-sum{font-size:9.5px}
+.pct-card .up-sum{font-size:11.5px}
 .pct-card .stats{flex:1 1 100%;gap:4px}
-.pct-card .st-hd{font-size:10px;line-height:1.5;display:flex;align-items:center;gap:4px;white-space:normal}
+.pct-card .st-hd{font-size:12.5px;line-height:1.4;display:flex;align-items:center;gap:4px;white-space:normal}
 .pct-card .st-hd .stc{flex:0 0 auto}
 .pct-stat{font-size:11.5px;gap:4px}
 .pct-stat .lb{width:24px;font-size:10.5px}
@@ -1146,20 +1148,20 @@ body.eve #p-msg{color:#B4622A}
 .pct-stat .nx.done{font-size:9.5px}
 /* Lv.1~5 다섯 칸 진행 */
 .pct-lvbar{gap:3px;margin-top:auto}
-.pct-lvbar .lt{font-size:9px}
+.pct-lvbar .lt{font-size:11px}
 .pct-pips{gap:3px}
-.pct-pip{width:16px;height:16px;font-size:9px;border-width:2px}
-.pct-lvbar .tk{font-size:9.5px;padding:0 6px}
+.pct-pip{width:19px;height:19px;font-size:11px;border-width:2.5px}
+.pct-lvbar .tk{font-size:12px;padding:0 7px}
 /* 🍬 참조표 — 2×2 (Lv.1→2 / Lv.2→3 · Lv.3→4 / Lv.4→5) */
-.pct-cost{gap:2px}
-.pct-cost .h{font-size:10px}
-.pct-cfs{display:grid;grid-template-columns:1fr 1fr;gap:3px 4px}
-.pct-cf{flex-direction:row;align-items:center;justify-content:space-between;gap:3px;padding:1px 4px;border-radius:8px}
-.pct-cf i{font-size:9.5px;letter-spacing:-.4px}
-.pct-cf b{font-size:10px;letter-spacing:-.4px}
-.pct-card .mx{font-size:9.5px;letter-spacing:-.4px;text-align:center;line-height:1.45;margin-top:auto}
-/* 강화 버튼 — 1/3 폭에 맞춰 글씨만 조금 줄인다 */
-.pct-detail .pct-up{margin:0 7px;font-size:15px;padding:9px 5px;white-space:nowrap}
+.pct-cost{gap:3px}
+.pct-cost .h{font-size:12.5px}
+.pct-cfs{display:grid;grid-template-columns:1fr 1fr;gap:4px 4px}
+.pct-cf{flex-direction:row;align-items:center;justify-content:space-between;gap:3px;padding:2px 5px;border-radius:8px}
+.pct-cf i{font-size:11.5px;letter-spacing:-.4px}
+.pct-cf b{font-size:12.5px;letter-spacing:-.4px}
+.pct-card .mx{font-size:12.5px;letter-spacing:-.4px;text-align:center;line-height:1.45;margin-top:auto}
+/* 강화 버튼 — v45: 글씨를 키워 한눈에 읽히게 (사탕 부족·만렙 문구도 같은 크기) */
+.pct-detail .pct-up{margin:0 7px;font-size:17px;padding:8px 5px;white-space:nowrap}
 
 /* 집안일 칸도 1/3 — 이름·설명·+1 칩이 한 줄에 그대로 들어가게 한 단계 줄인다 */
 .pct-chore{gap:7px;padding:4px 7px}
@@ -1180,18 +1182,25 @@ body.eve #p-msg{color:#B4622A}
   .pct-gridwrap{padding:7px 7px 3px}
   .pct-strip{gap:6px 5px;padding:2px 6px 3px 2px}
   .pct-thumb{max-width:66px}
-  .pct-grid-f{margin:0 7px 7px;padding:3px 5px;font-size:9.5px}
   .pct-chore{gap:6px;padding:3px 6px}
   .pct-chore .ic{width:35px;height:35px}
   .pct-chore .ic svg{width:25px;height:25px}
   .pct-chore .nm{font-size:13.5px;gap:2px 3px}
   .pct-chore .sb{font-size:10px}
   .pct-chore .rw{font-size:10px;padding:1px 5px}
-  .pct-detail .pct-up{font-size:13.5px;padding:9px 4px;margin:0 6px}
+  .pct-detail .pct-up{font-size:15.5px;padding:8px 4px;margin:0 6px}
   .pct-detail #pct-pane{padding:0 6px}
   .pct-stat .bar{height:13px}
-  .pct-cf{padding:0 4px}
-  .pct-pip{width:15px;height:15px}
+  .pct-cf{padding:1px 4px}
+  .pct-pip{width:18px;height:18px;font-size:10.5px}
+  .pct-lvbar .lt{font-size:10.5px}
+  .pct-lvbar .tk{font-size:11.5px;padding:0 6px}
+  .pct-cost .h{font-size:12px}
+  .pct-cf i{font-size:11px}
+  .pct-cf b{font-size:12px}
+  .pct-card .st-hd{font-size:12px}
+  .pct-card .mx{font-size:12px}
+  .pct-card .up-sum{font-size:11px}
 }
 
 </style>
@@ -1309,12 +1318,12 @@ body.eve #p-msg{color:#B4622A}
     </div>
     <div id="pk-filters">
       <button class="pk-chip on" id="chip-all" data-f="all">전체 (200)</button>
-      <button class="pk-chip" id="chip-caught" data-f="caught">잡은 포켓몬 (0)</button>
+      <button class="pk-chip" id="chip-caught" data-f="caught">내 포켓몬 (0)</button>
       <span id="pk-count"></span>
     </div>
     <div id="pk-scroll">
       <div id="pk-grid"></div>
-      <div id="pk-empty" class="hidden"><span class="em">🥚</span>아직 잡은 포켓몬이 없어요.<br>할 일을 끝내고 100 EXP를 모으면 한 마리씩 잡혀요!</div>
+      <div id="pk-empty" class="hidden"><span class="em">🥚</span>아직 내 포켓몬이 없어요.<br>할 일을 끝내고 100 EXP를 모으면 한 마리씩 잡혀요!</div>
     </div>
   </section>
 
@@ -1333,16 +1342,14 @@ body.eve #p-msg{color:#B4622A}
       <section class="pct-sec">
         <div class="pct-sec-h"><span class="ic" aria-hidden="true">🧹</span><span>오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
         <div class="pct-list" id="pct-chores"></div>
-        <div class="pct-tip" id="pct-tip"></div>
       </section>
-      <!-- ② 오른쪽: 포켓몬 강화소 (2/3) — 안을 모은 친구 : 고른 포켓몬 = 1 : 1 로 나눈다 -->
+      <!-- ② 오른쪽: 포켓몬 강화소 (2/3) — 안을 내 포켓몬 : 고른 포켓몬 = 1 : 1 로 나눈다 -->
       <section class="pct-sec">
-        <div class="pct-sec-h"><span class="ic" aria-hidden="true">✨</span><span>포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
+        <div class="pct-sec-h"><span class="ic" aria-hidden="true">✨</span><span>포켓몬 강화소</span></div>
         <div class="pct-split">
           <div class="pct-side">
-            <div class="pct-side-h"><span>🐾 모은 친구</span><b id="pct-side-n">-</b><span id="pct-side-more" hidden>⌄ 더</span></div>
+            <div class="pct-side-h"><svg class="pkball" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff" stroke="#222B38" stroke-width="2.4"/><path d="M2 12a10 10 0 0 1 20 0Z" fill="#E94B4B" stroke="#222B38" stroke-width="2.4"/><path d="M2 12h20" stroke="#222B38" stroke-width="2.4"/><circle cx="12" cy="12" r="3.6" fill="#fff" stroke="#222B38" stroke-width="2.4"/></svg><span>내 포켓몬</span><b id="pct-side-n">-</b><span id="pct-side-more" hidden>⌄ 더</span></div>
             <div class="pct-gridwrap"><div class="pct-strip" id="pct-strip"></div></div>
-            <div class="pct-grid-f" id="pct-grid-f">👆 눌러서 오른쪽에서 키워요</div>
           </div>
           <div class="pct-detail">
             <div id="pct-pane"></div>
@@ -1578,7 +1585,7 @@ body.eve #p-msg{color:#B4622A}
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch">
       <div class="btn-col">
-        <span class="set-sub">도감·기록 백업 (.json 파일) · 잡은 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요</span>
+        <span class="set-sub">도감·기록 백업 (.json 파일) · 내 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요</span>
         <button class="set-btn sb-backup" id="btn-backup-save">💾 백업 파일 저장 (.json)</button>
         <button class="set-btn sb-backup" id="btn-backup-load">📂 백업 파일 불러오기</button>
       </div>
@@ -4123,7 +4130,7 @@ function renderPoke(){
   const m=caughtDates();
   const kinds=POKEMON.filter(p=>m[p.id]).length;
   document.getElementById('chip-all').textContent=`전체 (${POKEMON.length})`;
-  document.getElementById('chip-caught').textContent=`잡은 포켓몬 (${kinds})`;
+  document.getElementById('chip-caught').textContent=`내 포켓몬 (${kinds})`;
   document.querySelectorAll('.pk-chip').forEach(b=>b.classList.toggle('on',b.dataset.f===pkFilter));
   const list=pkFilter==='caught'?POKEMON.filter(p=>m[p.id]):POKEMON;
   const next=nextTarget();
@@ -4145,7 +4152,7 @@ function renderPoke(){
     grid.appendChild(card);
   });
   document.getElementById('pk-stats').textContent=
-    `잡은 포켓몬 ${S.caught.length}마리 · 도감 ${kinds}/${POKEMON.length}종`;
+    `내 포켓몬 ${S.caught.length}마리 · 도감 ${kinds}/${POKEMON.length}종`;
   document.getElementById('pk-count').textContent=
     pkFilter==='caught'?`${list.length}마리 모아 보기`:`${POKEMON.length}마리 전체 (스크롤해 보세요 ↓)`;
   document.getElementById('pk-empty').classList.toggle('hidden',list.length>0);
@@ -4365,29 +4372,18 @@ function renderCenter(pop){
     }).join('');
     /* 잠긴(disabled) 버튼에는 클릭이 가지 않으니, 열린 집안일만 리스너를 붙인다 */
     box.querySelectorAll('[data-chore]:not(:disabled)').forEach(b=>b.addEventListener('click',()=>doChore(b.dataset.chore)));
-    const tip=document.getElementById('pct-tip');
-    if(tip){
-      const active=list.filter(c=>!(c.water&&!wd)).length;
-      const cnt=list.filter(c=>done[c.id]===true).length;
-      const hasWater=list.some(c=>c.water);
-      tip.textContent=(active&&cnt>=active)
-        ? `오늘 할 수 있는 집안일은 모두 도왔어요! 🎉 내일 또 도와줘요 (${cnt} / ${active})`
-        : `오늘 도운 집안일 ${cnt} / ${active} · 사탕은 오른쪽에서 포켓몬을 키우는 데 써요!`+
-          (hasWater&&!wd?' (물 주기 1·15일)':'');
-    }
+    /* v45: 왼쪽 아래 노란 점선 안내 상자(pct-tip)는 뺐다 — 지운다 */
   }
   /* ── 오른쪽: 포켓몬 강화소 ── */
   const strip=document.getElementById('pct-strip'),pane=document.getElementById('pct-pane');
-  const up=document.getElementById('pct-up'),pill=document.getElementById('pct-next');
+  const up=document.getElementById('pct-up');
   const m=caughtDates(),caught=POKEMON.filter(p=>m[p.id]);
   if(!caught.length){
     centerSel=null;
     if(strip)strip.innerHTML='';
     {const sn=document.getElementById('pct-side-n');if(sn)sn.textContent='0마리';
-     const mh=document.getElementById('pct-side-more');if(mh)mh.hidden=true;
-     const gf=document.getElementById('pct-grid-f');if(gf)gf.hidden=true;}
-    if(pill){pill.hidden=true;pill.textContent='';}
-    if(pane)pane.innerHTML='<div class="pct-empty"><span class="em">🥚</span><div>아직 잡은 포켓몬이 없어요!<br>아침·저녁 루틴으로 친구를 먼저 만나봐요!</div></div>';
+     const mh=document.getElementById('pct-side-more');if(mh)mh.hidden=true;}
+    if(pane)pane.innerHTML='<div class="pct-empty"><span class="em">🥚</span><div>아직 내 포켓몬이 없어요!<br>아침·저녁 루틴으로 친구를 먼저 만나봐요!</div></div>';
     if(up){up.classList.remove('max','short');up.disabled=true;up.textContent='🍬 강화할 포켓몬이 없어요';}
     return;
   }
@@ -4395,8 +4391,7 @@ function renderCenter(pop){
   const p=POKEMON.find(x=>x.id===centerSel)||caught[0];
   const lv=pkLv(p.id),bonus=pkBonus(lv),max=lv>=POKE_MAX_LV;
   const gain=max?0:nextGain(lv), cost=max?0:upgradeCost(lv+1);
-  {const sn=document.getElementById('pct-side-n');if(sn)sn.textContent=caught.length+'마리';
-   const gf=document.getElementById('pct-grid-f');if(gf)gf.hidden=false;}
+  {const sn=document.getElementById('pct-side-n');if(sn)sn.textContent=caught.length+'마리';}
   if(strip){
     strip.innerHTML=caught.map(q=>{
       const ql=pkLv(q.id);
@@ -4409,7 +4404,7 @@ function renderCenter(pop){
     const mh=document.getElementById('pct-side-more');
     if(mh)mh.hidden=!(strip.scrollHeight>strip.clientHeight+2);
   }
-  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.5 MAX':`⭐ Lv.${lv} → Lv.${lv+1} · 🍬${cost}`;}
+  /* v45: 제목 옆 레벨업 알약(pct-next ⭐ Lv.X → Lv.Y · 🍬N)은 뺐다 — 바로 아래 참조표가 같은 것을 알려 준다 */
   /* HP·공격·방어 막대 — 지금 값(파랑) + 사탕으로 오른 만큼(금색) + 다음 레벨에 오를 만큼(점선) */
   const cap=Math.max(120,p.hp+LV_BONUS[POKE_MAX_LV],p.atk+LV_BONUS[POKE_MAX_LV],p.def+LV_BONUS[POKE_MAX_LV]);
   const pw=v=>Math.max(0,Math.round(v/cap*1000)/10);
@@ -4566,7 +4561,7 @@ function downloadBackup(){
     a.href=url;a.download='morning-dashboard-backup-'+todayKey()+'.json';
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-    toast(`백업 파일을 저장했어요 · 잡은 포켓몬 ${S.caught.length}마리`);
+    toast(`백업 파일을 저장했어요 · 내 포켓몬 ${S.caught.length}마리`);
     return true;
   }catch(e){alert('백업 파일을 만들지 못했어요.\n'+(e&&e.message?e.message:e));return false;}
 }
@@ -4732,7 +4727,7 @@ function loadBackupText(text){
   try{raw=JSON.parse(text);}catch(e){throw new Error('JSON을 읽지 못했어요. 백업 파일이 맞는지 확인해 주세요.');}
   const r=parseBackup(raw);
   const dayCount=Object.keys(r.days).length;
-  const msg=`백업 파일로 복원할까요?\n\n· 잡은 포켓몬 ${r.caught.length}마리`+
+  const msg=`백업 파일로 복원할까요?\n\n· 내 포켓몬 ${r.caught.length}마리`+
     `\n· 기록한 날짜 ${dayCount}일`+
     `\n· 기상 ${r.settings.wake} · 출발 ${r.settings.depart}`+
     (r.skipped?`\n· 알 수 없는 포켓몬 ${r.skipped}개는 건너뜀`:'')+
@@ -4740,7 +4735,7 @@ function loadBackupText(text){
     `\n\n지금 기기의 도감·기록이 백업 내용으로 바뀝니다.`;
   if(!confirm(msg))return null;
   applyBackup(r);
-  toast(`복원 완료! 잡은 포켓몬 ${r.caught.length}마리 · 기록 ${dayCount}일`);
+  toast(`복원 완료! 내 포켓몬 ${r.caught.length}마리 · 기록 ${dayCount}일`);
   return r;
 }
 function openBackupPicker(){
@@ -5551,7 +5546,7 @@ document.getElementById('btn-reset-day').addEventListener('click',()=>{
   }
 });
 document.getElementById('btn-reset-dex').addEventListener('click',()=>{
-  if(confirm('잡은 포켓몬 도감을 모두 지울까요?')){
+  if(confirm('내 포켓몬 도감을 모두 지울까요?')){
     S.caught=[];S.partnerId=null;save();renderPoke();renderExp();renderPartner(true);
   }
 });
