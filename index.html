@@ -78,7 +78,8 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 .hl-top .dex-btn .pokeball::after{width:6px;height:6px;border-width:2.2px}
 /* 🏥 포켓몬 센터 버튼 — 도감 버튼 바로 옆 */
 .center-btn{background:#FFF3F6;position:relative}
-.center-btn .ct-ic{font-size:13px;line-height:1}
+.center-btn .ct-ic{display:grid;place-items:center;width:18px;height:18px;font-size:13px;line-height:1}
+.center-btn .ct-ic svg{display:block;width:18px;height:18px}
 .center-btn .ct-tx{white-space:nowrap}
 /* 🍬 배지는 버튼 폭을 밀지 않게 오른쪽 위 모서리에 작게 얹는다 */
 .center-btn .ct-candy{display:none;position:absolute;right:-4px;top:-6px;z-index:2;
@@ -815,14 +816,16 @@ body.eve #p-msg{color:#B4622A}
 .missed-title{font-size:11.5px;font-weight:900;color:#41505F;margin:0 0 2px}
 
 /* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ─────────────
-   집안일을 도우면 사탕 1개, 그 사탕으로 잡은 포켓몬을 Lv.10까지 키운다.
-   왼쪽: 오늘의 집안일 / 오른쪽: 내 포켓몬을 골라 바로 강화. */
+   v43: 최대 Lv.5. 집안일 5개가 왼쪽 칸을 넘침 없이 같은 높이로 채우고,
+   오른쪽은 고른 포켓몬의 HP·공격·방어 막대 + 다음 레벨(+5/+10/+15) 미리보기다.
+   아이콘은 모두 display:grid/place-items:center 로 칸 한가운데에 앉힌다. */
 /* v26: 팝업(어두운 배경)이 아니라 도감·루틴처럼 전체 화면 메인 뷰로 전환 */
 #view-center{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#FFFDF4;
   border:var(--bw) solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:10px 12px 10px}
 #ct-head{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ct-badge{flex:0 0 auto;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:26px;
+.ct-badge{flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;line-height:1;
   background:#fff;border:3px solid var(--ink);border-radius:13px;box-shadow:0 3px 0 rgba(34,43,56,.16)}
+.ct-badge svg{display:block;width:32px;height:32px}
 .ct-tt{min-width:0;flex:1 1 auto}
 .ct-tt b{display:block;font-size:23px;font-weight:900;letter-spacing:-.6px;line-height:1.1;color:var(--ink)}
 .ct-tt p{margin:1px 0 0;font-size:12.5px;font-weight:800;letter-spacing:-.4px;color:var(--ink-soft);line-height:1.25;
@@ -835,38 +838,41 @@ body.eve #p-msg{color:#B4622A}
 .pct-candy b{font-family:"Arial Black",Arial,sans-serif;font-size:19px;line-height:1;letter-spacing:-.5px}
 .pct-body{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:0}
 .pct-sec{display:flex;flex-direction:column;min-height:0;border:3px solid var(--ink);border-radius:18px;background:#fff;overflow:hidden}
-.pct-sec-h{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 10px;background:#FFF6E2;
+.pct-sec-h{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:6px 10px;background:#FFF6E2;
   border-bottom:2.5px solid var(--ink);font-weight:900;font-size:15px;letter-spacing:-.4px}
+.pct-sec-h .ic{flex:0 0 auto;display:grid;place-items:center;width:20px;height:20px;font-size:15px;line-height:1}
 .pct-sec-h .pct-note{margin-left:auto;font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;white-space:nowrap}
 .pct-sec-h .pct-note.pill{background:#FFE9A8;border:2px solid var(--ink);border-radius:99px;padding:0 8px;line-height:1.6;color:#7A3E00}
-.pct-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:7px;padding:8px 8px 6px}
+/* 집안일은 5개가 왼쪽 칸을 나눠 채운다 — 칸이 남으면 조금씩 늘고 모자라면 줄어서 스크롤이 안 생긴다 */
+.pct-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:7px 8px 5px}
 .pct-list::-webkit-scrollbar{width:10px}
 .pct-list::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
 .pct-list::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px;border:3px solid #F2F6FC}
-.pct-chore{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:9px 10px;font-family:inherit;
-  border:3px solid var(--ink);border-radius:14px;background:#fff;cursor:pointer;text-align:left;
-  box-shadow:0 3px 0 rgba(34,43,56,.14);transition:transform .1s,box-shadow .1s,background .12s}
+.pct-chore{position:relative;flex:1 1 0;min-height:52px;max-height:90px;display:flex;align-items:center;gap:9px;
+  padding:4px 9px;font-family:inherit;border:3px solid var(--ink);border-radius:14px;background:#fff;cursor:pointer;
+  text-align:left;box-shadow:0 3px 0 rgba(34,43,56,.14);transition:transform .1s,box-shadow .1s,background .12s}
 .pct-chore:hover{background:#FFFDF6}
 .pct-chore:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.14)}
-.pct-chore .ic{flex:0 0 auto;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
-  background:#FFF6E2;border:2.5px solid var(--ink);border-radius:13px}
-.pct-chore .ic svg{width:38px;height:38px;display:block}
-.pct-chore .ic .em{font-size:29px;line-height:1}
-.pct-chore .tx{flex:1 1 auto;min-width:0}
-.pct-chore .nm{display:flex;align-items:center;gap:5px;font-size:16.5px;font-weight:900;letter-spacing:-.5px;color:var(--ink);line-height:1.25}
+.pct-chore .ic{flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;line-height:1;
+  background:#FFF6E2;border:2.5px solid var(--ink);border-radius:12px;overflow:hidden}
+.pct-chore .ic svg{display:block;width:32px;height:32px}
+.pct-chore .ic .em{display:block;font-size:28px;line-height:1}
+.pct-chore .tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.pct-chore .nm{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:900;letter-spacing:-.5px;color:var(--ink);line-height:1.25}
 .pct-chore .nm .t{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pct-chore .sb{display:block;font-size:11px;font-weight:800;color:#7E8A98;letter-spacing:-.3px;margin-top:1px}
-.pct-chore .rw{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-size:12.5px;font-weight:900;
-  color:#8A5A00;background:#FFF3C4;border:2.5px solid var(--ink);border-radius:99px;padding:1px 9px;line-height:1.5;white-space:nowrap}
+.pct-chore .sb{display:block;font-size:11.5px;font-weight:800;color:#6E7C8B;letter-spacing:-.2px;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-chore .rw{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:900;
+  color:#8A5A00;background:#FFF3C4;border:2.5px solid var(--ink);border-radius:99px;padding:1px 8px;line-height:1.5;white-space:nowrap}
 /* v33: 잘못 눌렀을 때 다시 눌러 취소할 수 있으니 완료 카드도 누를 수 있게 둔다 */
 .pct-chore.done{background:#E8F8EC;border-color:#2E9E4F;cursor:pointer;box-shadow:0 3px 0 rgba(46,158,79,.2)}
 .pct-chore.done:hover{background:#DDF4E3}
 .pct-chore.done .ic{background:#DCF7E2}
 .pct-chore.done .sb{color:#2E7D4F}
-.pct-chore.done .rw{color:#fff;background:#35A45B;border-color:#227A3F;padding:1px 10px}
+.pct-chore.done .rw{color:#fff;background:#35A45B;border-color:#227A3F;padding:1px 9px}
 .pct-chore.water{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(34,43,56,.14)}
 .pct-chore.water.done{box-shadow:0 0 0 3px rgba(59,130,246,.2),0 3px 0 rgba(46,158,79,.2)}
-/* 물주기: 1일·15일이 아니면 보이긴 하지만 지금은 잠겨 있다 (누를 수 없음) */
+/* 물 주기: 1일·15일이 아니면 보이긴 하지만 지금은 잠겨 있다 (누를 수 없음) */
 .pct-chore.locked{background:#F3F6FA;border-color:#BCC8D7;cursor:default;opacity:1;box-shadow:0 3px 0 rgba(34,43,56,.07)}
 .pct-chore.locked:hover{background:#F3F6FA}
 .pct-chore.locked:active{transform:none;box-shadow:0 3px 0 rgba(34,43,56,.07)}
@@ -880,64 +886,85 @@ body.eve #p-msg{color:#B4622A}
 @keyframes waterPulse{50%{transform:scale(1.07)}}
 .pct-tip{flex:0 0 auto;margin:0 8px 8px;padding:5px 9px;font-size:11.5px;font-weight:900;color:#7A5A12;
   background:#FFF9E4;border:2.5px dashed #E3C87A;border-radius:12px;line-height:1.4;letter-spacing:-.3px;text-align:center}
-/* 오른쪽: 포켓몬 강화소 */
-.pct-strip{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:5px 9px 4px}
+/* 오른쪽: 포켓몬 강화소 — 대기 포켓몬은 크게(60px) 잡아 누르기 쉽게 */
+.pct-strip{flex:0 0 auto;display:flex;align-items:center;gap:7px;overflow-x:auto;overflow-y:hidden;padding:6px 9px 7px}
 .pct-strip::-webkit-scrollbar{height:8px}
 .pct-strip::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px}
-.pct-thumb{position:relative;flex:0 0 auto;width:50px;height:50px;padding:2px;border:2.5px solid #C9D5E4;border-radius:12px;
+.pct-thumb{position:relative;flex:0 0 auto;width:60px;height:60px;padding:2px;border:2.5px solid #C9D5E4;border-radius:14px;
   background:#F7FAFF;cursor:pointer;transition:transform .1s,border-color .12s}
-.pct-thumb img{width:100%;height:100%;object-fit:contain}
+.pct-thumb img{width:100%;height:100%;object-fit:contain;display:block}
 .pct-thumb:active{transform:translateY(2px)}
 .pct-thumb.on{border-color:var(--ink);background:#FFF7D6;box-shadow:0 0 0 3px rgba(250,204,21,.6)}
-.pct-thumb .lv{position:absolute;right:-5px;bottom:-6px;font-size:9px;font-weight:900;color:#5A3B00;
+.pct-thumb .lv{position:absolute;right:-5px;bottom:-6px;font-size:9.5px;font-weight:900;color:#5A3B00;
   background:var(--yellow);border:2px solid var(--ink);border-radius:99px;padding:0 4px;line-height:1.5}
 .pct-thumb.max .lv{background:#FFC93C}
 #pct-pane{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:0 9px}
-.pct-card{position:relative;flex:1 1 auto;display:flex;flex-direction:column;gap:4px;margin:0 0 8px;padding:7px;
-  border:3px solid var(--ink);border-radius:16px;background:linear-gradient(160deg,#FFFDF2,#FFF1CE);
-  box-shadow:0 4px 0 rgba(34,43,56,.12)}
-.pct-card .row1{display:flex;gap:9px;align-items:center;min-height:0}
-.pct-card .art{flex:0 0 auto;width:104px;height:104px;display:flex;align-items:center;justify-content:center;
+.pct-card{position:relative;flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;gap:5px;
+  margin:0 0 8px;padding:8px;border:3px solid var(--ink);border-radius:16px;
+  background:linear-gradient(160deg,#FFFDF2,#FFF1CE);box-shadow:0 4px 0 rgba(34,43,56,.12)}
+.pct-card .row1{flex:0 0 auto;display:flex;gap:9px;align-items:stretch;min-height:0}
+/* 스프라이트 칸 — 카드 높이에 맞춰 커지되 정사각형을 유지해 아래 빈 공간이 생기지 않는다 */
+.pct-card .art{flex:0 0 auto;align-self:center;width:clamp(104px,30%,152px);aspect-ratio:1;display:grid;place-items:center;
   background:radial-gradient(circle at 50% 38%,#fff,#FFF0C6 80%);border:2.5px solid var(--ink);border-radius:14px;overflow:hidden}
-.pct-card .art img{width:94%;height:94%;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(34,43,56,.16))}
-.pct-card .info{flex:1 1 auto;min-width:0}
-.pct-card .nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:20px;font-weight:900;letter-spacing:-.7px;line-height:1.1;color:var(--ink)}
-.pct-lvpill{display:inline-block;font-size:11px;font-weight:900;letter-spacing:-.3px;color:#5A3B00;
+.pct-card .art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(34,43,56,.16))}
+.pct-card .info{flex:0 0 auto;width:clamp(92px,24%,132px);min-width:0;display:flex;flex-direction:column;
+  justify-content:center;gap:3px}
+.pct-card .nm{font-size:19px;font-weight:900;letter-spacing:-.7px;line-height:1.15;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-lvpill{display:inline-block;align-self:flex-start;font-size:11px;font-weight:900;letter-spacing:-.3px;color:#5A3B00;
   background:linear-gradient(180deg,#FFF6C4,#FFD75E);border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.6}
 .pct-lvpill.max{background:linear-gradient(180deg,#FFF0A8,#FFB800);color:#4E3000}
-.pct-stats{display:flex;flex-direction:column;gap:1px;margin-top:5px}
-.pct-stat{display:flex;align-items:baseline;gap:5px;font-size:13px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
-.pct-stat .lb{flex:0 0 auto;width:29px;font-size:11.5px;color:#63718a}
-.pct-stat .now{font-size:15px}
-.pct-stat .nx{font-size:15px;color:#C2571B}
-.pct-stat .add{font-size:11px;color:#B8860B}
-.pct-stat .ar{font-size:12px;color:#9AA6B4}
-.pct-card .up-sum{flex:0 0 auto;margin-top:2px;font-size:11px;font-weight:900;color:#6B7480;letter-spacing:-.3px}
+.pct-card .tps{display:flex;gap:3px;flex-wrap:wrap}
+.pct-card .up-sum{font-size:10.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.3}
 .pct-card .up-sum b{color:#C2571B}
-/* 레벨 진행 표시 (사탕 10칸) + 안내 */
-.pct-more{margin-top:auto;padding-top:7px;border-top:2px dashed #E6D6AC;display:flex;flex-direction:column;gap:5px}
-.pct-more .tps{display:flex;gap:4px;flex-wrap:wrap}
-.pct-more .mx{font-size:11.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.4}
-.pct-more .mx b{color:#C2571B;font-size:13px}
-.pct-track{display:flex;align-items:center;gap:4px;padding-top:4px;flex-wrap:nowrap}
-.pct-track .tt{flex:0 0 auto;font-size:11px;font-weight:900;color:#7A6A48;margin-right:2px}
-.pct-pip{flex:0 0 auto;width:13px;height:13px;border-radius:50%;border:2.5px solid var(--ink);background:#EDEFF4}
-.pct-pip.on{background:linear-gradient(180deg,#FFE066,#F5B300)}
+/* 오른쪽: 능력치 막대 — 지금 값(파랑) · 사탕으로 오른 만큼(금색) · 다음 레벨(점선) */
+.pct-card .stats{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.pct-card .st-hd{font-size:10.5px;font-weight:900;color:#7A6A48;letter-spacing:-.4px;line-height:1.25;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.pct-card .st-hd b{color:#C2571B;font-size:11.5px}
+.pct-card .st-hd .stc{color:#8A5A00;background:#FFF3C4;border:2px solid var(--ink);border-radius:99px;padding:0 6px;
+  margin-left:2px;line-height:1.5}
+.pct-stat{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--ink);
+  font-variant-numeric:tabular-nums;line-height:1}
+.pct-stat .lb{flex:0 0 auto;width:26px;font-size:11px;color:#63718A;letter-spacing:-.3px}
+.pct-stat .bar{flex:1 1 auto;min-width:24px;height:15px;display:flex;border:2.5px solid #A9B6C7;border-radius:99px;
+  background:#EDF1F7;overflow:hidden;box-shadow:inset 0 2px 0 rgba(34,43,56,.06)}
+.pct-stat .bar i{display:block;height:100%}
+.pct-stat .bar .b{background:linear-gradient(180deg,#A8DFFF,#3FA0E8)}
+.pct-stat .bar .g{min-width:4px;background:linear-gradient(180deg,#FFE066,#F0A81E);box-shadow:inset 1.5px 0 0 rgba(255,255,255,.85)}
+.pct-stat .bar .n{min-width:5px;border-left:1.5px solid #fff;
+  background:repeating-linear-gradient(45deg,#FF9F2E 0,#FF9F2E 3.2px,#FFE3C0 3.2px,#FFE3C0 6.4px)}
+.pct-stat .vl{flex:0 0 auto;min-width:26px;text-align:right;font-size:13px}
+.pct-stat .nx{flex:0 0 auto;min-width:54px;display:inline-flex;align-items:baseline;justify-content:flex-end;gap:2px;
+  font-size:11.5px;color:#C2571B}
+.pct-stat .nx i{font-style:normal;color:#9AA6B4;font-size:10px}
+.pct-stat .nx b{font-size:10.5px;color:#B8860B;background:#FFF3C4;border-radius:99px;padding:0 4px;line-height:1.4}
+.pct-stat .nx.done{font-size:10.5px;color:#8A5A00}
+/* Lv.1 → Lv.5 다섯 칸 진행 */
+.pct-lvbar{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:0 1px}
+.pct-lvbar .lt{flex:0 0 auto;font-size:9.5px;font-weight:900;color:#9A8A66;letter-spacing:-.3px}
+.pct-pips{display:flex;align-items:center;gap:4px}
+.pct-pip{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--ink);background:#EDEFF4;
+  display:grid;place-items:center;font-size:9.5px;font-weight:900;color:#9AA6B4;line-height:1}
+.pct-pip.on{background:linear-gradient(180deg,#FFE066,#F5B300);color:#5A3B00}
 .pct-pip.cur{box-shadow:0 0 0 3px rgba(250,204,21,.45)}
-.pct-track .tk{margin-left:auto;font-size:11px;font-weight:900;color:#8A5A00;background:#FFF3C4;border:2px solid var(--ink);
+.pct-lvbar .tk{margin-left:auto;font-size:10.5px;font-weight:900;color:#8A5A00;background:#FFF3C4;border:2px solid var(--ink);
   border-radius:99px;padding:0 7px;line-height:1.6;white-space:nowrap}
-/* 🍬 레벨별 사탕 참조표 — 다음 레벨에 드는 사탕을 미리 보고, 지금 구간을 노랗게 켠다 */
-.pct-cost{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;margin-top:1px}
-.pct-cost .h{font-size:11.5px;font-weight:900;color:#7A6A48;letter-spacing:-.4px;line-height:1.2;white-space:nowrap}
-.pct-cost .h b{color:#C2571B;font-size:12.5px}
+/* 🍬 레벨별 사탕 참조표 — 다음 레벨에 드는 사탕과 오르는 능력치를 미리 보고, 지금 구간을 노랗게 켠다 */
+.pct-cost{flex:0 0 auto;display:flex;flex-direction:column;gap:3px;margin-top:1px}
+.pct-cost .h{font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.4px;line-height:1.2;white-space:nowrap}
 .pct-cfs{display:flex;gap:4px}
-.pct-cf{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
-  padding:2px 2px;border:2.5px solid #CBD6E4;border-radius:10px;background:#F7FAFF;line-height:1.15}
-.pct-cf i{font-style:normal;font-size:11px;font-weight:900;color:#63718A;letter-spacing:-.5px;white-space:nowrap}
-.pct-cf b{font-size:15px;font-weight:900;color:#8A5A00;letter-spacing:-.5px;white-space:nowrap}
+.pct-cf{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:2px;border:2.5px solid #CBD6E4;border-radius:10px;background:#F7FAFF;line-height:1.15}
+.pct-cf i{font-style:normal;font-size:10.5px;font-weight:900;color:#63718A;letter-spacing:-.5px;white-space:nowrap}
+.pct-cf b{font-size:12.5px;font-weight:900;color:#8A5A00;letter-spacing:-.5px;white-space:nowrap}
 .pct-cf.on{border-color:var(--ink);background:linear-gradient(180deg,#FFF6C4,#FFD75E);box-shadow:0 0 0 2.5px rgba(250,204,21,.45)}
 .pct-cf.on i{color:#5A3B00}
 .pct-cf.on b{color:#4E3000}
+.pct-card .pct-more{flex:0 0 auto}
+.pct-card .mx{font-size:10.5px;font-weight:900;color:#6B7480;letter-spacing:-.3px;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-card .mx b{color:#C2571B;font-size:11.5px}
 /* 강화 순간 반짝 */
 .pct-card.pop{animation:lvPop .5s ease}
 @keyframes lvPop{0%{transform:scale(1)}35%{transform:scale(1.035)}100%{transform:scale(1)}}
@@ -960,8 +987,9 @@ body.eve #p-msg{color:#B4622A}
 /* 사탕이 모자랄 때: 누를 수는 없지만 '몇 개 더 필요해요!'를 또렷하게 읽을 수 있게 */
 .pct-up.short{background:linear-gradient(180deg,#FFF4CE,#F3D98A);color:#7A4A00;opacity:1;filter:none}
 /* 설정: 집안일 목록 편집 */
-.chore-rows{display:flex;flex-direction:column;gap:5px;margin-top:8px}
-.chore-row{display:flex;align-items:center;gap:6px}
+.chore-rows{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.chore-row{display:flex;flex-direction:column;gap:3px}
+.chore-line{display:flex;align-items:center;gap:6px;min-width:0}
 .chore-ic-view{flex:0 0 36px;width:36px;height:34px;display:flex;align-items:center;justify-content:center;
   background:#FFF6E2;border:2.5px solid var(--ink);border-radius:10px}
 .chore-ic-view svg{width:24px;height:24px;display:block}
@@ -969,6 +997,19 @@ body.eve #p-msg{color:#B4622A}
 .chore-row .chore-name{flex:1 1 auto;min-width:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink);
   border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px;background:#fff}
 .chore-row .chore-name:focus{outline:3px solid rgba(250,204,21,.55);outline-offset:-1px}
+/* v43.2: 카드에 나오는 한 줄 안내(설명)도 여기서 고치고 넣는다 — 이름 칸 아래에 같은 폭으로 */
+.chore-desc{flex:1 1 auto;min-width:0;margin-left:42px;font-family:inherit;font-size:12px;font-weight:800;
+  color:#4E5A68;border:2px solid #BFC9D6;border-radius:9px;padding:3px 8px;background:#FBFCFF}
+.chore-desc::placeholder{color:#9AA6B4;font-weight:700}
+.chore-desc:focus{outline:3px solid rgba(250,204,21,.45);outline-offset:-1px;border-color:var(--ink)}
+.chore-add{display:flex;flex-direction:column;gap:4px;margin-top:9px;padding:7px 9px 8px;
+  background:#FFFDF6;border:2px dashed #D8C08C;border-radius:11px}
+.chore-add-h{font-size:12.5px;font-weight:900;color:#8A6A00;letter-spacing:-.3px}
+.chore-add-h span{font-weight:800;color:#8A7A5C;font-size:11.5px}
+.chore-add .chore-name{flex:1 1 auto;min-width:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink);
+  border:2.5px solid var(--ink);border-radius:10px;padding:5px 8px;background:#fff}
+.chore-add .chore-name:focus{outline:3px solid rgba(250,204,21,.55);outline-offset:-1px}
+.chore-add #btn-chore-add{flex:0 0 auto;font-size:12.5px;padding:4px 10px}
 .chore-del{flex:0 0 32px;height:34px;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer;color:#A63D12;
   background:#FFE2D6;border:2.5px solid var(--ink);border-radius:10px;box-shadow:0 2px 0 rgba(34,43,56,.16)}
 .chore-del:active{transform:translateY(2px);box-shadow:none}
@@ -1075,7 +1116,7 @@ body.eve #p-msg{color:#B4622A}
           <span class="pokeball"></span><span class="dt">포켓몬 도감</span>
         </button>
         <button class="dex-btn center-btn" id="tab-center" title="포켓몬 센터 열기 — 집안일을 도우면 받은 사탕으로 포켓몬을 키워요" aria-pressed="false">
-          <span class="ct-ic" aria-hidden="true">🏥</span><span class="ct-tx">포켓몬 센터</span><span class="ct-candy" id="ct-candy">🍬 0</span>
+          <span class="ct-ic" data-center-icon aria-hidden="true"></span><span class="ct-tx">포켓몬 센터</span><span class="ct-candy" id="ct-candy">🍬 0</span>
         </button>
       </div>
       <div class="exp-mini">
@@ -1181,23 +1222,23 @@ body.eve #p-msg{color:#B4622A}
   <!-- 🏥 포켓몬 센터 (집안일 돕기 · 사탕으로 강화) — 도감처럼 전체 화면 메인 뷰 -->
   <section id="view-center" class="hidden">
     <div id="ct-head">
-      <div class="ct-badge" aria-hidden="true">🏥</div>
+      <div class="ct-badge" data-center-icon aria-hidden="true"></div>
       <div class="ct-tt">
         <b>포켓몬 센터</b>
-        <p>집안일을 도우며 받은 사탕으로 내 포켓몬을 강하게 키워요!</p>
+        <p>집안일을 도우며 받은 사탕으로 내 포켓몬을 Lv.5까지 키워요!</p>
       </div>
       <span class="pct-candy">🍬 보유 사탕: <b id="pct-candy-n">0</b>개</span>
     </div>
     <div class="pct-body">
       <!-- 왼쪽: 오늘의 집안일 돕기 -->
       <section class="pct-sec">
-        <div class="pct-sec-h"><span>🧹 오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
+        <div class="pct-sec-h"><span class="ic" aria-hidden="true">🧹</span><span>오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
         <div class="pct-list" id="pct-chores"></div>
         <div class="pct-tip" id="pct-tip"></div>
       </section>
       <!-- 오른쪽: 포켓몬 강화소 -->
       <section class="pct-sec">
-        <div class="pct-sec-h"><span>✨ 포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
+        <div class="pct-sec-h"><span class="ic" aria-hidden="true">✨</span><span>포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
         <div class="pct-strip" id="pct-strip"></div>
         <div id="pct-pane"></div>
         <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
@@ -1349,7 +1390,7 @@ body.eve #p-msg{color:#B4622A}
     <div class="set-pane hidden" data-pane="test">
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:linear-gradient(180deg,#FFFDF3,#FFF4CC);border:2px solid #E6CB76;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
       <span><span style="color:#B87400">★</span> 오늘의 긍정 확언 <b style="font-size:12px;color:#8a6a00">· 보호자용</b></span>
-      <span class="set-sub">화면 위 <b>★ 오늘의 긍정 확언</b> 바에 보여 줄 문장이에요. <b>비워 두면</b> 매일 자정에 바뀌는 100개 문구가 자동으로 나오고, 여기에 적으면 <b>아침·저녁 모두</b> 같은 문장이 계속 나와요. (최대 32자)</span>
+      <span class="set-sub">화면 위 <b>★ 오늘의 긍정 확언</b> 바에 보여 줄 문장이에요. <b>오늘 하루만</b> 직접 쓴 문장이 나오고, 내일이 되면 자동으로 100개 문구로 바뀌어요. 비워 두면 매일 자정에 바뀌는 100개 문구가 자동으로 나와요. (최대 32자)</span>
       <div class="vac-row" style="margin-top:6px">
         <input type="text" id="set-affirm" class="set-date" style="flex:1;min-width:190px" maxlength="32" placeholder="비워 두면 매일 바뀌는 100개 문구가 자동으로 나와요" autocomplete="off" spellcheck="false">
         <button class="set-btn sb-backup" id="btn-affirm-apply" type="button">적용</button>
@@ -1385,11 +1426,21 @@ body.eve #p-msg{color:#B4622A}
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7FB;border:2px solid #F2C9DA;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
       <span>🧹 포켓몬 센터 집안일 목록 <b style="font-size:12px;color:#A63D6E">· 보호자용</b></span>
-      <span class="set-sub">🏥 포켓몬 센터에서 아이가 도울 집안일이에요. 이름을 고치거나 <b>✕</b>로 빼고, <b>＋ 집안일 추가</b>로 더할 수 있어요. 아이가 하나를 도우면 <b>🍬 사탕 1개</b>를 받고, 같은 집안일은 <b>하루 1번</b>만 받아요.</span>
+      <span class="set-sub">🏥 포켓몬 센터에서 아이가 도울 집안일이에요. <b>이름</b>과 <b>설명</b>(카드에 나오는 한 줄 안내)을 고치거나 <b>✕</b>로 빼고, 아래 칸에 <b>제목·설명</b>을 적어 더할 수 있어요. 아이가 하나를 도우면 <b>🍬 사탕 1개</b>를 받고, 같은 집안일은 <b>하루 1번</b>만 받아요.</span>
       <div class="chore-rows" id="chore-rows"></div>
+      <div class="chore-add" id="chore-add">
+        <div class="chore-add-h">＋ 새 집안일 <span>제목과 설명을 적고 <b>추가</b>를 눌러요</span></div>
+        <div class="chore-line">
+          <span class="chore-ic-view" aria-hidden="true"><span class="em">🧹</span></span>
+          <input type="text" id="chore-new-name" class="chore-name" maxlength="30" autocomplete="off" spellcheck="false" placeholder="제목 · 예: 장난감 정리" aria-label="새 집안일 제목">
+        </div>
+        <div class="chore-line">
+          <input type="text" id="chore-new-desc" class="chore-desc" maxlength="24" autocomplete="off" spellcheck="false" placeholder="설명 · 비우면 '완료하면 🍬 사탕 1개'" aria-label="새 집안일 설명">
+          <button class="set-btn sb-backup" id="btn-chore-add" type="button">＋ 추가</button>
+        </div>
+      </div>
       <div class="chore-foot">
-        <button class="set-btn sb-backup" id="btn-chore-add" type="button">＋ 집안일 추가</button>
-        <button class="set-btn sb-reset" id="btn-chore-reset" type="button">↺ 기본 4개로 되돌리기</button>
+        <button class="set-btn sb-reset" id="btn-chore-reset" type="button">↺ 기본 5개로 되돌리기</button>
         <span class="set-sub" id="chore-note"></span>
       </div>
     </div>
@@ -1644,21 +1695,72 @@ const STUDY_DEFAULT={
 };
 
 /* ── 🏥 포켓몬 센터 (집안일 · 사탕 강화) ──
-   집안일 항목당 하루 1번 사탕 1개, 레벨별 강화 비용은 1/2/3/5개 (Lv.1 → Lv.10 합계 18개, 최대 +45) */
-const POKE_MAX_LV=10, LV_STEP=5;
+   집안일 항목당 하루 1번 사탕 1개.
+   v43: 최대 Lv.5 — Lv.1→2·Lv.2→3은 사탕 1개(+5씩), Lv.3→4는 2개(+10), Lv.4→5는 3개(+15).
+        Lv.1에서 Lv.5까지 사탕 7개를 먹이면 능력치가 모두 +35 오른다. */
+const POKE_MAX_LV=5;
+const LV_BONUS=[0,0,5,10,20,35];   /* LV_BONUS[lv] = 그 레벨의 능력치 보너스 (Lv.1=0 … Lv.5=+35) */
+const LV_COST =[0,0,1,1,2,3];      /* LV_COST[to]  = 그 레벨로 올리는 데 드는 사탕 */
+/* 기본 집안일에는 '무엇을 하는지' 한 줄 안내(desc)가 붙는다.
+   이름을 고쳐도 id로 안내를 찾으므로 그대로 남고, 직접 넣은 집안일에 desc가 없으면
+   예전처럼 '완료하면 🍬 사탕 1개'로 보인다. */
 const CHORES_DEFAULT=[
-  {id:'shoes',   name:'신발 정리',          icon:'👟'},
-  {id:'laundry', name:'빨래 정리',          icon:'🧺'},
-  {id:'roller',  name:'돌돌이',             icon:'roller'},
-  {id:'water',   name:'물주기 (1일, 15일)', icon:'🌱', water:true}
+  {id:'blanket', name:'이불 정리',          icon:'blanket', desc:'이불, 배게, 인형 가지런히 정리하기'},
+  {id:'shoes',   name:'신발 정리',          icon:'shoes',   desc:'현관 신발 가지런히 정리하기'},
+  {id:'laundry', name:'빨래 정리',          icon:'laundry', desc:'빨래 개고 제자리 갖다놓기'},
+  {id:'roller',  name:'돌돌이',             icon:'roller',  desc:'매트 아래 돌돌이로 먼지 닦기'},
+  {id:'water',   name:'물 주기 (1일, 15일)', icon:'water', water:true, desc:'400ml 물 두 번 주기'}
 ];
-/* 돌돌이 = 테이프클리너(롤러). 빗자루가 아니라 테이프 롤러 모양으로 그린다. */
+const CHORE_DESC={};                        /* 기본 집안일 id → 안내 문구 */
+CHORES_DEFAULT.forEach(c=>{CHORE_DESC[c.id]=c.desc;});
+const WATER_OLD_NAME='물주기 (1일, 15일)';  /* '물 주기'로 띄어쓰기를 고치기 전의 기본 이름 */
+/* 아이콘 SVG는 모두 48×48 상자에 같은 두께(3px)의 먹선으로 그린다 —
+   아이콘 칸(.pct-chore .ic)에 넣으면 어떤 그림이든 똑같은 크기로 한가운데 앉는다. */
+const ICON_INK='#2A3442';
+/* 이불 정리 = 반듯하게 정리한 침대(머리판 + 베개 + 덮은 이불) — 32px에서도 한눈에 읽힌다 */
+const BLANKET_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<rect x="3.5" y="8" width="7" height="32" rx="3.5" fill="#FFD9A8" stroke="'+ICON_INK+'" stroke-width="3"/>'+
+  '<path d="M9 32.5h31a4 4 0 0 1 4 4v3.5H9z" fill="#FFFFFF" stroke="'+ICON_INK+'" stroke-width="3" stroke-linejoin="round"/>'+
+  '<rect x="12.5" y="21.5" width="12" height="11" rx="4" fill="#FFFFFF" stroke="'+ICON_INK+'" stroke-width="3"/>'+
+  '<path d="M24 32.5V26a4 4 0 0 1 4-4h13a4 4 0 0 1 4 4v6.5z" fill="#A9D5FF" stroke="'+ICON_INK+'" stroke-width="3" stroke-linejoin="round"/>'+
+  '<path d="M29 23.5v9" stroke="#4C9BD8" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* 신발 정리 = 옆에서 본 운동화 (깔창 + 끈) */
+const SHOES_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<path d="M9 32.5V24c0-4 3-7 7-7h1.8c1.8 0 3.4 1 4.3 2.6l3.7 6.2 9.6 3c3.2 1 5.6 3.5 5.6 6.4v.8H9z" fill="#CFE8FF" stroke="'+ICON_INK+'" stroke-width="3" stroke-linejoin="round"/>'+
+  '<path d="M6.5 34.5h35" stroke="'+ICON_INK+'" stroke-width="3.4" stroke-linecap="round"/>'+
+  '<path d="M10 39.5h28" stroke="'+ICON_INK+'" stroke-width="2.4" stroke-linecap="round" opacity=".4"/>'+
+  '<path d="M17 21.5 21 25M21 19.5 25 23" stroke="#7FB6E8" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* 빨래 정리 = 빨랫감 바구니 */
+const LAUNDRY_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<path d="M9.5 17.5h29l-2.5 20.4a3 3 0 0 1-3 2.6H15a3 3 0 0 1-3-2.6z" fill="#FFD9A8" stroke="'+ICON_INK+'" stroke-width="3" stroke-linejoin="round"/>'+
+  '<path d="M6.5 13.5h35" stroke="'+ICON_INK+'" stroke-width="3.2" stroke-linecap="round"/>'+
+  '<path d="M17.5 24.5v10M24 24.5v10M30.5 24.5v10" stroke="#D8A45E" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* 돌돌이 = 테이프클리너(롤러). 빗자루가 아니라, 테이프가 감긴 롤러 + 노란 손잡이 + 떼어 낸 테이프 끝. */
 const LINT_ROLLER_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
-  '<rect x="3.5" y="6" width="29" height="16" rx="8" fill="#CFE8FF" stroke="#2A3442" stroke-width="3"/>'+
-  '<path d="M11 7.5v13M18 7.5v13M25 7.5v13" stroke="#7FB6E8" stroke-width="2.2" stroke-linecap="round"/>'+
-  '<path d="M27 22.5 33.5 30.5" stroke="#2A3442" stroke-width="3.8" stroke-linecap="round"/>'+
-  '<rect x="30" y="29" width="11" height="13.5" rx="5" fill="#FFD75E" stroke="#2A3442" stroke-width="3"/>'+
-  '<path d="M4.5 11c-3.4 1.4-3.4 6.6 0 8" fill="#fff" stroke="#2A3442" stroke-width="2.6" stroke-linecap="round"/></svg>';
+  '<rect x="3.5" y="7" width="29" height="16.5" rx="8.25" fill="#CFE8FF" stroke="'+ICON_INK+'" stroke-width="3"/>'+
+  '<path d="M11.5 8.5v13.5M18.5 8.5v13.5" stroke="#7FB6E8" stroke-width="2.6" stroke-linecap="round"/>'+
+  '<path d="M33 11.5c3.8.4 5.4 3.4 3.8 5.9-1.2 1.9-3.9 2.1-5.4.7" fill="#FFFFFF" stroke="'+ICON_INK+'" stroke-width="2.6" stroke-linecap="round"/>'+
+  '<path d="M21 22.5 27.5 32.5" stroke="'+ICON_INK+'" stroke-width="5" stroke-linecap="round"/>'+
+  '<rect x="24.5" y="31" width="16" height="13.5" rx="6.5" fill="#FFD75E" stroke="'+ICON_INK+'" stroke-width="3"/>'+
+  '</svg>';
+/* 물 주기 = 새싹에 떨어지는 물방울 */
+const WATER_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<path d="M24 41V25" stroke="#4E9A4A" stroke-width="3.2" stroke-linecap="round"/>'+
+  '<path d="M24 31c-5.6 0-9.8-3.4-9.8-8.2 5.6 0 9.8 3.4 9.8 8.2z" fill="#9BDD86" stroke="'+ICON_INK+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+  '<path d="M24 27.5c5.6 0 9.8-3.4 9.8-8.2-5.6 0-9.8 3.4-9.8 8.2z" fill="#9BDD86" stroke="'+ICON_INK+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+  '<path d="M15.5 12.5c2 2.2 2 4.3 0 6.5-2-2.2-2-4.3 0-6.5z" fill="#7FB6E8" stroke="'+ICON_INK+'" stroke-width="2.2" stroke-linejoin="round"/>'+
+  '<path d="M32.5 9.5c2 2.2 2 4.3 0 6.5-2-2.2-2-4.3 0-6.5z" fill="#7FB6E8" stroke="'+ICON_INK+'" stroke-width="2.2" stroke-linejoin="round"/></svg>';
+const CHORE_SVG={blanket:BLANKET_SVG,shoes:SHOES_SVG,laundry:LAUNDRY_SVG,roller:LINT_ROLLER_SVG,water:WATER_SVG};
+/* 옛 기록·옛 백업의 기본 아이콘(이모지)도 같은 그림으로 보여 준다 */
+const CHORE_EMOJI={ '👟':'shoes', '🧺':'laundry', '🌱':'water' };
+/* 포켓몬 센터 표시 — 빨간 지붕 + 하얀 건물 + 빨간 십자 */
+const CENTER_ICON_SVG='<svg viewBox="0 0 48 48" aria-hidden="true">'+
+  '<path d="M24 4.5 43.5 19.5h-39z" fill="#FF7A7A" stroke="'+ICON_INK+'" stroke-width="3" stroke-linejoin="round"/>'+
+  '<rect x="9" y="18.5" width="30" height="24" rx="4.5" fill="#FFFFFF" stroke="'+ICON_INK+'" stroke-width="3"/>'+
+  '<path d="M24 24v9M19.5 28.5h9" stroke="#FF5A5A" stroke-width="4.4" stroke-linecap="round"/></svg>';
+function defaultChores(){return CHORES_DEFAULT.map(c=>Object.assign({},c));}
+/* 헤더 배지·헤더 버튼 아이콘을 같은 SVG로 채운다 (칸 가운데 정렬은 CSS가 맡는다) */
+document.querySelectorAll('[data-center-icon]').forEach(el=>{el.innerHTML=CENTER_ICON_SVG;});
 function defaultChores(){return CHORES_DEFAULT.map(c=>Object.assign({},c));}
 
 function todayKey(d=new Date()){
@@ -1677,8 +1779,15 @@ if(!Array.isArray(S.caught))S.caught=[];
    없거나 도감에 없는 id면 null로 두고, 다음 목표 계산 때 새로 골라 저장한다. */
 S.targetId=(S.targetId!=null&&POKEMON.some(p=>p.id===Number(S.targetId)))?Number(S.targetId):null;
 if(typeof S.settings.weatherProxy!=='string')S.settings.weatherProxy=DEFAULT_WEATHER_PROXY;
-/* ★ 오늘의 긍정 확언: 보호자가 직접 넣은 문장(없으면 빈 문자열 → 매일 바뀌는 100개 문구) */
+/* ★ 오늘의 긍정 확언: 보호자가 직접 넣은 문장(없으면 빈 문자열 → 매일 바뀌는 100개 문구)
+   v43.2: 직접 쓴 문장은 '오늘 하루만' 나온다 — customAffirmationDate(YYYY-MM-DD)가 오늘일 때만 쓰고,
+   날짜가 바뀌면 자동으로 AFFIRMATIONS 100개 순환으로 돌아간다. */
 if(typeof S.settings.customAffirmation!=='string')S.settings.customAffirmation='';
+if(typeof S.settings.customAffirmationDate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(S.settings.customAffirmationDate)){
+  /* v43.2 이전 기록: 날짜 없이 남아 있던 직접 쓴 문장은 '처음 연 날 하루'로 본다 → 내일 자동 복귀 */
+  S.settings.customAffirmationDate=S.settings.customAffirmation?todayKey():'';
+  if(S.settings.customAffirmationDate)save();
+}
 /* ═══ v41: 내 파트너 포켓몬 ═══
    도감에서 잡은 포켓몬 하나를 골라 두면 루틴 화면 시계 옆에 그 포켓몬이 선다.
    잡은 적 없는 포켓몬 id가 남아 있으면(옛 기록·지워진 도감) null로 정리한다. */
@@ -1692,11 +1801,32 @@ if(typeof S.settings.battleEnabled!=='boolean')S.settings.battleEnabled=false;
 function centerAllowed(){return !!(S.settings&&S.settings.centerEnabled===true);}
 if(typeof S.settings.centerEnabled!=='boolean')S.settings.centerEnabled=false;
 /* 🏥 포켓몬 센터: 보유 사탕 · 오늘 도운 집안일 · 포켓몬 레벨 · 집안일 목록
-   (값이 없는 옛 기록은 사탕 0 · 도움 기록 없음 · 모두 Lv.1 · 기본 4개로 시작) */
+   (값이 없는 옛 기록은 사탕 0 · 도움 기록 없음 · 모두 Lv.1 · 기본 5개로 시작) */
 S.candy=(typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;
 if(!S.choresDone||typeof S.choresDone!=='object'||Array.isArray(S.choresDone))S.choresDone={};
 if(!S.pokeLv||typeof S.pokeLv!=='object'||Array.isArray(S.pokeLv))S.pokeLv={};
+/* v43: 최대 레벨이 Lv.5로 바뀌었다 — 옛 기록에 남은 Lv.6~10은 Lv.5로 내려서 저장한다 */
+(function(){let fix=false;Object.keys(S.pokeLv).forEach(k=>{
+  const v=Number(S.pokeLv[k]);if(isFinite(v)&&v>POKE_MAX_LV){S.pokeLv[k]=POKE_MAX_LV;fix=true;}});
+  if(fix)save();})();
+/* v43: 기본 집안일에 '이불 정리'가 새로 생겼다. 옛 기록(4개)에는 한 번만 첫 번째로 넣고,
+   보호자가 설정에서 뺀 뒤에는 다시 넣지 않는다(choreSeed43). */
+if(!S.settings.choreSeed43){
+  const _ch=S.settings.chores;
+  if(!_ch.some(c=>c&&String(c.name||'').trim()==='이불 정리'))
+    _ch.unshift({id:'blanket',name:'이불 정리',icon:'blanket'});
+  S.settings.choreSeed43=true;
+  save();
+}
 if(!Array.isArray(S.settings.chores))S.settings.chores=defaultChores();
+/* v43.1: '물주기' → '물 주기' — 옛 기본 이름 그대로인 물 주기만 고친다(직접 고친 이름은 그대로 둔다) */
+(function fixWaterName(){
+  let fix=false;
+  S.settings.chores.forEach(c=>{
+    if(c&&c.water===true&&String(c.name||'').trim()===WATER_OLD_NAME){c.name='물 주기 (1일, 15일)';fix=true;}
+  });
+  if(fix)save();
+})();
 /* 집안일 기록은 최근 40일만 남긴다 (오래 쓴 기기에서도 저장 공간이 작게 유지되도록) */
 (function pruneChoreDays(){
   const cut=todayKey(new Date(Date.now()-40*864e5));
@@ -3931,7 +4061,7 @@ const TYPE_GRAD={
 };
 function pokeCardFront(p,got){
   /* v25: 사탕으로 키운 레벨만큼 HP·공격·방어가 +5씩 오르고, 늘어난 만큼은 금색 막대로 보여 준다 */
-  const lv=pkLv(p.id), bonus=(lv-1)*LV_STEP, maxLv=lv>=POKE_MAX_LV;
+  const lv=pkLv(p.id), bonus=pkBonus(lv), maxLv=lv>=POKE_MAX_LV;
   const bar=(lb,base,cls)=>{
     const total=base+bonus;
     const bw=Math.max(4,Math.min(100,Math.round(base/160*100)));
@@ -3945,7 +4075,7 @@ function pokeCardFront(p,got){
   const fx=p.r==='normal'?'':`<div class="pc-fx fx-${p.r}" aria-hidden="true">${
     stars.split('').map(c=>`<i>${c}</i>`).join('')}</div>`;
   return `${fx}<div class="pc-hd">
-      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-lv${maxLv?' max':''}">${maxLv?'👑 Lv.10 MAX':'⭐ Lv.'+lv+' / 10'}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
+      <div class="pc-hd1"><span class="pc-no">No.${p.no}</span><span class="pc-lv${maxLv?' max':''}">${maxLv?'👑 Lv.5 MAX':'⭐ Lv.'+lv+' / 5'}</span><span class="pc-rar ${p.r}">${RARITY_LABEL[p.r]||'일반'}</span></div>
       <div class="pc-hd2"><span class="pc-nm">${p.name}</span><span class="pc-hp"><i>HP</i><b>${p.hp+bonus}</b></span></div>
       <div class="pc-tps">${p.types.map(typeBadge).join('')}</div>
     </div>
@@ -4026,8 +4156,8 @@ document.addEventListener('keydown',e=>{
 
 /* ================= 🏥 포켓몬 센터 =================
    · 왼쪽: 오늘의 집안일 돕기 — 항목당 하루 1번, 도우면 🍬 사탕 +1
-   · 오른쪽: 포켓몬 강화소 — 레벨이 오를수록 사탕이 더 든다 (Lv.2~5=1개 · Lv.6~8=2개 · Lv.9=3개 · Lv.10=5개, 능력치 +5, Lv.10 MAX)
-   · 물주기: 목록에 늘 있고, 1일·15일에만 💧 오늘 물 주는 날! 표시가 반짝인다. */
+   · 오른쪽: 포켓몬 강화소 — Lv.1→3은 사탕 1개(+5) · Lv.3→4는 2개(+10) · Lv.4→5는 3개(+15), Lv.5 MAX
+   · 물 주기: 목록에 늘 있고, 1일·15일에만 💧 오늘 물 주는 날! 표시가 반짝인다. */
 let centerSel=null;
 function choreListRaw(){
   if(!Array.isArray(S.settings.chores))S.settings.chores=defaultChores();
@@ -4039,13 +4169,27 @@ function chores(){
     if(!c||typeof c!=='object'||Array.isArray(c))return;
     const name=String(c.name==null?'':c.name).trim();
     if(!name)return;
-    out.push({id:String(c.id||('c'+i)),name,icon:String(c.icon||'🧹'),water:c.water===true});
+    const id=String(c.id||('c'+i));
+    out.push({id,name,icon:String(c.icon||'🧹'),water:c.water===true,desc:choreDescOf(c,id)});
   });
   return out.length?out:defaultChores();
 }
+/* v43.2: 집안일 카드 부제(설명)
+   · 직접 적은 설명이 있으면 그 문구
+   · 설명을 일부러 비운 집안일(desc:'' 로 저장)은 '완료하면 🍬 사탕 1개'
+   · desc 값이 아예 없는 옛 기록·옛 백업은 id로 기본 안내(CHORE_DESC) — 이름을 고쳐도 그대로 */
+function choreDescOf(c,id){
+  const key=String(id||(c&&c.id)||'');
+  const raw=(c&&typeof c.desc==='string')?c.desc.trim():'';
+  if(raw)return raw.slice(0,60);
+  if(c&&Object.prototype.hasOwnProperty.call(c,'desc'))return '';
+  return CHORE_DESC[key]||'';
+}
 function choreIcon(c){
-  if(c.icon==='roller')return LINT_ROLLER_SVG;
-  return `<span class="em">${escHtml(c.icon||'🧹')}</span>`;
+  const k=String((c&&c.icon)||'');
+  const key=CHORE_SVG[k]?k:(CHORE_EMOJI[k]||'');       /* 옛 이모지 아이콘도 같은 그림으로 */
+  if(key&&CHORE_SVG[key])return CHORE_SVG[key];
+  return `<span class="em">${escHtml(k||'🧹')}</span>`;
 }
 function choresDoneToday(){
   const k=todayKey();
@@ -4055,32 +4199,39 @@ function choresDoneToday(){
 }
 function isWaterDay(){const d=new Date().getDate();return d===1||d===15;}
 function candyN(){return (typeof S.candy==='number'&&isFinite(S.candy)&&S.candy>0)?Math.floor(S.candy):0;}
-/* 🍬 레벨별 사탕 참조표 — 레벨이 오를수록 드는 사탕이 늘어난다.
-   Lv.1→10까지 다 키우면 1+1+1+1 + 2+2+2 + 3 + 5 = 18개. */
+/* 🍬 레벨별 사탕 참조표 — v43: 최대 Lv.5
+   Lv.1→2·Lv.2→3 = 사탕 1개(능력 +5) · Lv.3→4 = 2개(+10) · Lv.4→5 = 3개(+15) → 모두 7개 */
 const CANDY_TIERS=[
-  {from:2,to:5,cost:1,label:'Lv.2~5'},
-  {from:6,to:8,cost:2,label:'Lv.6~8'},
-  {from:9,to:9,cost:3,label:'Lv.9'},
-  {from:10,to:10,cost:5,label:'Lv.10'}
+  {from:2,to:2,cost:1,gain:5, label:'Lv.1→2'},
+  {from:3,to:3,cost:1,gain:5, label:'Lv.2→3'},
+  {from:4,to:4,cost:2,gain:10,label:'Lv.3→4'},
+  {from:5,to:5,cost:3,gain:15,label:'Lv.4→5'}
 ];
-function lvCost(nextLv){                       /* nextLv = 올라갈 목표 레벨 (curLv + 1) */
+function upgradeCost(nextLv){                  /* nextLv = 올라갈 목표 레벨 (curLv + 1) */
   const n=Math.floor(Number(nextLv)||0);
-  if(n>=10)return 5;
-  if(n>=9)return 3;
-  if(n>=6)return 2;
-  return 1;
+  return (n>=2&&n<=POKE_MAX_LV)?LV_COST[n]:0;
 }
-function candiesToMax(curLv){                  /* 지금 레벨에서 만렙(Lv.10)까지 필요한 사탕 합계 */
+function lvCost(nextLv){return upgradeCost(nextLv);}         /* 옛 이름 — 다른 곳에서 부른다 */
+function candiesToMax(curLv){                  /* 지금 레벨에서 Lv.5까지 필요한 사탕 합계 */
   let sum=0;
-  for(let lv=Math.floor(Number(curLv)||1)+1;lv<=POKE_MAX_LV;lv++)sum+=lvCost(lv);
+  for(let lv=Math.floor(Number(curLv)||1)+1;lv<=POKE_MAX_LV;lv++)sum+=LV_COST[lv];
   return sum;
 }
 function pkLv(id){
   const v=Number(S.pokeLv?S.pokeLv[String(id)]:1);
   if(!isFinite(v)||v<1)return 1;
-  return Math.min(POKE_MAX_LV,Math.floor(v));
+  return Math.min(POKE_MAX_LV,Math.floor(v));  /* 옛 기록의 Lv.6~10은 Lv.5로 안전하게 */
 }
-function lvBonus(id){return (pkLv(id)-1)*LV_STEP;}
+function pkBonus(lv){                          /* 그 레벨의 능력치 보너스 (Lv.1=0 · Lv.5=+35) */
+  const n=Math.floor(Number(lv)||1);
+  if(!isFinite(n)||n<1)return 0;
+  return LV_BONUS[Math.min(POKE_MAX_LV,n)];
+}
+function lvBonus(id){return pkBonus(pkLv(id));}
+function nextGain(lv){                         /* 이 레벨에서 다음 레벨로 오를 때 오르는 능력치 */
+  const n=Math.max(1,Math.min(POKE_MAX_LV,Math.floor(Number(lv)||1)));
+  return n>=POKE_MAX_LV?0:(LV_BONUS[n+1]-LV_BONUS[n]);
+}
 function renderCandyBadge(){
   const n=candyN(),b=document.getElementById('ct-candy'),btn=document.getElementById('tab-center');
   if(b){b.textContent='🍬 '+n;b.classList.toggle('show',n>0);}
@@ -4096,14 +4247,14 @@ function renderCenter(pop){
     box.innerHTML=list.map(c=>{
       const ok=done[c.id]===true;
       const wet=!!c.water&&wd;                 /* 물 주는 날(1일·15일) */
-      const locked=!!c.water&&!wd;             /* 물주기는 그 외 날에는 보이기만 하고 눌리지 않는다 */
+      const locked=!!c.water&&!wd;             /* 물 주기는 그 외 날에는 보이기만 하고 눌리지 않는다 */
       return `<button type="button" class="pct-chore${ok?' done':''}${wet?' water':''}${locked?' locked':''}"`+
         ` data-chore="${escHtml(c.id)}"${locked?' disabled aria-disabled="true"':''}>`+
         `<span class="ic" aria-hidden="true">${choreIcon(c)}</span>`+
         `<span class="tx"><span class="nm"><span class="t">${escHtml(c.name)}</span>`+
         (wet?'<span class="water-badge">💧 오늘 물 주는 날!</span>':'')+`</span>`+
-        `<span class="sb">${locked?'매달 1일·15일에 열려요':(ok?(candyN()>=1?'오늘 도와줬어요! 다시 누르면 취소돼요':'오늘 도와줬어요! 사탕을 써서 취소는 안 돼요'):'완료하면 🍬 사탕 1개')}</span></span>`+
-        `<span class="rw">${locked?'🔒 잠김':(ok?'✅ 오늘 완료! (+🍬 1)':'🍬 +1')}</span></button>`;
+        `<span class="sb">${ok?(candyN()>=1?'오늘 도와줬어요! 다시 누르면 취소돼요':'오늘 도와줬어요! 사탕을 써서 취소는 안 돼요'):(c.desc||'완료하면 🍬 사탕 1개')}</span></span>`+
+        `<span class="rw">${locked?'🔒 잠김':(ok?'✅ 오늘 완료! +🍬1':'🍬 +1')}</span></button>`;
     }).join('');
     /* 잠긴(disabled) 버튼에는 클릭이 가지 않으니, 열린 집안일만 리스너를 붙인다 */
     box.querySelectorAll('[data-chore]:not(:disabled)').forEach(b=>b.addEventListener('click',()=>doChore(b.dataset.chore)));
@@ -4114,8 +4265,8 @@ function renderCenter(pop){
       const hasWater=list.some(c=>c.water);
       tip.textContent=(active&&cnt>=active)
         ? `오늘 할 수 있는 집안일은 모두 도왔어요! 🎉 내일 또 도와줘요 (${cnt} / ${active})`
-        : `오늘 도운 집안일 ${cnt} / ${active} · 모은 사탕은 오른쪽에서 내 포켓몬을 키우는 데 써요!`+
-          (hasWater&&!wd?' (물주기는 1일·15일에 열려요)':'');
+        : `오늘 도운 집안일 ${cnt} / ${active} · 사탕은 오른쪽에서 포켓몬을 키우는 데 써요!`+
+          (hasWater&&!wd?' (물 주기 1·15일)':'');
     }
   }
   /* ── 오른쪽: 포켓몬 강화소 ── */
@@ -4132,37 +4283,54 @@ function renderCenter(pop){
   }
   if(centerSel==null||!caught.some(p=>p.id===centerSel))centerSel=caught[0].id;
   const p=POKEMON.find(x=>x.id===centerSel)||caught[0];
-  const lv=pkLv(p.id),bonus=(lv-1)*LV_STEP,max=lv>=POKE_MAX_LV;
+  const lv=pkLv(p.id),bonus=pkBonus(lv),max=lv>=POKE_MAX_LV;
+  const gain=max?0:nextGain(lv), cost=max?0:upgradeCost(lv+1);
   if(strip){
     strip.innerHTML=caught.map(q=>{
       const ql=pkLv(q.id);
-      return `<button type="button" class="pct-thumb${q.id===p.id?' on':''}${ql>=POKE_MAX_LV?' max':''}" data-poke="${q.id}" title="${escHtml(q.name)} · Lv.${ql}">`+
-        `<img src="assets/pokemon/${q.id}.png" alt="${escHtml(q.name)}"><span class="lv">Lv.${ql}</span></button>`;
+      return `<button type="button" class="pct-thumb${q.id===p.id?' on':''}${ql>=POKE_MAX_LV?' max':''}" data-poke="${q.id}"`+
+        ` title="${escHtml(q.name)} · Lv.${ql}" aria-label="${escHtml(q.name)} Lv.${ql}">`+
+        `<img src="assets/pokemon/${q.id}.png" alt=""><span class="lv">Lv.${ql}</span></button>`;
     }).join('');
     strip.querySelectorAll('[data-poke]').forEach(b=>b.addEventListener('click',()=>{centerSel=Number(b.dataset.poke);renderCenter();}));
   }
-  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.10 MAX':`⭐ Lv.${lv} → Lv.${lv+1} · 🍬${lvCost(lv+1)}`;}
-  const row=(lb,base)=>{
+  if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.5 MAX':`⭐ Lv.${lv} → Lv.${lv+1} · 🍬${cost}`;}
+  /* HP·공격·방어 막대 — 지금 값(파랑) + 사탕으로 오른 만큼(금색) + 다음 레벨에 오를 만큼(점선) */
+  const cap=Math.max(120,p.hp+LV_BONUS[POKE_MAX_LV],p.atk+LV_BONUS[POKE_MAX_LV],p.def+LV_BONUS[POKE_MAX_LV]);
+  const pw=v=>Math.max(0,Math.round(v/cap*1000)/10);
+  const statRow=(lb,base)=>{
     const now=base+bonus;
-    return '<div class="pct-stat"><span class="lb">'+lb+'</span><span class="now">'+now+'</span>'+
-      (max?`<span class="add">(+${bonus})</span>`
-        :`<span class="ar">→</span><span class="nx">${now+LV_STEP}</span><span class="add">(+${LV_STEP})</span>`)+'</div>';
+    return '<div class="pct-stat"><span class="lb">'+lb+'</span>'+
+      '<span class="bar"><i class="b" style="width:'+pw(base)+'%"></i>'+
+        (bonus?'<i class="g" style="width:'+pw(bonus)+'%"></i>':'')+
+        (gain?'<i class="n" style="width:'+pw(gain)+'%"></i>':'')+'</span>'+
+      '<span class="vl">'+now+'</span>'+
+      (max?`<span class="nx done">+${bonus}</span>`
+          :`<span class="nx"><i>→</i>${now+gain}<b>+${gain}</b></span>`)+'</div>';
   };
-  /* 레벨 진행 표시 (사탕 10칸) — 카드 아래 빈 자리를 채우고, 몇 번 더 키우면 만렙인지 보여 준다 */
+  /* Lv.1 → Lv.5 다섯 칸 진행 — 지금 어디인지 한눈에 */
   let pips='';
-  for(let i=1;i<=POKE_MAX_LV;i++)pips+=`<span class="pct-pip${i<=lv?' on':''}${i===lv?' cur':''}"></span>`;
-  if(pane)pane.innerHTML='<div class="pct-card" id="pct-card"><div class="row1">'+
-      `<div class="art"><img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}"></div>`+
-      '<div class="info">'+
-        `<div class="nm">${escHtml(p.name)}<span class="pct-lvpill${max?' max':''}">${max?'👑 Lv.10 MAX':'⭐ Lv.'+lv+' / 10'}</span></div>`+
-        `<div class="pct-stats">${row('HP',p.hp)}${row('공격',p.atk)}${row('방어',p.def)}</div>`+
-        `<div class="up-sum">${max?'👑 만렙! 더 키울 필요 없어요':`강화 ${lv-1}번 · 지금까지 <b>+${bonus}</b>`}</div>`+
-      '</div></div>'+
-      `<div class="pct-more"><div class="tps">${p.types.map(typeBadge).join('')}</div>`+
-      `<div class="mx">👑 만렙(Lv.10)이 되면 <b>HP ${p.hp+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>공격 ${p.atk+LV_STEP*(POKE_MAX_LV-1)}</b> · <b>방어 ${p.def+LV_STEP*(POKE_MAX_LV-1)}</b>!</div></div>`+
-      `<div class="pct-track"><span class="tt">레벨</span>${pips}`+
-      `<span class="tk">${max?'👑 MAX':`🍬 ${candiesToMax(lv)}개 더 먹이면 만렙!`}</span></div>`+
+  for(let i=1;i<=POKE_MAX_LV;i++)pips+=`<span class="pct-pip${i<=lv?' on':''}${i===lv?' cur':''}">${i}</span>`;
+  if(pane)pane.innerHTML='<div class="pct-card" id="pct-card">'+
+      '<div class="row1">'+
+        `<div class="art"><img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}"></div>`+
+        '<div class="info">'+
+          `<div class="nm">${escHtml(p.name)}</div>`+
+          `<span class="pct-lvpill${max?' max':''}">${max?'👑 Lv.5 MAX':'⭐ Lv.'+lv+' / 5'}</span>`+
+          `<div class="tps">${p.types.map(typeBadge).join('')}</div>`+
+          `<div class="up-sum">${max?'👑 만렙이에요!':(lv===1?'아직 강화 전이에요':`강화 ${lv-1}번 · <b>+${bonus}</b>`)}</div>`+
+        '</div>'+
+        '<div class="stats">'+
+          `<div class="st-hd">${max?'👑 Lv.5 만렙 — 더 오를 곳이 없어요'
+            :`다음 <b>Lv.${lv+1}</b> — 능력치 <b>+${gain}</b> <span class="stc">🍬 ${cost}개</span>`}</div>`+
+          statRow('HP',p.hp)+statRow('공격',p.atk)+statRow('방어',p.def)+
+        '</div>'+
+      '</div>'+
+      `<div class="pct-lvbar"><span class="lt">Lv.1</span><span class="pct-pips">${pips}</span><span class="lt">Lv.5</span>`+
+        `<span class="tk">${max?'👑 MAX':`🍬 ${candiesToMax(lv)}개 더 먹이면 만렙!`}</span></div>`+
       candyCostStrip(max?0:lv+1)+
+      `<div class="pct-more"><div class="mx">${max?'👑 Lv.5 — HP '+p.hp+' · 공격 '+p.atk+' · 방어 '+p.def+' (+'+bonus+')'
+        :`👑 Lv.5가 되면 <b>HP ${p.hp+LV_BONUS[POKE_MAX_LV]}</b> · <b>공격 ${p.atk+LV_BONUS[POKE_MAX_LV]}</b> · <b>방어 ${p.def+LV_BONUS[POKE_MAX_LV]}</b>!`}</div></div>`+
       '<div class="pct-fx" id="pct-fx"></div></div>';
   if(pop){
     const card=document.getElementById('pct-card'),fx=document.getElementById('pct-fx');
@@ -4170,25 +4338,24 @@ function renderCenter(pop){
     if(fx){fx.textContent=pop;fx.classList.add('show');}
   }
   if(up){
-    const cost=max?0:lvCost(lv+1);
     up.classList.toggle('max',max);
     up.classList.toggle('short',!max&&n<cost);
     up.disabled=!!max||n<cost;
     up.textContent=max?'👑 MAX · 만렙이에요!'
-      :(n<cost?`🍬 사탕이 ${cost-n}개 더 필요해요!`:`🍬 사탕 ${cost}개로 강화하기! (+5)`);
+      :(n<cost?`🍬 사탕이 ${cost-n}개 더 필요해요!`:`🍬 사탕 ${cost}개로 강화하기! (+${gain})`);
   }
 }
-/* 🍬 레벨별 사탕 참조표 — 아이가 다음 레벨에 드는 사탕을 미리 보는 표 (지금 구간은 노랗게) */
+/* 🍬 레벨별 사탕 참조표 — 다음 레벨에 드는 사탕과 오르는 능력치를 미리 본다 (지금 구간은 노랗게) */
 function candyCostStrip(nextLv){
-  return '<div class="pct-cost" aria-label="레벨별 사탕 비용"><div class="h">🍬 레벨별 사탕 · 한 번에 <b>능력치 +5</b></div><div class="pct-cfs">'+
-    CANDY_TIERS.map(t=>`<span class="pct-cf${(nextLv&&nextLv>=t.from&&nextLv<=t.to)?' on':''}" data-cost="${t.cost}">`+
-      `<i>${t.label}</i><b>🍬 ${t.cost}개</b></span>`).join('')+'</div></div>';
+  return '<div class="pct-cost" aria-label="레벨별 사탕 비용"><div class="h">🍬 레벨별 사탕 · 능력치</div><div class="pct-cfs">'+
+    CANDY_TIERS.map(t=>`<span class="pct-cf${(nextLv&&nextLv===t.from)?' on':''}" data-cost="${t.cost}">`+
+      `<i>${t.label}</i><b>🍬 ${t.cost}개 · +${t.gain}</b></span>`).join('')+'</div></div>';
 }
 function doChore(id){
   const c=chores().find(x=>x.id===String(id));
   if(!c)return;
-  /* 물주기는 1일·15일에만 — 그 외 날에는 보이기만 하고 사탕을 주지 않는다 */
-  if(c.water&&!isWaterDay()){toast('💧 물주기는 매달 1일·15일에 열려요!');return;}
+  /* 물 주기는 1일·15일에만 — 그 외 날에는 보이기만 하고 사탕을 주지 않는다 */
+  if(c.water&&!isWaterDay()){toast('💧 물 주기는 매달 1일·15일에 열려요!');return;}
   const done=choresDoneToday();
   /* v33: 잘못 눌렀으면 다시 눌러 취소 — 사탕 1개를 그대로 되돌린다.
      이미 사탕을 써서 남은 사탕이 없으면 취소할 수 없고(사탕이 음수가 되지 않게) 완료 표시를 그대로 둔다. */
@@ -4215,7 +4382,7 @@ function upgradePoke(){
   const m=caughtDates();
   const p=POKEMON.filter(q=>m[q.id]).find(q=>q.id===centerSel);
   if(!p)return;
-  const lv=pkLv(p.id),cost=lvCost(lv+1);
+  const lv=pkLv(p.id),cost=upgradeCost(lv+1),gain=nextGain(lv);
   if(lv>=POKE_MAX_LV){toast('이미 👑 MAX 만렙이에요! 다른 친구를 키워 봐요');return;}
   if(candyN()<cost){toast(`🍬 사탕이 ${cost-candyN()}개 더 필요해요! 집안일을 도와 모아요`);return;}
   S.candy=candyN()-cost;
@@ -4224,8 +4391,8 @@ function upgradePoke(){
   save();
   try{btAc();}catch(e){}
   sfxUpgrade();
-  renderCandyBadge();renderCenter('Lv.'+(lv+1)+'!  +'+LV_STEP);
-  toast(`✨ ${p.name} Lv.${lv+1}! 능력치 +${LV_STEP}`);
+  renderCandyBadge();renderCenter('Lv.'+(lv+1)+'!  +'+gain);
+  toast(`✨ ${p.name} Lv.${lv+1}! 능력치 +${gain}`);
 }
 /* 포켓몬 센터는 팝업이 아니라 main 뷰 전환으로 연다 (도감과 같은 방식) */
 function openCenter(){
@@ -4244,7 +4411,7 @@ function toast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
-function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false,centerEnabled:false,chores:defaultChores(),customAffirmation:''};}
+function defaultSettings(){return {wake:'06:45',depart:'08:10',bedtime:'20:10',sound:false,vacations:[],holidays:[],weatherProxy:DEFAULT_WEATHER_PROXY,proxyCustom:false,study:defaultStudy(),battleEnabled:false,centerEnabled:false,chores:defaultChores(),choreSeed43:true,customAffirmation:'',customAffirmationDate:''};}
 function proxyUrl(v){                                  /* 설정값 정리: 공백·끝 슬래시 제거, http(s)만 허용 */
   let s=String(v==null?'':v).trim().replace(/\s+/g,'').replace(/\/+$/,'');
   if(!s)return '';
@@ -4368,6 +4535,10 @@ function parseBackup(raw){
   settings.centerEnabled=rs.centerEnabled===true;          /* 🙈 센터 공개 여부도 담김(옛 백업엔 없으므로 숨김) */
   /* ★ 오늘의 긍정 확언 — 보호자가 직접 넣은 문장도 백업에 담고 되살린다(옛 백업엔 없으므로 자동) */
   settings.customAffirmation=(typeof rs.customAffirmation==='string')?rs.customAffirmation.trim().slice(0,32):'';
+  /* v43.2: 그 문장을 쓴 날짜. 날짜가 없는 옛 백업은 오늘로 보아 그대로 보이게 한다 */
+  settings.customAffirmationDate=(typeof rs.customAffirmationDate==='string'&&DATE_RE.test(rs.customAffirmationDate))
+    ?rs.customAffirmationDate:(settings.customAffirmation?todayKey():'');
+  if(!settings.customAffirmation)settings.customAffirmationDate='';
   /* 요일별 공부 목록 (0=일 … 6=토) — 옛 백업에 없으면 기본값 */
   const st=(rs.study&&typeof rs.study==='object'&&!Array.isArray(rs.study))?rs.study:{};
   settings.study={};
@@ -4379,17 +4550,23 @@ function parseBackup(raw){
   if(Array.isArray(rs.holidays)){
     settings.holidays=rs.holidays.filter(k=>typeof k==='string'&&DATE_RE.test(k));
   }
-  /* 🧹 포켓몬 센터 집안일 목록 — 옛 백업에 없으면 기본 4개 */
+  /* 🧹 포켓몬 센터 집안일 목록 — 옛 백업에 없으면 기본 5개 */
   const ch=Array.isArray(rs.chores)?rs.chores:[];
   settings.chores=[];
   ch.forEach((c,i)=>{
     if(!c||typeof c!=='object'||Array.isArray(c))return;
     const nm=(typeof c.name==='string')?c.name.trim():'';
     if(!nm)return;
-    settings.chores.push({id:(typeof c.id==='string'&&c.id&&c.id.length<=40)?c.id:('c'+i),
-      name:nm.slice(0,30),icon:(typeof c.icon==='string'&&c.icon)?c.icon:'🧹',water:c.water===true});
+    const item={id:(typeof c.id==='string'&&c.id&&c.id.length<=40)?c.id:('c'+i),
+      name:nm.slice(0,30),icon:(typeof c.icon==='string'&&c.icon)?c.icon:'🧹',water:c.water===true};
+    /* v43.2: 카드에 나오는 설명(desc)도 백업에 담고 되살린다.
+       설명 값이 아예 없던 옛 백업은 그대로 두어 id로 기본 안내(CHORE_DESC)가 나오게 한다. */
+    if(typeof c.desc==='string')item.desc=c.desc.trim().slice(0,24);
+    else if(Object.prototype.hasOwnProperty.call(c,'desc'))item.desc='';
+    settings.chores.push(item);
   });
   if(!settings.chores.length)settings.chores=defaultChores();
+  settings.choreSeed43=true;                 /* 되살린 목록은 그대로 존중 — '이불 정리'를 다시 넣지 않는다 */
   /* 🍬 사탕·오늘 도운 집안일·포켓몬 레벨 (없는 옛 백업은 사탕 0 · 기록 없음 · 모두 Lv.1) */
   const candy=(typeof raw.candy==='number'&&isFinite(raw.candy)&&raw.candy>0)?Math.floor(raw.candy):0;
   const choresDone={};
@@ -4521,7 +4698,7 @@ function btEl(id){return document.getElementById(id);}
 function btPrep(list,mine){
   return list.map(p=>{
     const lv=mine?pkLv(p.id):1;
-    const lb=mine?Math.max(0,(lv-1)*LV_STEP):0;
+    const lb=mine?pkBonus(lv):0;
     const max=Math.round(p.hp+lb), atk=p.atk+lb, def=p.def+lb;
     return {p,hp:max,max,atk,def,shield:1,lv};
   });
@@ -5098,10 +5275,14 @@ function buildChoreRows(){
   box.innerHTML=arr.map((c,i)=>{
     const icon=choreIcon({icon:String((c&&c.icon)||'🧹')});
     const name=(c&&typeof c.name==='string')?c.name:'';
-    return `<div class="chore-row">
-      <span class="chore-ic-view" aria-hidden="true">${icon}</span>
-      <input type="text" class="chore-name" data-i="${i}" value="${escHtml(name)}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="예: 장난감 정리">
-      <button type="button" class="chore-del" data-del="${i}" title="이 집안일 빼기">✕</button>
+    const desc=choreDescOf(c,String((c&&c.id)||('c'+i)));   /* 카드에 나오는 그 안내 문구 */
+    return `<div class="chore-row" data-row="${i}">
+      <div class="chore-line">
+        <span class="chore-ic-view" aria-hidden="true">${icon}</span>
+        <input type="text" class="chore-name" data-i="${i}" value="${escHtml(name)}" maxlength="30" autocomplete="off" spellcheck="false" placeholder="예: 장난감 정리" aria-label="집안일 ${i+1} 이름">
+        <button type="button" class="chore-del" data-del="${i}" title="이 집안일 빼기">✕</button>
+      </div>
+      <input type="text" class="chore-desc" data-i="${i}" value="${escHtml(desc)}" maxlength="24" autocomplete="off" spellcheck="false" placeholder="설명 · 비우면 '완료하면 🍬 사탕 1개'" aria-label="집안일 ${i+1} 설명">
     </div>`;
   }).join('');
   box.querySelectorAll('input.chore-name').forEach(inp=>{
@@ -5109,6 +5290,13 @@ function buildChoreRows(){
       const arr2=choreListRaw(),i=Number(inp.dataset.i);
       if(arr2[i]){arr2[i].name=inp.value;save();}
       updateChoreNote();
+    });
+  });
+  /* v43.2: 설명(카드 부제)도 여기서 고친다 — 바로 저장하고 센터 카드도 다시 그린다 */
+  box.querySelectorAll('input.chore-desc').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const arr2=choreListRaw(),i=Number(inp.dataset.i);
+      if(arr2[i]){arr2[i].desc=inp.value;save();renderCenter();}
     });
   });
   box.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click',()=>{
@@ -5121,19 +5309,33 @@ function buildChoreRows(){
   }));
   updateChoreNote();
 }
-document.getElementById('btn-chore-add').addEventListener('click',()=>{
+/* ＋ 새 집안일 — 제목과 설명을 적어 넣는다. 설명을 비우면 카드에는 '완료하면 🍬 사탕 1개'가 나온다. */
+function addChoreFromForm(){
+  const nEl=document.getElementById('chore-new-name'),dEl=document.getElementById('chore-new-desc');
+  const name=nEl?String(nEl.value||'').trim():'';
+  const desc=dEl?String(dEl.value||'').trim().slice(0,24):'';
   const arr=choreListRaw();
+  if(!name){toast('집안일 제목을 적어 주세요');if(nEl)nEl.focus();return;}
   if(arr.length>=10){toast('집안일은 10개까지 넣을 수 있어요');return;}
-  arr.push({id:'c'+Date.now().toString(36),name:'새 집안일',icon:'🧹'});
-  save();buildChoreRows();renderCenter();
-  const inputs=document.querySelectorAll('#chore-rows input.chore-name');
-  const last=inputs[inputs.length-1];
-  if(last){last.focus();last.select();}
-});
+  if(arr.some(c=>c&&String(c.name||'').trim()===name)){toast('같은 이름의 집안일이 이미 있어요');if(nEl)nEl.focus();return;}
+  arr.push({id:'c'+Date.now().toString(36),name:name.slice(0,30),icon:'🧹',desc:desc});
+  save();
+  if(nEl)nEl.value='';
+  if(dEl)dEl.value='';
+  buildChoreRows();renderCenter();
+  toast(desc?`✅ '${name}' 집안일을 넣었어요 · ${desc}`:`✅ '${name}' 집안일을 넣었어요 · 완료하면 🍬 사탕 1개`);
+  if(nEl)nEl.focus();
+}
+document.getElementById('btn-chore-add').addEventListener('click',addChoreFromForm);
+(function bindChoreAddEnter(){
+  const nEl=document.getElementById('chore-new-name'),dEl=document.getElementById('chore-new-desc');
+  if(nEl)nEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(dEl)dEl.focus();else addChoreFromForm();}});
+  if(dEl)dEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addChoreFromForm();}});
+})();
 document.getElementById('btn-chore-reset').addEventListener('click',()=>{
-  if(!confirm('집안일 목록을 처음 기본 4개(신발 정리·빨래 정리·돌돌이·물주기)로 되돌릴까요?\n(직접 넣거나 고친 목록은 사라져요. 모은 사탕과 오늘 완료 표시는 그대로예요)'))return;
+  if(!confirm('집안일 목록을 처음 기본 5개(이불 정리·신발 정리·빨래 정리·돌돌이·물 주기)로 되돌릴까요?\n(직접 넣거나 고친 목록은 사라져요. 모은 사탕과 오늘 완료 표시는 그대로예요)'))return;
   S.settings.chores=defaultChores();save();buildChoreRows();renderCenter();
-  toast('집안일 목록을 기본 4개로 되돌렸어요');
+  toast('집안일 목록을 기본 5개로 되돌렸어요');
 });
 function renderDepartSongHint(){
   const el=document.getElementById('set-depart-song');
@@ -5429,9 +5631,19 @@ const AFFIRMATIONS=[
   '나는 나를 믿고 한 걸음 더 나아가요!'
 ];
 const AFFIRM_MAX=32;                                  /* 보호자가 직접 넣는 문장은 32자까지(한 줄에 들어오게) */
-function customAffirmation(){
+/* 보호자가 넣어 둔 문장 그대로(날짜 확인 전) — 설정 화면 설명에 쓰려고 따로 둔다 */
+function storedAffirmation(){
   const v=(S.settings&&typeof S.settings.customAffirmation==='string')?S.settings.customAffirmation:'';
   return v.trim().slice(0,AFFIRM_MAX);
+}
+function affirmationIsToday(){
+  return !!(S.settings&&S.settings.customAffirmationDate===todayKey());
+}
+/* v43.2: 직접 쓴 문장은 쓴 날 하루만. 날짜가 지난 문장은 버리지 않고 저장해 두되(백업에도),
+   화면에는 매일 바뀌는 100개 문구(AFFIRMATIONS[dayNumber()%100])를 쓴다. */
+function customAffirmation(){
+  if(!affirmationIsToday())return '';
+  return storedAffirmation();
 }
 function dayNumber(){
   const d=new Date(), s=new Date(d.getFullYear(),0,0);
@@ -5463,8 +5675,10 @@ function updateAffirmNote(){
   const el=document.getElementById('affirm-note');
   if(!el)return;
   const c=customAffirmation();
-  el.textContent=c?('지금은 보호자가 넣은 문장이 아침·저녁 모두 나와요: “'+c+'”')
-                  :'지금은 자동이에요 · 매일 자정에 바뀌는 100개 문구 중 오늘의 문장이 나와요.';
+  const old=storedAffirmation();
+  if(c)el.textContent='오늘 하루는 보호자가 넣은 문장이 아침·저녁 모두 나와요: “'+c+'” · 내일이 되면 자동으로 100개 문구로 바뀌어요.';
+  else if(old)el.textContent='지난번에 넣은 “'+old+'”는 하루가 지나 자동으로 100개 문구로 돌아갔어요. 다시 넣으면 오늘 하루 다시 나와요.';
+  else el.textContent='지금은 자동이에요 · 매일 자정에 바뀌는 100개 문구 중 오늘의 문장이 나와요.';
 }
 function syncAffirmSetting(){
   const inp=document.getElementById('set-affirm');
@@ -5475,11 +5689,12 @@ function applyCustomAffirmation(){
   const inp=document.getElementById('set-affirm');
   const v=inp?String(inp.value||'').trim().slice(0,AFFIRM_MAX):'';
   S.settings.customAffirmation=v;
+  S.settings.customAffirmationDate=v?todayKey():'';      /* v43.2: 오늘 날짜를 함께 저장 → 내일 자동 복귀 */
   if(inp)inp.value=v;
   save();
   renderAffirm();
   updateAffirmNote();
-  if(v)toast('긍정 확언을 바꿨어요 · '+v);
+  if(v)toast('오늘 하루 긍정 확언을 바꿨어요 · '+v);
   else toast('긍정 확언을 자동으로 되돌렸어요 · 매일 바뀌는 100개 문구');
 }
 document.getElementById('btn-affirm-apply').addEventListener('click',applyCustomAffirmation);
@@ -5487,6 +5702,7 @@ document.getElementById('btn-affirm-auto').addEventListener('click',()=>{
   const inp=document.getElementById('set-affirm');
   if(inp)inp.value='';
   S.settings.customAffirmation='';
+  S.settings.customAffirmationDate='';
   save();
   renderAffirm();
   updateAffirmNote();
@@ -5517,6 +5733,9 @@ setInterval(tickTimer,500);
 setInterval(()=>{
   if(applyMode(false))return;      /* 모드가 바뀌었으면 applyMode가 다시 그린다 */
   renderProgress();checkDepartEvent();tickWake();renderAffirm();
+  /* 날짜가 바뀌면 직접 쓴 긍정 확언도 100개 문구로 자동 복귀 — 설정을 열어 둔 채여도 설명이 맞춰진다 */
+  const sm=document.getElementById('modal-settings');
+  if(sm&&!sm.classList.contains('hidden'))updateAffirmNote();
 },5000);
 checkDepartEvent();
 scheduleSongTick();
