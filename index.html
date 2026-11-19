@@ -1095,6 +1095,105 @@ body.eve #p-msg{color:#B4622A}
 }
 @media (prefers-reduced-motion:reduce){
   #partner-a img{animation:none}}
+
+/* ═══ v44 — 집안일 : 모은 친구 : 고른 포켓몬 = 1 : 1 : 1 (강화소 안 2단) ═══
+   바깥은 카드 두 장(집안일 · 포켓몬 강화소) 그대로 두고, 강화소 안을 좌우 1:1로 나눈다.
+   왼쪽 칸 폭 = (본문 폭 − 바깥 간격 9 − 강화소 카드 테두리 6 − 강화소 안 여백 16 − 안 간격 10) / 3
+   이므로 집안일 · 모은 친구 · 고른 포켓몬 세 칸(상자 폭)이 정확히 같아진다. */
+.pct-body{grid-template-columns:calc((100% - 41px)/3) 1fr;gap:9px}
+
+/* ✨ 강화소 안 2단 — 왼쪽 모은 친구 / 오른쪽 고른 포켓몬 */
+.pct-split{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:7px 8px 8px}
+.pct-side{display:flex;flex-direction:column;min-height:0;min-width:0;
+  background:#FFFCF3;border:2.5px solid #E5DCC4;border-radius:14px;overflow:hidden}
+.pct-side-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:4px 8px 5px;
+  font-size:11px;font-weight:900;color:#7A6A48;letter-spacing:-.3px;border-bottom:2px dashed #E5DCC4}
+.pct-side-h b{margin-left:auto;font-size:11px;color:#C2571B;letter-spacing:-.3px}
+#pct-side-more{font-size:9.5px;font-weight:900;color:#7A6A48;background:#FFF3C4;border:2px solid #D8C08C;
+  border-radius:99px;padding:0 5px;line-height:1.6;white-space:nowrap}
+/* 모은 친구 4열 격자 — 16마리(4×4)가 스크롤 없이 다 보이고, 넘칠 때만 이 안에서 세로로 넘긴다 */
+.pct-gridwrap{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px 8px 4px}
+.pct-strip{flex:0 1 auto;min-height:0;max-height:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px 6px;padding:2px 6px 3px 2px;overflow-x:hidden;overflow-y:auto;align-content:start}
+.pct-strip::-webkit-scrollbar{width:8px}
+.pct-strip::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
+.pct-strip::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px}
+.pct-thumb{width:100%;height:auto;max-width:72px;aspect-ratio:1;justify-self:center;border-radius:13px}
+.pct-thumb .lv{right:-4px;bottom:-5px;font-size:9px;padding:0 3.5px;border-width:1.8px}
+.pct-grid-f{flex:0 0 auto;margin:0 8px 8px;padding:4px 6px;font-size:10px;font-weight:900;color:#7A6A48;
+  background:#FFF9E4;border:2px dashed #E3C87A;border-radius:10px;line-height:1.4;letter-spacing:-.3px;text-align:center}
+
+/* 고른 포켓몬 — 1/3 폭에서 위아래로: 그림·이름·Lv·타입 위, HP·공격·방어 막대 아래(폭 전체) */
+.pct-detail{display:flex;flex-direction:column;min-height:0;min-width:0}
+.pct-detail #pct-pane{padding:0 7px}
+.pct-card{padding:7px;gap:6px;margin:0 0 7px;justify-content:flex-start}
+.pct-card .row1{flex:0 0 auto;flex-wrap:wrap;gap:6px 9px}
+.pct-card .art{width:clamp(88px,38%,132px);border-radius:12px}
+.pct-card .info{flex:1 1 0;width:auto;min-width:0;gap:3px}
+.pct-card .nm{font-size:17px;line-height:1.35}
+.pct-card .pct-lvpill{font-size:10px;padding:0 6px}
+.pct-card .tps{gap:3px}
+.pct-card .up-sum{font-size:9.5px}
+.pct-card .stats{flex:1 1 100%;gap:4px}
+.pct-card .st-hd{font-size:10px;line-height:1.5;display:flex;align-items:center;gap:4px;white-space:normal}
+.pct-card .st-hd .stc{flex:0 0 auto}
+.pct-stat{font-size:11.5px;gap:4px}
+.pct-stat .lb{width:24px;font-size:10.5px}
+.pct-stat .bar{height:14px}
+.pct-stat .vl{min-width:24px;font-size:12px}
+.pct-stat .nx{min-width:46px;font-size:10.5px}
+.pct-stat .nx b{font-size:10px;padding:0 3px}
+.pct-stat .nx.done{font-size:9.5px}
+/* Lv.1~5 다섯 칸 진행 */
+.pct-lvbar{gap:3px;margin-top:auto}
+.pct-lvbar .lt{font-size:9px}
+.pct-pips{gap:3px}
+.pct-pip{width:16px;height:16px;font-size:9px;border-width:2px}
+.pct-lvbar .tk{font-size:9.5px;padding:0 6px}
+/* 🍬 참조표 — 2×2 (Lv.1→2 / Lv.2→3 · Lv.3→4 / Lv.4→5) */
+.pct-cost{gap:2px}
+.pct-cost .h{font-size:10px}
+.pct-cfs{display:grid;grid-template-columns:1fr 1fr;gap:3px 4px}
+.pct-cf{flex-direction:row;align-items:center;justify-content:space-between;gap:3px;padding:1px 4px;border-radius:8px}
+.pct-cf i{font-size:9.5px;letter-spacing:-.4px}
+.pct-cf b{font-size:10px;letter-spacing:-.4px}
+.pct-card .mx{font-size:9.5px;letter-spacing:-.4px;text-align:center;line-height:1.45;margin-top:auto}
+/* 강화 버튼 — 1/3 폭에 맞춰 글씨만 조금 줄인다 */
+.pct-detail .pct-up{margin:0 7px;font-size:15px;padding:9px 5px;white-space:nowrap}
+
+/* 집안일 칸도 1/3 — 이름·설명·+1 칩이 한 줄에 그대로 들어가게 한 단계 줄인다 */
+.pct-chore{gap:7px;padding:4px 7px}
+.pct-chore .ic{width:38px;height:38px}
+.pct-chore .ic svg{width:27px;height:27px}
+.pct-chore .nm{font-size:14.5px;gap:3px 4px;flex-wrap:wrap;row-gap:1px}
+.pct-chore .sb{font-size:10.5px;letter-spacing:-.4px}
+.pct-chore .rw{font-size:10.5px;padding:1px 6px}
+
+/* 1024×768 처럼 세로가 짧을 때 — 여백·그림을 한 단계 더 줄인다 */
+@media (max-height:800px){
+  /* 안 여백 7+7 · 안 간격 9 로 줄어든 만큼 바깥 보정도 다시 맞춘다 (9+6+14+9=38) */
+  .pct-body{grid-template-columns:calc((100% - 38px)/3) 1fr}
+  .pct-split{gap:9px;padding:6px 7px 7px}
+  .pct-card{padding:6px;gap:5px}
+  .pct-card .art{width:clamp(80px,34%,108px)}
+  .pct-card .nm{font-size:16px}
+  .pct-gridwrap{padding:7px 7px 3px}
+  .pct-strip{gap:6px 5px;padding:2px 6px 3px 2px}
+  .pct-thumb{max-width:66px}
+  .pct-grid-f{margin:0 7px 7px;padding:3px 5px;font-size:9.5px}
+  .pct-chore{gap:6px;padding:3px 6px}
+  .pct-chore .ic{width:35px;height:35px}
+  .pct-chore .ic svg{width:25px;height:25px}
+  .pct-chore .nm{font-size:13.5px;gap:2px 3px}
+  .pct-chore .sb{font-size:10px}
+  .pct-chore .rw{font-size:10px;padding:1px 5px}
+  .pct-detail .pct-up{font-size:13.5px;padding:9px 4px;margin:0 6px}
+  .pct-detail #pct-pane{padding:0 6px}
+  .pct-stat .bar{height:13px}
+  .pct-cf{padding:0 4px}
+  .pct-pip{width:15px;height:15px}
+}
+
 </style>
 </head>
 <body>
@@ -1230,18 +1329,26 @@ body.eve #p-msg{color:#B4622A}
       <span class="pct-candy">🍬 보유 사탕: <b id="pct-candy-n">0</b>개</span>
     </div>
     <div class="pct-body">
-      <!-- 왼쪽: 오늘의 집안일 돕기 -->
+      <!-- ① 왼쪽: 오늘의 집안일 돕기 (1/3) -->
       <section class="pct-sec">
         <div class="pct-sec-h"><span class="ic" aria-hidden="true">🧹</span><span>오늘의 집안일 돕기</span><span class="pct-note">항목당 하루 1번</span></div>
         <div class="pct-list" id="pct-chores"></div>
         <div class="pct-tip" id="pct-tip"></div>
       </section>
-      <!-- 오른쪽: 포켓몬 강화소 -->
+      <!-- ② 오른쪽: 포켓몬 강화소 (2/3) — 안을 모은 친구 : 고른 포켓몬 = 1 : 1 로 나눈다 -->
       <section class="pct-sec">
         <div class="pct-sec-h"><span class="ic" aria-hidden="true">✨</span><span>포켓몬 강화소</span><span class="pct-note pill" id="pct-next"></span></div>
-        <div class="pct-strip" id="pct-strip"></div>
-        <div id="pct-pane"></div>
-        <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
+        <div class="pct-split">
+          <div class="pct-side">
+            <div class="pct-side-h"><span>🐾 모은 친구</span><b id="pct-side-n">-</b><span id="pct-side-more" hidden>⌄ 더</span></div>
+            <div class="pct-gridwrap"><div class="pct-strip" id="pct-strip"></div></div>
+            <div class="pct-grid-f" id="pct-grid-f">👆 눌러서 오른쪽에서 키워요</div>
+          </div>
+          <div class="pct-detail">
+            <div id="pct-pane"></div>
+            <button class="pct-up" id="pct-up" type="button">🍬 사탕 1개로 강화하기! (+5)</button>
+          </div>
+        </div>
       </section>
     </div>
   </section>
@@ -4276,6 +4383,9 @@ function renderCenter(pop){
   if(!caught.length){
     centerSel=null;
     if(strip)strip.innerHTML='';
+    {const sn=document.getElementById('pct-side-n');if(sn)sn.textContent='0마리';
+     const mh=document.getElementById('pct-side-more');if(mh)mh.hidden=true;
+     const gf=document.getElementById('pct-grid-f');if(gf)gf.hidden=true;}
     if(pill){pill.hidden=true;pill.textContent='';}
     if(pane)pane.innerHTML='<div class="pct-empty"><span class="em">🥚</span><div>아직 잡은 포켓몬이 없어요!<br>아침·저녁 루틴으로 친구를 먼저 만나봐요!</div></div>';
     if(up){up.classList.remove('max','short');up.disabled=true;up.textContent='🍬 강화할 포켓몬이 없어요';}
@@ -4285,6 +4395,8 @@ function renderCenter(pop){
   const p=POKEMON.find(x=>x.id===centerSel)||caught[0];
   const lv=pkLv(p.id),bonus=pkBonus(lv),max=lv>=POKE_MAX_LV;
   const gain=max?0:nextGain(lv), cost=max?0:upgradeCost(lv+1);
+  {const sn=document.getElementById('pct-side-n');if(sn)sn.textContent=caught.length+'마리';
+   const gf=document.getElementById('pct-grid-f');if(gf)gf.hidden=false;}
   if(strip){
     strip.innerHTML=caught.map(q=>{
       const ql=pkLv(q.id);
@@ -4293,6 +4405,9 @@ function renderCenter(pop){
         `<img src="assets/pokemon/${q.id}.png" alt=""><span class="lv">Lv.${ql}</span></button>`;
     }).join('');
     strip.querySelectorAll('[data-poke]').forEach(b=>b.addEventListener('click',()=>{centerSel=Number(b.dataset.poke);renderCenter();}));
+    /* 4열 격자에 다 안 들어가면(20마리부터) 머리글에 '⌄ 더' 힌트를 켠다 */
+    const mh=document.getElementById('pct-side-more');
+    if(mh)mh.hidden=!(strip.scrollHeight>strip.clientHeight+2);
   }
   if(pill){pill.hidden=false;pill.textContent=max?'👑 Lv.5 MAX':`⭐ Lv.${lv} → Lv.${lv+1} · 🍬${cost}`;}
   /* HP·공격·방어 막대 — 지금 값(파랑) + 사탕으로 오른 만큼(금색) + 다음 레벨에 오를 만큼(점선) */
