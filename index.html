@@ -2220,20 +2220,19 @@ function fmtK(hm){const{h,m}=parseHM(hm),ap=h<12?'오전':'오후';let h12=h%12;
 /* ================= EXP · 포획 ================= */
 function poolExp(){let t=0;for(const k in S.days)t+=S.days[k].exp||0;return t-EXP_PER_CATCH*S.caught.length;}
 function nextTarget(){
-  /* 한 마리를 잡을 때까지는 며칠이 걸려도 같은 목표를 유지한다.
-     날짜(di)는 '새 목표를 고를 때'만 쓰고, 이미 정해진 목표는 날이 바뀌어도 바꾸지 않는다. */
+  /* 한 마리를 잡을 때까지는 며칠이 걸려도 같은 목표를 유지한다(새로고침·날짜 변경에도 그대로).
+     새 목표는 아직 잡지 않은 포켓몬 중에서 무작위로 고른다(v45.1 — 예전엔 날짜 순서대로 돌았다).
+     도감 200종을 다 잡은 뒤에는 전체 200종 중에서 무작위로 고른다. */
   const caughtIds={};S.caught.forEach(c=>{caughtIds[Number(c.id)]=true;});
-  const allCaught=POKEMON.every(p=>caughtIds[p.id]);
-  const di=Math.floor(new Date(todayKey()+'T00:00:00')/864e5);
-  let p=null;
-  if(!allCaught){
-    if(S.targetId!=null)p=POKEMON.find(x=>x.id===Number(S.targetId))||null;
-    if(p&&caughtIds[p.id])p=null;                 /* 이미 잡은 포켓몬이 목표로 남아 있으면 새로 고른다 */
-    if(!p)for(let i=0;i<POKEMON.length;i++){const q=POKEMON[(di+i)%POKEMON.length];
-      if(!caughtIds[q.id]){p=q;break;}}
+  if(S.targetId!=null){                                   /* 정해진 목표가 있으면 잡을 때까지 그대로 */
+    const t=POKEMON.find(x=>x.id===Number(S.targetId));
+    if(t&&!caughtIds[t.id])return t;
   }
-  if(!p)p=POKEMON[di%POKEMON.length];              // 도감 완료 후엔 순환
-  if(S.targetId!==p.id){S.targetId=p.id;save();}   /* 목표가 실제로 바뀔 때만 저장 */
+  const uncaught=POKEMON.filter(q=>!caughtIds[q.id]);
+  const p=uncaught.length>0
+    ? uncaught[Math.floor(Math.random()*uncaught.length)]   /* 아직 못 잡은 포켓몬 중 무작위 */
+    : POKEMON[Math.floor(Math.random()*POKEMON.length)];    /* 도감 완료 후엔 전체에서 무작위 */
+  S.targetId=p.id;save();
   return p;
 }
 /* 오늘의 목표 모습 단계 — 보이는 이름·그림을 EXP에 맞춰 숨긴다.
