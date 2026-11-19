@@ -969,6 +969,12 @@ body.eve #p-msg{color:#B4622A}
 .chore-del:active{transform:translateY(2px);box-shadow:none}
 .chore-foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
 
+/* ── v39: 루틴 완료 몬스터볼 컨페티 ─────────
+   화면 전체를 덮지만 pointer-events:none이라 어떤 터치도 막지 않는다.
+   포획 창(#modal-catch z 60)·배틀(z 70)·노래 배너(z 70~71)보다 위,
+   도감 카드(z 75)·토스트(z 80)보다는 아래에 떠서 읽는 화면을 가리지 않는다. */
+#confetti{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:73;display:block}
+
 /* ── 알림 토스트 ───────────────────────── */
 #toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);background:#fff;color:var(--ink);
   border:var(--bw) solid var(--ink);border-radius:14px;padding:9px 18px;font-weight:900;font-size:14.5px;
@@ -1926,7 +1932,13 @@ function showCatch(p){
   document.getElementById('catch-name').textContent=`No.${p.no} ${p.name}`;
   document.getElementById('catch-sub').textContent=`${todayKey().replace(/-/g,'.')} 획득 · 다음 목표는 새로 시작!`;
   document.getElementById('modal-catch').classList.remove('hidden');
-  playChime();
+  /* 루틴 완료 팡파레가 울리는 중이면 '가랏, 피카츄!'는 팡파레가 끝난 뒤에 (소리가 섞이지 않게) */
+  const nowMs=Date.now();
+  if(routineFanfareEnd>nowMs){
+    const delay=routineFanfareEnd-nowMs+60;
+    routineFanfareEnd=0;
+    setTimeout(()=>{try{playChime();}catch(e){}},delay);
+  }else playChime();
   renderExp();renderPoke();
 }
 document.getElementById('catch-close').addEventListener('click',()=>{
@@ -1996,9 +2008,11 @@ function recalcExp(d){
   d.exp=Math.max(0,e+(d.testExp||0));      /* 🎯 테스트로 준 EXP(#btn-exp)는 다시 계산해도 지우지 않는다 */
 }
 function toggleTask(k){
-  if(!dayTasks().some(t=>t.k===k))return;
+  const list=dayTasks();
+  if(!list.some(t=>t.k===k))return;
   const d=day(todayKey());
   const st=curState();
+  const wasAllDone=list.every(t=>!!st.tasks[t.k]);      /* v39: 이 터치 전에 이미 다 끝나 있었는지 */
   if(!st.tasks[k]){
     st.tasks[k]=true;
     st.inTime[k]=isEveMode()?beforeBedtime():(isRestDay()?true:isBeforeDepart());
@@ -2010,6 +2024,7 @@ function toggleTask(k){
     delete st.tasks[k];delete st.inTime[k];
     if(st.bonus)delete st.bonus[k];
   }
+  const nowAllDone=list.every(t=>!!st.tasks[t.k]);      /* v39: 5개가 모두 끝난 상태가 됐는지 */
   if(st.tasks[k])playDoneSound();      /* 완료로 바뀔 때만 피카츄 효과음 */
   if(st.tasks[k])pauseTimerForTask(k); /* 완료 상태가 되면 그 할 일의 타이머·음원도 바로 멈춤 */
   recalcExp(d);
@@ -2017,6 +2032,7 @@ function toggleTask(k){
   if(k==='toilet'&&!isEveMode())wakeOnCardTap();   /* v31: 아침 '화장실' 카드를 누른 그 터치로 화면 유지 바로 켜기 */
   eveWakeReleaseCheck();                       /* 저녁: 식사 완료 1차 · 샤워+두 책 완료 2차 → 그 자리에서 바로 해제 */
   tickWake();                                  /* 쉬는 날: 양치(5번) 체크하면 화면 유지 해제 */
+  if(nowAllDone&&!wasAllDone&&st.tasks[k])celebrateRoutineClear();   /* v39: 마지막 할 일을 끝낸 그 한 번만 */
   checkCatch();
 }
 function renderTasks(){
@@ -2722,6 +2738,142 @@ function sfxUpgrade(){
   const t=ac.currentTime+0.01;
   [659.25,830.61,987.77,1318.51].forEach((f,i)=>btTone(ac,f,f,t+i*0.075,0.22,'triangle',0.13));
   btTone(ac,1975.53,1975.53,t+0.3,0.34,'sine',0.09);
+}
+
+/* ================= 🎉 루틴 완료 팡파레 · 몬스터볼 컨페티 (v39) =================
+   그날 루틴(아침 할 일 · 쉬는 날 · 저녁 할 일) 5가지를 '모두' 끝낸 그 한 번에만 터진다.
+   · 소리: "피카!"(assets/task-done.mp3)가 끝난 뒤에 이어지는 약 1.3초짜리 밝은 팡파레.
+     기존 playChime()(도,미,솔,도)나 sfxVictory()(C장조 5음)와 겹치지 않게 D장조로 올라가고,
+     시작에 '반짝' 터지는 소리(하이패스 잡음 + 위로 솟는 사인)를 넣어 축하 느낌을 냈다.
+   · 그림: 두 모서리에서 터지는 종이 조각 + 미니 몬스터볼이 회전하며 흩날린다(약 3초).
+   Web Audio로만 소리를 내서 무음 영상·유튜브와 섞여도 끊기지 않는다. */
+function drawMiniPokeball(ctx,r){
+  ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.beginPath();ctx.arc(0,0,r,Math.PI,Math.PI*2);ctx.fillStyle='#E3350D';ctx.fill();
+  ctx.strokeStyle='#23303f';ctx.lineWidth=Math.max(1.2,r*0.20);ctx.lineCap='butt';
+  ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.lineWidth=Math.max(1.1,r*0.15);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,r*0.33,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.lineWidth=Math.max(1,r*0.14);ctx.stroke();
+}
+let confettiCv=null,confettiRaf=0;
+function confettiRemove(){
+  if(confettiRaf){try{cancelAnimationFrame(confettiRaf);}catch(e){}confettiRaf=0;}
+  if(confettiCv){try{confettiCv.remove();}catch(e){}confettiCv=null;}
+}
+function launchPokeballConfetti(){
+  try{
+    confettiRemove();
+    const vw=window.innerWidth||document.documentElement.clientWidth||1024;
+    const vh=window.innerHeight||document.documentElement.clientHeight||768;
+    const dpr=Math.min(2,window.devicePixelRatio||1);      /* 아이패드 레티나에서도 가볍게 */
+    const cv=document.createElement('canvas');
+    cv.id='confetti';cv.setAttribute('aria-hidden','true');
+    cv.width=Math.round(vw*dpr);cv.height=Math.round(vh*dpr);
+    (document.body||document.documentElement).appendChild(cv);
+    const ctx=cv.getContext('2d');
+    if(!ctx){cv.remove();return;}
+    confettiCv=cv;
+    const COL=['#E3350D','#FFCB05','#2B6ECB','#3FA34D','#F5C518','#FFFFFF','#FF7A3D'];
+    const rand=(a,b)=>a+Math.random()*(b-a);
+    const ps=[];
+    /* ① 두 모서리에서 위·안쪽으로 터지는 색종이 */
+    const paperN=Math.max(32,Math.min(80,Math.round(vw/15)));
+    for(let i=0;i<paperN;i++){
+      const left=i%2===0;
+      const ang=(left?1:-1)*rand(12,60)*Math.PI/180;      /* 왼쪽 모서리는 오른쪽 위로, 오른쪽은 왼쪽 위로 */
+      const sp=rand(520,940);
+      ps.push({t:'paper',x:left?vw*0.08:vw*0.92,y:vh*0.985,
+        vx:Math.sin(ang)*sp,vy:-Math.cos(ang)*sp,
+        pw:rand(5,11),ph:rand(8,16),rot:rand(0,6.28),vr:rand(-9,9),
+        col:COL[i%COL.length],sway:rand(0,6.28),swAY:rand(18,46),age:0,ttl:rand(2.8,3.3)});
+    }
+    /* ①-2 가운데 아래에서 위로 터지는 한 줄기 — 누른 순간 바로 눈에 들어오게 */
+    for(let i=0;i<14;i++){
+      const ang=rand(-42,42)*Math.PI/180;
+      const sp=rand(600,950);
+      ps.push({t:'paper',x:vw*0.5+rand(-vw*0.07,vw*0.07),y:vh*0.99,
+        vx:Math.sin(ang)*sp,vy:-Math.cos(ang)*sp,
+        pw:rand(5,10),ph:rand(8,15),rot:rand(0,6.28),vr:rand(-9,9),
+        col:COL[(i+3)%COL.length],sway:rand(0,6.28),swAY:rand(18,40),age:0,ttl:rand(2.6,3.1)});
+    }
+    /* ② 같은 두 모서리에서 날아오르는 미니 몬스터볼 */
+    const ballN=Math.max(12,Math.min(24,Math.round(vw/56)));
+    for(let i=0;i<ballN;i++){
+      const left=i%2===0;
+      const ang=(left?1:-1)*rand(10,50)*Math.PI/180;
+      const sp=rand(480,860);
+      ps.push({t:'ball',x:left?vw*0.08:vw*0.92,y:vh*0.985,
+        vx:Math.sin(ang)*sp,vy:-Math.cos(ang)*sp,
+        r:rand(8,13),rot:rand(0,6.28),vr:rand(-7,7),
+        sway:rand(0,6.28),swAY:rand(14,34),age:0,ttl:rand(2.8,3.3)});
+    }
+    /* ③ 위에서 흩날리며 내려오는 몬스터볼 몇 개 */
+    for(let i=0;i<5;i++){
+      ps.push({t:'ball',x:rand(vw*0.22,vw*0.78),y:rand(-60,-20),
+        vx:rand(-40,40),vy:rand(60,160),r:rand(9,13),rot:rand(0,6.28),vr:rand(-5,5),
+        sway:rand(0,6.28),swAY:rand(20,40),age:0,ttl:rand(3.0,3.4)});
+    }
+    const G=900,FALL=165;      /* 떨어질 때는 종잇조각처럼 천천히(최대 165px/s) 흔들리며 내려온다 */
+    let last=performance.now(),t0=last;
+    function frame(now){
+      const dt=Math.min(0.05,(now-last)/1000);last=now;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,vw,vh);
+      let alive=0;
+      for(const p of ps){
+        p.age+=dt;
+        if(p.age>=p.ttl)continue;
+        alive++;
+        p.vy+=G*dt;
+        if(p.vy>FALL)p.vy=FALL;                     /* 내려오는 속도를 제한해 화면에 오래 머물게 */
+        p.vx*=(1-0.45*dt);                          /* 좌우로 퍼진 뒤 천천히 멈춤 */
+        p.x+=p.vx*dt+Math.sin(p.sway+p.age*3.4)*p.swAY*dt;
+        p.y+=p.vy*dt;
+        p.rot+=p.vr*dt;
+        ctx.save();
+        ctx.globalAlpha=Math.min(1,Math.max(0,(p.ttl-p.age)/0.55));
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rot);
+        if(p.t==='ball')drawMiniPokeball(ctx,p.r);
+        else{
+          ctx.scale(1,0.35+0.65*Math.abs(Math.cos(p.sway+p.age*5)));   /* 펄럭이는 종이 */
+          ctx.fillStyle=p.col;ctx.fillRect(-p.pw/2,-p.ph/2,p.pw,p.ph);
+        }
+        ctx.restore();
+      }
+      if(alive&&(now-t0)<4000)confettiRaf=requestAnimationFrame(frame);
+      else confettiRemove();                        /* 다 떨어지면 캔버스를 스스로 지운다 */
+    }
+    confettiRaf=requestAnimationFrame(frame);
+  }catch(e){try{confettiRemove();}catch(e2){}}
+}
+/* 루틴 완료 팡파레 소리 — '반짝' + 올라가는 D장조 아르페지오 + 마지막 화음 (약 1.3초) */
+function playRoutineClearSound(){
+  if(!soundUnlocked)return;
+  const ac=btAc();if(!ac)return;
+  const t=ac.currentTime+0.02;
+  btNoiseHit(ac,t,0.16,0.09,2600);                 /* 톡 터지는 반짝 */
+  btTone(ac,1568,3136,t,0.20,'sine',0.07);         /* 위로 솟는 반짝임 */
+  btTone(ac,2093,4186,t+0.05,0.18,'sine',0.05);
+  [587.33,739.99,880.00,1174.66,1479.98].forEach((f,i)=>{   /* 따다다단~ */
+    btTone(ac,f,f,t+0.06+i*0.105,0.20,'square',0.115);
+    btTone(ac,f*2,f*2,t+0.06+i*0.105,0.12,'triangle',0.045);
+  });
+  [293.66,587.33,739.99,880.00,1174.66].forEach(f=>btTone(ac,f,f,t+0.70,0.66,'triangle',0.075));  /* 짠! */
+  btTone(ac,2349.32,2349.32,t+0.74,0.40,'sine',0.045);
+}
+/* 루틴을 모두 끝낸 순간: 컨페티 + 알림 + 팡파레(완료음이 끝난 뒤에 이어서) */
+let routineFanfareEnd=0;      /* 팡파레가 끝나는 시각(ms) — 이때 포획 연출이 겹치면 '가랏, 피카츄!'를 뒤로 미룬다 */
+function celebrateRoutineClear(){
+  try{btAc();}catch(e){}                          /* 터치 안에서 오디오를 깨워 둔다 */
+  launchPokeballConfetti();
+  const where=isEveMode()?'저녁':(isRestDay()?'쉬는 날':'아침');
+  toast(`🎉 ${where} 루틴 모두 완료!`);
+  const doneMs=(doneBuf&&isFinite(doneBuf.duration))?doneBuf.duration*1000:900;
+  const wait=Math.round(Math.min(1500,Math.max(240,doneMs-140)));   /* "피카!" 다음에 "따다다단~" */
+  routineFanfareEnd=Date.now()+wait+1400;
+  setTimeout(()=>{try{playRoutineClearSound();}catch(e){}},wait);
 }
 
 function updateSoundBtn(){
