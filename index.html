@@ -1101,6 +1101,34 @@ body.eve #p-msg{color:#B4622A}
 @media (prefers-reduced-motion:reduce){
   #partner-a img{animation:none}}
 
+/* ══════════════ v47: 파트너 응원 말풍선 ══════════════
+   · 시계 옆 파트너를 누르면 응원 한마디가 말풍선으로 떠오르고 30초 뒤 저절로 사라진다.
+   · 말풍선은 파트너 오른쪽 끝에 맞춰 왼쪽으로 자라고, 꼬리가 파트너 머리를 가리킨다.
+   · 자리는 파트너 위 하늘 띠 — 날짜줄(위)과 시계 숫자(아래) 사이를 비켜 간다.
+   · 폭은 15자까지 한 줄(약 240px)이라 1180·1024 두 폭 모두 시계 위 하늘 안에 들어온다. */
+#partner-a{cursor:pointer}
+#partner-a.tap img{animation:pbTap .34s ease-out}
+@keyframes pbTap{0%{transform:none}35%{transform:translateY(-9px) scale(1.06) rotate(2deg)}100%{transform:none}}
+#pb-bubble{position:absolute;right:0;bottom:calc(100% + 6px);z-index:60;
+  display:none;max-width:min(300px,calc(100vw - 40px));white-space:nowrap;
+  padding:3px 13px 4px;border:2.5px solid var(--ink);border-radius:16px;
+  background:linear-gradient(180deg,#FFFEF8,#FFF7DE);color:var(--ink);font-weight:900;font-size:15.5px;
+  line-height:1.15;letter-spacing:-.5px;text-align:center;
+  box-shadow:0 4px 0 rgba(34,43,56,.20),0 9px 16px rgba(34,43,56,.16);
+  transform-origin:100% 100%;cursor:pointer}
+#pb-bubble.on{display:block;animation:pbPop .34s cubic-bezier(.2,1.5,.5,1) both}
+#pb-bubble.on.out{animation:pbOut .2s ease-in both}
+#pb-bubble::after{content:"";position:absolute;right:31px;bottom:-9.5px;width:14px;height:14px;
+  background:#FFF7DE;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);
+  border-bottom-right-radius:3px;transform:rotate(45deg)}
+@keyframes pbPop{0%{opacity:0;transform:scale(.72) translateY(7px)}
+  60%{opacity:1;transform:scale(1.05) translateY(0)}100%{opacity:1;transform:scale(1)}}
+@keyframes pbOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.86) translateY(4px)}}
+@media (prefers-reduced-motion:reduce){
+  #pb-bubble.on{animation:none}
+  #pb-bubble.on.out{animation:none}!important;
+  #partner-a.tap img{animation:none}}
+
 /* ═══ v44 — 집안일 : 모은 친구 : 고른 포켓몬 = 1 : 1 : 1 (강화소 안 2단) ═══
    바깥은 카드 두 장(집안일 · 포켓몬 강화소) 그대로 두고, 강화소 안을 좌우 1:1로 나눈다.
    왼쪽 칸 폭 = (본문 폭 − 바깥 간격 9 − 강화소 카드 테두리 6 − 강화소 안 여백 16 − 안 간격 10) / 3
@@ -4236,10 +4264,97 @@ function renderPartner(force){
   lastPartnerKey=key;
   const a=document.getElementById('partner-a');
   if(!a)return;
-  if(!p){a.innerHTML='';a.classList.remove('on');return;}
-  a.innerHTML=`<img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}">`;
+  pbHide();                                    /* v47: 파트너가 바뀌면 말풍선은 내린다 */
+  if(!p){a.innerHTML='';a.classList.remove('on');a.setAttribute('aria-hidden','true');
+    a.removeAttribute('role');a.removeAttribute('aria-label');a.removeAttribute('tabindex');return;}
+  a.innerHTML=`<img src="assets/pokemon/${p.id}.png" alt="${escHtml(p.name)}" draggable="false">`
+    +`<div id="pb-bubble" role="status" aria-live="polite"></div>`;
+    /* ↑ v47: 말풍선은 파트너 안에 산다(파트너를 바꾸면 함께 새로 만들어지며 숨김 상태로 시작) */
   a.classList.add('on');
+  a.removeAttribute('aria-hidden');
+  a.setAttribute('role','button');
+  a.setAttribute('tabindex','0');
+  a.setAttribute('aria-label',`${p.name} — 눌러서 응원 한마디 듣기`);
 }
+
+/* ══════════════ v47: 파트너 응원 말풍선 ══════════════
+   · 누를 때마다 20개 중 하나를 무작위로 고른다(직전 것과 겹치지 않게).
+   · 말풍선을 눌러도, 파트너를 다시 눌러도 새 한마디가 나오고 30초 타이머가 처음부터 다시 센다.
+   · {name}은 지금 파트너의 이름으로 바뀐다. */
+const PB_MSGS=[
+  '오늘도 멋지게 해낼 수 있어!',
+  '천천히 하나씩 해 보자!',
+  '너랑 함께라서 든든해!',
+  '물 한 모금 마시고 힘내자!',
+  '넌 이미 잘하고 있어!',
+  '우와, 오늘도 반짝반짝!',
+  '내가 응원하고 있을게!',
+  '하나, 둘, 셋! 같이 가자!',
+  '오늘 기분 최고지? 나도야!',
+  '조금씩 해도 괜찮아!',
+  '너는 나의 최고의 친구야!',
+  '실수해도 괜찮아, 다시 하자!',
+  '어제보다 한 뼘 더 자랐네!',
+  '포근한 마음으로 시작하자!',
+  '힘들면 잠깐 쉬어도 좋아!',
+  '네 미소가 세상을 밝혀!',
+  '오늘 하루도 사랑해! 힘내!',
+  '이만큼 해냈어, 정말 대단해!',
+  '{name}도 널 응원하고 있어!',
+  '{name}도 같이 힘내자!'
+];
+const PB_SHOW_MS=30000;               /* 30초 뒤 저절로 사라진다 */
+let pbLastIdx=-1,pbOpen=false,pbTimer=null,pbExit=null;
+function pbPick(){
+  const p=partnerInfo();if(!p)return '';
+  let i=Math.floor(Math.random()*PB_MSGS.length);
+  if(PB_MSGS.length>1&&i===pbLastIdx)
+    i=(i+1+Math.floor(Math.random()*(PB_MSGS.length-1)))%PB_MSGS.length;   /* 직전 것만 피한다 */
+  pbLastIdx=i;
+  return PB_MSGS[i].replace(/\{name\}/g,p.name);
+}
+function pbFit(b){                    /* 한 줄에 안 들어오면 글자를 아주 조금 줄인다 */
+  b.style.fontSize='';
+  let fs=15.5;
+  while(fs>11&&b.scrollWidth>b.clientWidth+1){fs-=0.5;b.style.fontSize=fs+'px';}
+}
+function pbShow(){
+  const p=partnerInfo();if(!p)return;
+  const b=document.getElementById('pb-bubble');if(!b)return;
+  if(pbExit){clearTimeout(pbExit);pbExit=null;}
+  b.textContent=pbPick();
+  b.classList.remove('out');
+  b.style.animation='none';void b.offsetWidth;b.style.animation='';   /* 팝 연출 다시 재생 */
+  b.classList.add('on');
+  pbOpen=true;
+  pbFit(b);
+  if(pbTimer)clearTimeout(pbTimer);
+  pbTimer=setTimeout(()=>{pbTimer=null;pbHide();},PB_SHOW_MS);        /* 30초 */
+}
+function pbHide(){
+  if(pbTimer){clearTimeout(pbTimer);pbTimer=null;}
+  const b=document.getElementById('pb-bubble');
+  if(!b){pbOpen=false;return;}
+  if(!pbOpen)return;
+  pbOpen=false;
+  b.classList.add('out');
+  pbExit=setTimeout(()=>{pbExit=null;if(!pbOpen)b.classList.remove('on','out');},220);
+}
+function pbTap(){
+  const a=document.getElementById('partner-a');
+  if(!a||!partnerInfo())return;
+  a.classList.remove('tap');void a.offsetWidth;a.classList.add('tap');
+  setTimeout(()=>a.classList.remove('tap'),360);
+  pbShow();
+}
+(function(){
+  const a=document.getElementById('partner-a');
+  if(!a)return;
+  a.addEventListener('click',pbTap);
+  a.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();pbTap();}
+  });
+})();
 /* 파트너 정하기 / 해제 — 도감 카드의 버튼에서 부른다. 다른 포켓몬으로 바로 바꿀 수 있다. */
 function togglePartner(id){
   const p=POKEMON.find(x=>x.id===Number(id));
