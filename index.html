@@ -279,8 +279,9 @@ header{display:flex;gap:12px;height:210px;flex:0 0 auto;align-items:stretch}
 #btn-rest:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(34,43,56,.2)}
 #btn-rest.on{background:#FFE0B8;color:#8a3b00}
 .set-date{font-family:inherit;font-size:12px;padding:2px 5px;border:2px solid var(--ink);border-radius:8px;font-weight:800}
-.vac-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
-.chip-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.vac-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.chip-list .set-sub{font-size:10.5px;line-height:1.25}
+.chip-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:900;color:#1d5cad;background:#E3F0FD;
   border:2px solid var(--ink);border-radius:99px;padding:1px 4px 1px 9px}
 .chip button{font-family:inherit;font-weight:900;font-size:12px;line-height:1;cursor:pointer;color:#A63D12;
@@ -717,7 +718,7 @@ body.ball-locked .dex-btn .pokeball:active{transform:none}
 #catch-ball{font-size:42px;animation:spin 1.2s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 .modal h3{font-size:20px;margin-bottom:10px;text-align:left;font-weight:900}
-.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:2px dashed #E4E9F1;font-size:14px;font-weight:800}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:2px dashed #E4E9F1;font-size:14px;font-weight:800}
 .set-row:last-child{border-bottom:none}
 .set-row input[type=time]{font-family:inherit;font-size:14px;padding:3px 6px;border:2.5px solid var(--ink);border-radius:8px;font-weight:800}
 .set-btn{font-family:inherit;font-weight:900;font-size:13px;border:2.5px solid var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer;
@@ -727,23 +728,27 @@ body.ball-locked .dex-btn .pokeball:active{transform:none}
 .sb-reset{background:#FFE2D6;color:#A63D12}
 .sb-backup{background:#E3F0FD;color:#1d5cad}
 .sb-close{background:var(--green);color:#fff}
-.btn-col{display:flex;flex-direction:column;gap:7px}
+.btn-col{display:flex;flex-direction:column;gap:6px}
+/* v46: 나란히 놓는 버튼 줄 */
+.set-inc{display:flex;gap:7px;flex-wrap:wrap}
+.set-inc>*{flex:1 1 190px}
 .set-sub{font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35}
 /* ⚙️ 설정 안쪽 탭 (시간·포인트 / 공부 목록 / 시스템) — 탭·닫기 고정, 내용만 스크롤 */
-#modal-settings .modal{display:flex;flex-direction:column;max-height:88vh;overflow:hidden;padding:0;width:min(88vw,520px)}
+#modal-settings{align-items:flex-start}   /* 탭을 바꿔도 탭 줄이 제자리에 있도록 위쪽 기준 */
+#modal-settings .modal{display:flex;flex-direction:column;max-height:92vh;overflow:hidden;padding:0;margin-top:4vh;width:min(92vw,600px);max-width:min(92vw,600px)}
 .set-head{flex:0 0 auto;padding:16px 22px 0;background:#fff;border-radius:20px 20px 0 0}
-.set-head h3{margin:0 0 8px}
-.set-tabs{display:flex;gap:6px;background:#fff;padding:0 0 10px}
-.set-tab{flex:1 1 0;min-width:0;font-family:inherit;font-weight:900;font-size:12.5px;letter-spacing:-.3px;
-  color:#5C6979;background:#F2F6FC;border:2.5px solid #C9D5E4;border-radius:12px;padding:7px 3px;cursor:pointer;
+.set-head h3{margin:0 0 6px}
+.set-tabs{display:flex;gap:5px;background:#fff;padding:0 0 8px}
+.set-tab{flex:1 1 0;min-width:0;font-family:inherit;font-weight:900;font-size:12px;letter-spacing:-.45px;
+  color:#5C6979;background:#F2F6FC;border:2.5px solid #C9D5E4;border-radius:12px;padding:7px 2px;cursor:pointer;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(34,43,56,.08);transition:.12s}
 .set-tab.on{background:var(--yellow-l);border-color:var(--ink);color:var(--ink);box-shadow:0 3px 0 rgba(34,43,56,.16)}
 .set-tab:active{transform:translateY(1px)}
-.set-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px 22px 8px}
+.set-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px 22px 2px}
 .set-body::-webkit-scrollbar{width:11px}
 .set-body::-webkit-scrollbar-track{background:#F2F6FC;border-radius:99px}
 .set-body::-webkit-scrollbar-thumb{background:#C3CEDD;border-radius:99px;border:3px solid #F2F6FC}
-.set-pane{padding-top:4px}
+.set-pane{padding-top:2px}
 .set-foot{flex:0 0 auto;display:flex;justify-content:flex-end;gap:8px;background:#fff;
   padding:10px 22px 14px;border-top:2px solid #E8EDF5;border-radius:0 0 20px 20px}
 /* 요일별 공부 목록 편집 */
@@ -805,7 +810,7 @@ body.eve #p-msg{color:#B4622A}
 #p-preview{display:inline-block;font-size:10.5px;font-weight:900;color:#8a3b00;background:#FFE0B8;
   border:2px solid var(--ink);border-radius:99px;padding:0 7px;line-height:1.55;margin-top:3px}
 /* 설정: 화면 전환 버튼 */
-.mode-row{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.mode-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .mode-chip{flex:1 1 0;min-width:0;font-family:inherit;font-weight:900;font-size:12px;letter-spacing:-.3px;
   color:#5C6979;background:#F7FAFF;border:2.5px solid #C9D5E4;border-radius:11px;padding:7px 4px;cursor:pointer;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(34,43,56,.08);transition:.12s}
@@ -1446,19 +1451,21 @@ body.eve #p-msg{color:#B4622A}
   </div>
 </div>
 
-<!-- 설정 (보호자용) -->
+<!-- 설정 (보호자용) — v46: 5탭 재구조화 (시간·휴일 / 포인트·확언 / 공부·집안일 / 포켓몬·소리 / 시스템) -->
 <div id="modal-settings" class="overlay hidden">
-  <div class="modal" style="text-align:left;min-width:min(80vw,430px)">
+  <div class="modal" style="text-align:left">
     <div class="set-head">
     <h3>⚙️ 보호자용 설정 · 테스트</h3>
-    <div class="set-tabs" role="tablist">
-      <button type="button" class="set-tab on" data-tab="time" role="tab">⏰ 시간·포인트</button>
-      <button type="button" class="set-tab" data-tab="study" role="tab">📚 공부 목록</button>
-      <button type="button" class="set-tab" data-tab="test" role="tab">⚙️ 시스템</button>
+    <div class="set-tabs" role="tablist" aria-label="보호자용 설정 탭">
+      <button type="button" class="set-tab on" data-tab="time" role="tab" aria-selected="true">⏰ 시간·휴일</button>
+      <button type="button" class="set-tab" data-tab="reward" role="tab" aria-selected="false">✨ 포인트·확언</button>
+      <button type="button" class="set-tab" data-tab="tasks" role="tab" aria-selected="false">📚 공부·집안일</button>
+      <button type="button" class="set-tab" data-tab="feature" role="tab" aria-selected="false">🎮 포켓몬·소리</button>
+      <button type="button" class="set-tab" data-tab="sys" role="tab" aria-selected="false">⚙️ 시스템</button>
     </div>
     </div>
     <div class="set-body">
-    <!-- 탭 1: 시간 · 포인트 -->
+    <!-- 탭 1: ⏰ 시간·휴일 — 기상·출발·취침, 화면 모드, 쉬는 날/방학 -->
     <div class="set-pane" data-pane="time">
     <div class="set-row"><span>기상 시간 (진행 바 0%)</span><input type="time" id="set-wake"></div>
     <div class="set-row"><span>유치원 출발 시간 (100%)</span><input type="time" id="set-depart"></div>
@@ -1466,16 +1473,35 @@ body.eve #p-msg{color:#B4622A}
     <div class="set-row"><span>화면 켜짐 유지 (기상 ~ 출발)</span><b id="set-wl" style="font-size:12.5px">-</b></div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7EC;border:2px solid #F0D6B4;border-radius:12px;padding:8px 10px;margin:6px 0 4px">
       <span>🌙 저녁 루틴 · 취침 시간</span>
-      <span class="set-sub">오후 <b>4:00~자정</b>에는 🌙 저녁 루틴 화면이 자동으로 떠요(나머지 시간은 아침 루틴). 진행 바 100%는 아래 <b>취침 시간</b>이에요. 지금 화면을 직접 바꿔 볼 떈 아래 버튼을 누르세요.</span>
+      <span class="set-sub">오후 <b>4:00~자정</b>에는 🌙 저녁 루틴 화면이 자동으로 떠요. 진행 바 100%는 아래 <b>취침 시간</b>이고, 지금 화면을 바꿔 볼 땐 아래 버튼을 눌러요.</span>
       <div class="vac-row" style="margin-top:6px"><span style="font-weight:900;font-size:12.5px">🌙 취침 시간 (진행 바 100%)</span><input type="time" id="set-bedtime" class="set-date"></div>
       <div class="mode-row" role="group" aria-label="화면 모드 전환">
         <button type="button" class="mode-chip on" data-mode="auto">🕒 자동 (시간 기준)</button>
         <button type="button" class="mode-chip" data-mode="am">☀️ 아침 루틴</button>
         <button type="button" class="mode-chip" data-mode="pm">🌙 취침 루틴</button>
       </div>
-      <span class="set-sub" id="mode-note" style="margin-top:5px"></span>
+      <span class="set-sub" id="mode-note" style="margin-top:2px"></span>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FCF7;border:2px solid #CBEBD5;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F4F9FF;border:2px solid #CFE1F5;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
+      <div class="btn-col">
+        <span>🏖️ 쉬는 날 · 방학/휴일 설정 <b id="set-rest-now" style="font-size:12px;color:#E0731D"></b></span>
+        <span class="set-sub">토·일요일과 법정공휴일은 자동으로 쉬는 날이에요. 방학 기간·휴일 날짜를 넣으면 그날도 쉽니다. 오늘만 바꿀 땐 진행 바의 <b>🏖️ 오늘 쉬는 날</b>을 눌러요.</span>
+        <div class="vac-row">
+          <input type="date" id="vac-s" class="set-date"><span>~</span><input type="date" id="vac-e" class="set-date">
+          <button class="set-btn sb-backup" id="vac-add" type="button">+ 방학·휴원 기간</button>
+        </div>
+        <div id="vac-list" class="chip-list"></div>
+        <div class="vac-row">
+          <input type="date" id="hol-d" class="set-date">
+          <button class="set-btn sb-backup" id="hol-add" type="button">+ 휴일 날짜</button>
+        </div>
+        <div id="hol-list" class="chip-list"></div>
+      </div>
+    </div>
+    </div>
+    <!-- 탭 2: ✨ 포인트·확언 — 깜빡한 할 일 인정 + 오늘의 긍정 확언 -->
+    <div class="set-pane hidden" data-pane="reward">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FCF7;border:2px solid #CBEBD5;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
       <span>🛡️ 깜빡한 할 일 포인트 인정 <b style="font-size:12px;color:#1C7A3A">· 보호자용</b></span>
       <span class="set-sub">아이가 제때 끝냈는데 화면 터치를 깜빡했을 때 여기서 눌러 주세요. 누른 할 일은 완료로 바뀌고 <b>+10 EXP</b>가 돼요. 진행 바와 마감 시각은 그대로예요. <b>✅</b>는 이미 인정된 할 일이고, 잘못 인정했으면 닫은 뒤 메인 화면에서 그 카드를 한 번 더 눌러 취소할 수 있어요.</span>
       <div class="missed-group"><div class="missed-title">🎒 아침 루틴</div><div id="missed-chips" class="missed-chips"></div></div>
@@ -1487,21 +1513,6 @@ body.eve #p-msg{color:#B4622A}
         <span class="set-sub" id="missed-note"></span>
       </div>
     </div>
-    </div>
-    <!-- 탭 2: 요일별 공부 목록 (월~일 각각 따로) -->
-    <div class="set-pane hidden" data-pane="study">
-    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FAFF;border:2px solid #CFE3F7;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
-      <span>📚 요일별 아침 공부 목록 <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
-      <span class="set-sub">그날 <b>아침 공부</b> 카드 제목 아래에 그대로 보여요. <b>/</b>로 나눠 적으면 항목마다 알약 모양으로 나뉘어 나와요. <b>예: 문어빵 / 키즈팩토 / ORT</b> — 요일마다 따로 저장되니 하나씩 고쳐 주세요.</span>
-      <div id="study-rows" class="study-rows"></div>
-      <div class="study-foot">
-        <button class="set-btn sb-backup" id="btn-study-reset" type="button">↺ 기본 목록으로 되돌리기</button>
-        <span class="set-sub" id="study-note"></span>
-      </div>
-    </div>
-    </div>
-    <!-- 탭 3: 시스템 (긍정 확언 · 소리 · 날씨 · 휴일 · 백업 · 테스트) -->
-    <div class="set-pane hidden" data-pane="test">
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:linear-gradient(180deg,#FFFDF3,#FFF4CC);border:2px solid #E6CB76;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
       <span><span style="color:#B87400">★</span> 오늘의 긍정 확언 <b style="font-size:12px;color:#8a6a00">· 보호자용</b></span>
       <span class="set-sub">화면 위 <b>★ 오늘의 긍정 확언</b> 바에 보여 줄 문장이에요. <b>오늘 하루만</b> 직접 쓴 문장이 나오고, 내일이 되면 자동으로 100개 문구로 바뀌어요. 비워 두면 매일 자정에 바뀌는 100개 문구가 자동으로 나와요. (최대 32자)</span>
@@ -1512,30 +1523,16 @@ body.eve #p-msg{color:#B4622A}
       </div>
       <span class="set-sub" id="affirm-note" style="margin-top:4px"></span>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <span>소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
-      <div class="btn-col" style="margin-top:6px">
-        <span style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
-          <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
-        </span>
-        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기 / 정지</button>
-      </div>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF3F0;border:2px solid #F3CFC6;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
-      <span>🔴 포켓몬 도감 <b style="font-size:12px;color:#A63D12">· 보호자용</b></span>
-      <span class="set-sub">도감 앞 <b>몬스터볼</b>을 눌렀을 때 열리는 도감 속 추가 기능이에요. <b>🔒 잠금</b>이면 몬스터볼을 눌러도 아무 반응이 없고, <b>🔓 켜짐</b>일 때만 열려요. 기본은 잠금이라 새로고침해도 그대로 잠겨 있어요.</span>
-      <div class="ball-lock-row">
-        <button class="set-btn sb-lock" id="btn-ball-lock" type="button" aria-pressed="false">🔒 잠금 (숨김)</button>
-        <span class="set-sub" id="ball-lock-note"></span>
-      </div>
-    </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F3F8FF;border:2px solid #C8DBF2;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
-      <span>🏥 포켓몬 센터 공개 (기본 숨김) <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
-      <span class="set-sub">헤더의 <b>🏥 포켓몬 센터</b> 버튼을 아이에게 보여 줄지 정해요. <b>🙈 숨김</b>이면 버튼이 아예 보이지 않고(기본), <b>👀 공개</b>일 때만 <b>포켓몬 도감</b> 옆에 나타나요. 서연 님이 혼자 시험해 볼 때만 켜 두면 돼요.</span>
-      <div class="ball-lock-row">
-        <button class="set-btn sb-lock" id="btn-center-lock" type="button" aria-pressed="false">🙈 숨김 (기본)</button>
-        <span class="set-sub" id="center-lock-note"></span>
+    <!-- 탭 3: 📚 공부·집안일 — 요일별 아침 공부 목록 + 포켓몬 센터 집안일 -->
+    <div class="set-pane hidden" data-pane="tasks">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F6FAFF;border:2px solid #CFE3F7;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>📚 요일별 아침 공부 목록 <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
+      <span class="set-sub">그날 <b>아침 공부</b> 카드 제목 아래에 그대로 보여요. <b>/</b>로 나눠 적으면 항목마다 알약 모양으로 나뉘어 나와요. <b>예: 문어빵 / 키즈팩토 / ORT</b> — 요일마다 따로 저장되니 하나씩 고쳐 주세요.</span>
+      <div id="study-rows" class="study-rows"></div>
+      <div class="study-foot">
+        <button class="set-btn sb-backup" id="btn-study-reset" type="button">↺ 기본 목록으로 되돌리기</button>
+        <span class="set-sub" id="study-note"></span>
       </div>
     </div>
     <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7FB;border:2px solid #F2C9DA;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
@@ -1558,45 +1555,66 @@ body.eve #p-msg{color:#B4622A}
         <span class="set-sub" id="chore-note"></span>
       </div>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <span>네이버 날씨 중계 주소 (Cloudflare Worker)</span>
-      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 기본으로 서연 님 워커 주소가 들어 있어 <b>네이버</b> 값을 먼저 쓰고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비우고 저장하면 Open-Meteo·met.no만 씁니다.</span>
+    </div>
+    <!-- 탭 4: 🎮 포켓몬·소리 — 도감 잠금 · 센터 공개 · 소리 미리 듣기 -->
+    <div class="set-pane hidden" data-pane="feature">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF3F0;border:2px solid #F3CFC6;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>🔴 포켓몬 도감 <b style="font-size:12px;color:#A63D12">· 보호자용</b></span>
+      <span class="set-sub">도감 앞 <b>몬스터볼</b>을 눌렀을 때 열리는 도감 속 추가 기능이에요. <b>🔒 잠금</b>이면 몬스터볼을 눌러도 아무 반응이 없고, <b>🔓 켜짐</b>일 때만 열려요. 기본은 잠금이라 새로고침해도 그대로 잠겨 있어요.</span>
+      <div class="ball-lock-row">
+        <button class="set-btn sb-lock" id="btn-ball-lock" type="button" aria-pressed="false">🔒 잠금 (숨김)</button>
+        <span class="set-sub" id="ball-lock-note"></span>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F3F8FF;border:2px solid #C8DBF2;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>🏥 포켓몬 센터 공개 (기본 숨김) <b style="font-size:12px;color:#1d5cad">· 보호자용</b></span>
+      <span class="set-sub">헤더의 <b>🏥 포켓몬 센터</b> 버튼을 아이에게 보여 줄지 정해요. <b>🙈 숨김</b>이면 버튼이 아예 보이지 않고(기본), <b>👀 공개</b>일 때만 <b>포켓몬 도감</b> 옆에 나타나요. 서연 님이 혼자 시험해 볼 때만 켜 두면 돼요.</span>
+      <div class="ball-lock-row">
+        <button class="set-btn sb-lock" id="btn-center-lock" type="button" aria-pressed="false">🙈 숨김 (기본)</button>
+        <span class="set-sub" id="center-lock-note"></span>
+      </div>
+    </div>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFFBEF;border:2px solid #EADFAF;border-radius:12px;padding:8px 10px;margin:2px 0 6px">
+      <span>🔊 소리 · 출발 알림 음악(유튜브 '우리는 모두 친구')</span>
+      <div class="btn-col" style="margin-top:6px">
+        <span style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="set-btn sb-sound" id="btn-unlock">🔊 소리 켜기</button>
+          <button class="set-btn sb-sound" id="btn-preview">🎵 우리는 모두 친구 미리 듣기 / 정지</button>
+        </span>
+        <button class="set-btn sb-test" id="btn-preview-beep">🔔 식사 타이머 소리 미리 듣기 / 정지</button>
+      </div>
+    </div>
+    </div>
+    <!-- 탭 5: ⚙️ 시스템 — 날씨 중계 · 백업 · 테스트/초기화 -->
+    <div class="set-pane hidden" data-pane="sys">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F7F9FC;border:2px solid #DCE4EE;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
+      <span>🌤️ 네이버 날씨 중계 주소 (Cloudflare Worker)</span>
+      <span class="set-sub">답십리1동 네이버 날씨를 그대로 받아오는 중계 주소예요. 기본으로 서연 님 워커 주소가 들어 있고, 실패하면 자동으로 Open-Meteo·met.no로 넘어가요. 비우고 저장하면 Open-Meteo·met.no만 씁니다.</span>
       <div class="vac-row" style="margin-top:6px">
         <input type="url" id="set-proxy" class="set-date" style="flex:1;min-width:200px" placeholder="https://naver-weather.계정.workers.dev" inputmode="url" autocomplete="off" spellcheck="false">
         <button class="set-btn sb-backup" id="btn-proxy-save" type="button">저장 및 새로고침</button>
       </div>
       <div id="set-proxy-state" class="set-sub" style="margin-top:2px"></div>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <div class="btn-col">
-        <span>쉬는 날 · 방학/휴일 설정 <b id="set-rest-now" style="font-size:12px;color:#E0731D"></b></span>
-        <span class="set-sub">토·일요일과 법정공휴일(대체공휴일 포함)은 자동으로 쉬는 날이에요. 방학 기간과 특정 휴일 날짜를 넣으면 그날도 쉽니다. 오늘 하루만 바꿀 때는 진행 바의 <b>🏖️ 오늘 쉬는 날</b> 버튼을 누르세요.</span>
-        <div class="vac-row">
-          <input type="date" id="vac-s" class="set-date"><span>~</span><input type="date" id="vac-e" class="set-date">
-          <button class="set-btn sb-backup" id="vac-add" type="button">+ 방학·휴원 기간</button>
-        </div>
-        <div id="vac-list" class="chip-list"></div>
-        <div class="vac-row">
-          <input type="date" id="hol-d" class="set-date">
-          <button class="set-btn sb-backup" id="hol-add" type="button">+ 휴일 날짜</button>
-        </div>
-        <div id="hol-list" class="chip-list"></div>
-      </div>
-    </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <div class="btn-col">
-        <span class="set-sub">도감·기록 백업 (.json 파일) · 내 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요</span>
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#F5F9FF;border:2px solid #D3E2F3;border-radius:12px;padding:8px 10px;margin:2px 0 4px">
+      <span>💾 도감·기록 백업 <b style="font-size:12px;color:#1d5cad">· .json 파일</b></span>
+      <span class="set-sub">내 포켓몬, EXP, 오늘 진행 상태, 설정이 모두 담겨요.</span>
+      <div class="set-inc" style="margin-top:6px">
         <button class="set-btn sb-backup" id="btn-backup-save">💾 백업 파일 저장 (.json)</button>
         <button class="set-btn sb-backup" id="btn-backup-load">📂 백업 파일 불러오기</button>
       </div>
     </div>
-    <div class="set-row" style="flex-direction:column;align-items:stretch">
-      <div class="btn-col">
+    <div class="set-row" style="flex-direction:column;align-items:stretch;background:#FFF7F3;border:2px solid #F3D9CB;border-radius:12px;padding:8px 10px;margin:2px 0 0">
+      <span>🧪 테스트 · 초기화 <b style="font-size:12px;color:#A63D12">· 보호자용</b></span>
+      <span class="set-sub">테스트용 버튼이에요. 맨 아래 <b>초기화</b> 두 가지는 되돌릴 수 없어요.</span>
+      <div class="btn-col" style="margin-top:6px">
         <button class="set-btn sb-test" id="btn-test-poke">🧪 테스트용 포켓몬 3마리 등록</button>
         <button class="set-btn sb-test" id="btn-test">⏱ 시간 내 완료 테스트 (할 일 5개 완료 +50 EXP)</button>
         <button class="set-btn sb-test" id="btn-exp">🎯 포획 연출 바로 보기 (+50 EXP)</button>
-        <button class="set-btn sb-reset" id="btn-reset-day">🧹 오늘 기록 초기화</button>
-        <button class="set-btn sb-reset" id="btn-reset-dex">📚 도감 전체 초기화</button>
+        <span class="set-inc">
+          <button class="set-btn sb-reset" id="btn-reset-day">🧹 오늘 기록 초기화</button>
+          <button class="set-btn sb-reset" id="btn-reset-dex">📚 도감 전체 초기화</button>
+        </span>
       </div>
     </div>
     </div>
@@ -1605,7 +1623,6 @@ body.eve #p-msg{color:#B4622A}
     <input type="file" id="backup-file" accept="application/json,.json" class="hidden">
   </div>
 </div>
-
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -5338,7 +5355,11 @@ document.getElementById('btn-set').addEventListener('click',()=>{
 
 /* ── ⚙️ 설정 안쪽 탭 ── */
 function switchSetTab(name){
-  document.querySelectorAll('#modal-settings .set-tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  document.querySelectorAll('#modal-settings .set-tab').forEach(b=>{
+    const on=b.dataset.tab===name;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
   document.querySelectorAll('#modal-settings .set-pane').forEach(p=>p.classList.toggle('hidden',p.dataset.pane!==name));
   const body=document.querySelector('#modal-settings .set-body');
   if(body)body.scrollTop=0;
