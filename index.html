@@ -490,7 +490,7 @@ body.dex-open #affirm-card{display:none}
 .pc-st .bar i{display:block;height:100%}
 .pc-st .bar i.hp{background:#37B24D}.pc-st .bar i.atk{background:#E4572E}.pc-st .bar i.def{background:#2F6FD0}
 /* 강화로 늘어난 만큼은 금색 막대로 이어 보여 준다 */
-.pc-st .bar i.bonus{background:linear-gradient(180deg,#FFE066,#F5B300);border-left:2px solid #8A5A00}
+.pc-st .bar i.bonus{min-width:4px;background:linear-gradient(180deg,#FFE066,#F5B300);border-left:2px solid #8A5A00}
 .pc-st .vl{flex:0 0 auto;min-width:26px;text-align:right;font-size:12.5px;font-weight:900;white-space:nowrap}
 .pc-st .vl b{font-size:10.5px;color:#B8860B;letter-spacing:-.3px}
 .pc-foot{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:5px;
@@ -1814,6 +1814,12 @@ const STUDY_DEFAULT={
         Lv.1에서 Lv.5까지 사탕 7개를 먹이면 능력치가 모두 +35 오른다. */
 const POKE_MAX_LV=5;
 const LV_BONUS=[0,0,5,10,20,35];   /* LV_BONUS[lv] = 그 레벨의 능력치 보너스 (Lv.1=0 … Lv.5=+35) */
+/* v45.2: 능력치 막대의 기준은 '포켓몬마다 다른 값'이 아니라 모두 이 하나를 쓴다.
+   250 = 200종 종족값 중 가장 큰 값(HP 250 #113 럭키 · 공격 160 #289 슬레이킹 · 방어 200 #208 강철톤).
+   강화소(renderCenter)와 도감 카드(pokeCardFront)가 이 값과 아래 statPct()를 함께 써서
+   같은 포켓몬은 어느 화면에서 보든 똑같은 비율의 막대를 갖는다. */
+const STAT_BAR_MAX=250;
+function statPct(v){return Math.max(0,Math.round((Number(v)||0)/STAT_BAR_MAX*1000)/10);}  /* 250을 100%로 본 비율(0.1% 단위) */
 const LV_COST =[0,0,1,1,2,3];      /* LV_COST[to]  = 그 레벨로 올리는 데 드는 사탕 */
 /* 기본 집안일에는 '무엇을 하는지' 한 줄 안내(desc)가 붙는다.
    이름을 고쳐도 id로 안내를 찾으므로 그대로 남고, 직접 넣은 집안일에 desc가 없으면
@@ -4177,8 +4183,9 @@ function pokeCardFront(p,got){
   const lv=pkLv(p.id), bonus=pkBonus(lv), maxLv=lv>=POKE_MAX_LV;
   const bar=(lb,base,cls)=>{
     const total=base+bonus;
-    const bw=Math.max(4,Math.min(100,Math.round(base/160*100)));
-    const gw=bonus?Math.min(100-bw,Math.round(bonus/160*100)):0;
+    /* v45.2: 강화소와 똑같이 STAT_BAR_MAX(250)를 100%로 본다 — 예전 160 기준은 강화소와 달랐고 160이 넘는 값을 잘랐다 */
+    const bw=Math.min(100,statPct(base));
+    const gw=bonus?Math.min(100-bw,statPct(bonus)):0;
     return `<div class="pc-st"><span class="lb">${lb}</span>
     <span class="bar"><i class="${cls}" style="width:${bw}%"></i>${gw?`<i class="bonus" style="width:${gw}%"></i>`:''}</span>
     <span class="vl">${total}${bonus?`<b>(+${bonus})</b>`:''}</span></div>`;
@@ -4405,14 +4412,19 @@ function renderCenter(pop){
   }
   /* v45: 제목 옆 레벨업 알약(pct-next ⭐ Lv.X → Lv.Y · 🍬N)은 뺐다 — 바로 아래 참조표가 같은 것을 알려 준다 */
   /* HP·공격·방어 막대 — 지금 값(파랑) + 사탕으로 오른 만큼(금색) + 다음 레벨에 오를 만큼(점선) */
-  const cap=Math.max(120,p.hp+LV_BONUS[POKE_MAX_LV],p.atk+LV_BONUS[POKE_MAX_LV],p.def+LV_BONUS[POKE_MAX_LV]);
-  const pw=v=>Math.max(0,Math.round(v/cap*1000)/10);
+  /* v45.2: 예전에는 포켓몬마다 cap을 잡아서(공격이 센 포켓몬일수록 cap이 큼) HP가 더 높은데도 막대가 더 짧아 보였다.
+     이제 모든 포켓몬이 같은 STAT_BAR_MAX(250)를 100%로 삼고, 세 토막(지금 값·보너스·다음 레벨)이 막대를 넘지 않게 자른다
+     — 럭키 Lv.5 HP 250+35=285처럼 기준을 넘는 값도 밖으로 새지 않는다. */
+  const pw=statPct;
   const statRow=(lb,base)=>{
     const now=base+bonus;
+    const wb=Math.min(100,pw(base));               /* 지금 값(파랑) — 도감 카드와 같은 식 */
+    const wg=bonus?Math.min(100-wb,pw(bonus)):0;    /* 사탕으로 오른 만큼(금색) */
+    const wn=gain?Math.min(100-wb-wg,pw(gain)):0;   /* 다음 레벨에 오를 만큼(점선) */
     return '<div class="pct-stat"><span class="lb">'+lb+'</span>'+
-      '<span class="bar"><i class="b" style="width:'+pw(base)+'%"></i>'+
-        (bonus?'<i class="g" style="width:'+pw(bonus)+'%"></i>':'')+
-        (gain?'<i class="n" style="width:'+pw(gain)+'%"></i>':'')+'</span>'+
+      '<span class="bar"><i class="b" style="width:'+wb+'%"></i>'+
+        (bonus&&wg>0?'<i class="g" style="width:'+wg+'%"></i>':'')+
+        (gain&&wn>0?'<i class="n" style="width:'+wn+'%"></i>':'')+'</span>'+
       '<span class="vl">'+now+'</span>'+
       (max?`<span class="nx done">+${bonus}</span>`
           :`<span class="nx"><i>→</i>${now+gain}<b>+${gain}</b></span>`)+'</div>';
